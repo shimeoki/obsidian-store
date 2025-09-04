@@ -25,6 +25,26 @@ export default class Store extends Plugin {
 
 		this.addSettingTab(new StoreSettingTab(this.app, this));
 
+		this.addCommands();
+	}
+
+	async onunload() {
+		await this.saveSettings();
+	}
+
+	async loadSettings() {
+		this.settings = Object.assign(
+			{},
+			DEFAULT_SETTINGS,
+			await this.loadData(),
+		);
+	}
+
+	async saveSettings() {
+		await this.saveData(this.settings);
+	}
+
+	addCommands() {
 		this.addCommand({
 			id: "store-create-vertical-split",
 			name: "Create in a vertical split",
@@ -42,22 +62,6 @@ export default class Store extends Plugin {
 			name: "Create in a tab",
 			callback: async () => await this.createTab(),
 		});
-	}
-
-	async onunload() {
-		await this.saveSettings();
-	}
-
-	async loadSettings() {
-		this.settings = Object.assign(
-			{},
-			DEFAULT_SETTINGS,
-			await this.loadData(),
-		);
-	}
-
-	async saveSettings() {
-		await this.saveData(this.settings);
 	}
 
 	name(): string {
