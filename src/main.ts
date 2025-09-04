@@ -13,7 +13,7 @@ interface StoreSettings {
 }
 
 const DEFAULT_SETTINGS: Partial<StoreSettings> = {
-	folder: normalizePath("/store"),
+	folder: normalizePath("store"),
 	template: null,
 };
 
