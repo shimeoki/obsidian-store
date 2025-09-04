@@ -33,13 +33,17 @@ export default class StoreSettingTab extends PluginSettingTab {
 	}
 
 	addTemplate(containerEl: HTMLElement) {
-		new Setting(containerEl).setName("Template").addText((text) => {
-			text.setPlaceholder("Template file").setValue(
-				this.plugin.settings.template,
-			).onChange(async (template) => {
-				this.plugin.settings.template = template;
-				await this.plugin.saveSettings();
+		new Setting(containerEl)
+			.setName("Template location")
+			.setDesc("Path to the template for new files.")
+			.addText((text) => {
+				text
+					.setPlaceholder("Example: templates/store.md")
+					.setValue(this.plugin.settings.template)
+					.onChange(async (template) => {
+						this.plugin.settings.template = template;
+						await this.plugin.saveSettings();
+					});
 			});
-		});
 	}
 }
