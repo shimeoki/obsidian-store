@@ -5,6 +5,7 @@ import {
 	TFile,
 	TFolder,
 } from "obsidian";
+import StoreSettingTab from "./settings";
 
 interface StoreSettings {
 	folder: string;
@@ -21,6 +22,8 @@ export default class Store extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
+
+		this.addSettingTab(new StoreSettingTab(this.app, this));
 
 		this.addCommand({
 			id: "store-create-vertical-split",
