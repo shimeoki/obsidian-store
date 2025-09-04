@@ -23,12 +23,22 @@ export default class Store extends Plugin {
 		await this.loadSettings();
 
 		this.addCommand({
-			id: "store-create",
-			name: "Create",
-			callback: async () => await this.createTab(),
+			id: "store-create-vertical-split",
+			name: "Create in a vertical split",
+			callback: async () => await this.createSplit("vertical"),
 		});
 
-		console.log(this.settings.folder);
+		this.addCommand({
+			id: "store-create-horizontal-split",
+			name: "Create in a horizontal split",
+			callback: async () => await this.createSplit("horizontal"),
+		});
+
+		this.addCommand({
+			id: "store-create-tab",
+			name: "Create in a tab",
+			callback: async () => await this.createTab(),
+		});
 	}
 
 	async onunload() {
