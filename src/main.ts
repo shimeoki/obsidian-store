@@ -9,4 +9,8 @@ export default class Store extends Plugin {
 	async onunload(): Promise<void> {
 		console.log("unloading");
 	}
+
+	name(): string {
+		return crypto.randomUUID();
+	}
 }
