@@ -9,13 +9,28 @@ const DEFAULT_SETTINGS: Partial<StoreSettings> = {
 };
 
 export default class Store extends Plugin {
+	settings: StoreSettings;
+
 	async onload(): Promise<void> {
-		console.log("generating a random uuid:");
-		console.log(crypto.randomUUID());
+		await this.loadSettings();
+
+		console.log(this.settings.directory);
 	}
 
 	async onunload(): Promise<void> {
 		console.log("unloading");
+	}
+
+	async loadSettings(): Promise<void> {
+		this.settings = Object.assign(
+			{},
+			DEFAULT_SETTINGS,
+			await this.loadData(),
+		);
+	}
+
+	async saveSettings(): Promise<void> {
+		await this.saveData(this.settings);
 	}
 
 	name(): string {
