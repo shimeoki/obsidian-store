@@ -28,7 +28,9 @@ export default class StoreSettingTab extends PluginSettingTab {
 	addFolder(containerEl: HTMLElement) {
 		new Setting(containerEl)
 			.setName("Folder location")
-			.setDesc("Path to the store folder.")
+			.setDesc(
+				"Path to the store folder. Created on demand if doesn't exist.",
+			)
 			.addText((text) => {
 				text
 					.setPlaceholder("Default: store")
