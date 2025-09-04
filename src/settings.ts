@@ -21,5 +21,14 @@ export default class StoreSettingTab extends PluginSettingTab {
 				await this.plugin.saveSettings();
 			});
 		});
+
+		new Setting(containerEl).setName("Template").addText((text) => {
+			text.setPlaceholder("Template file").setValue(
+				this.plugin.settings.template,
+			).onChange(async (template) => {
+				this.plugin.settings.template = template;
+				await this.plugin.saveSettings();
+			});
+		});
 	}
 }
