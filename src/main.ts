@@ -18,7 +18,7 @@ export default class Store extends Plugin {
 	}
 
 	async onunload(): Promise<void> {
-		console.log("unloading");
+		await this.saveSettings();
 	}
 
 	async loadSettings(): Promise<void> {
