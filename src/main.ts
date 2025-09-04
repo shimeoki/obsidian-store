@@ -8,11 +8,12 @@ import {
 
 interface StoreSettings {
 	folder: string;
-	template?: string;
+	template: string | null;
 }
 
 const DEFAULT_SETTINGS: Partial<StoreSettings> = {
 	folder: normalizePath("/store"),
+	template: null,
 };
 
 export default class Store extends Plugin {
