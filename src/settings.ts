@@ -13,6 +13,11 @@ export default class StoreSettingTab extends PluginSettingTab {
 		let { containerEl } = this;
 		containerEl.empty();
 
+		this.addFolder(containerEl);
+		this.addTemplate(containerEl);
+	}
+
+	addFolder(containerEl: HTMLElement) {
 		new Setting(containerEl).setName("Folder").addText((text) => {
 			text.setPlaceholder("Store folder").setValue(
 				this.plugin.settings.folder,
@@ -21,7 +26,9 @@ export default class StoreSettingTab extends PluginSettingTab {
 				await this.plugin.saveSettings();
 			});
 		});
+	}
 
+	addTemplate(containerEl: HTMLElement) {
 		new Setting(containerEl).setName("Template").addText((text) => {
 			text.setPlaceholder("Template file").setValue(
 				this.plugin.settings.template,
