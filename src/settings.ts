@@ -4,6 +4,7 @@ import {
 	PluginSettingTab,
 	Setting,
 	TAbstractFile,
+	TFile,
 } from "obsidian";
 import Store from "./main";
 
@@ -50,6 +51,8 @@ export default class StoreSettingTab extends PluginSettingTab {
 						this.plugin.settings.template = template;
 						await this.plugin.saveSettings();
 					});
+
+				new FileSuggest(this.app, text.inputEl);
 			});
 	}
 }
@@ -66,5 +69,11 @@ abstract class PathSuggest<T extends TAbstractFile>
 
 	renderSuggestion(value: T, el: HTMLElement) {
 		el.setText(value.path);
+	}
+}
+
+class FileSuggest extends PathSuggest<TFile> {
+	protected items(): TFile[] {
+		return this.app.vault.getMarkdownFiles();
 	}
 }
