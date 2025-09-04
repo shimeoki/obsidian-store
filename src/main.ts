@@ -1,4 +1,4 @@
-import { Plugin } from "obsidian";
+import { normalizePath, Plugin } from "obsidian";
 
 export default class Store extends Plugin {
 	async onload(): Promise<void> {
@@ -12,5 +12,15 @@ export default class Store extends Plugin {
 
 	name(): string {
 		return crypto.randomUUID();
+	}
+
+	async rename(path: string): Promise<void> {
+		const file = this.app.vault.getFileByPath(path);
+		if (file == null) {
+			return;
+		}
+
+		const newPath = `${file.parent}/${this.name()}.${file.extension}`;
+		await this.app.fileManager.renameFile(file, normalizePath(newPath));
 	}
 }
