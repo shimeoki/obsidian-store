@@ -17,7 +17,7 @@ export default class Store extends Plugin {
 		this.addCommand({
 			id: "store-create",
 			name: "Create",
-			callback: async () => await this.create(),
+			callback: async () => await this.createAndOpen(),
 		});
 
 		console.log(this.settings.folder);
@@ -82,5 +82,14 @@ export default class Store extends Plugin {
 			this.name(),
 			"", // todo: template
 		);
+	}
+
+	async createAndOpen() {
+		const file = await this.create();
+
+		// todo: customization
+		const newLeaf = this.app.workspace.getLeaf("split");
+
+		await newLeaf.openFile(file);
 	}
 }
