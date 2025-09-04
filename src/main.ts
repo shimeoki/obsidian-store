@@ -148,7 +148,7 @@ export default class Store extends Plugin {
 	}
 
 	setTemplate(path: string | null) {
-		if (path == null) {
+		if (path == null || path.length == 0) {
 			this.settings.template = null;
 			return;
 		}
