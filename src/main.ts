@@ -1,4 +1,4 @@
-import { normalizePath, Plugin, TFolder } from "obsidian";
+import { normalizePath, Plugin, TFile, TFolder } from "obsidian";
 
 interface StoreSettings {
 	folder: string;
@@ -13,6 +13,12 @@ export default class Store extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
+
+		this.addCommand({
+			id: "store-create",
+			name: "Create",
+			callback: async () => await this.create(),
+		});
 
 		console.log(this.settings.folder);
 	}
@@ -69,9 +75,9 @@ export default class Store extends Plugin {
 		return await this.folder();
 	}
 
-	async create() {
+	async create(): Promise<TFile> {
 		// note: unofficial api
-		await this.app.fileManager.createNewMarkdownFile(
+		return await this.app.fileManager.createNewMarkdownFile(
 			await this.folder(),
 			this.name(),
 			"", // todo: template
