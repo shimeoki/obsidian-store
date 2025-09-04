@@ -56,4 +56,5 @@ export default class StoreSettingTab extends PluginSettingTab {
 
 abstract class PathSuggest<T extends TAbstractFile>
 	extends AbstractInputSuggest<T> {
+	protected abstract items(): T[];
 }
