@@ -88,7 +88,7 @@ export default class Store extends Plugin {
 		return await this.app.fileManager.createNewMarkdownFile(
 			await this.folder(),
 			this.name(),
-			"", // todo: template
+			await this.template(),
 		);
 	}
 
@@ -102,5 +102,22 @@ export default class Store extends Plugin {
 		const file = await this.create();
 		const newLeaf = this.app.workspace.getLeaf("split", direction);
 		await newLeaf.openFile(file);
+	}
+
+	async template(): Promise<string> {
+		const template = this.settings.template;
+		if (template == null) {
+			return "";
+		}
+
+		const vault = this.app.vault;
+
+		const file = vault.getFileByPath(template);
+		if (file == null) {
+			this.settings.template = null;
+			return "";
+		}
+
+		return await vault.cachedRead(file);
 	}
 }
