@@ -100,6 +100,10 @@ export default class Store extends Plugin {
 		return await this.folder();
 	}
 
+	setFolder(path: string) {
+		this.settings.folder = normalizePath(path);
+	}
+
 	async create(): Promise<TFile> {
 		// note: unofficial api
 		return await this.app.fileManager.createNewMarkdownFile(
@@ -136,5 +140,14 @@ export default class Store extends Plugin {
 		}
 
 		return await vault.cachedRead(file);
+	}
+
+	setTemplate(path: string | null) {
+		if (path == null) {
+			this.settings.template = null;
+			return;
+		}
+
+		this.settings.template = normalizePath(path);
 	}
 }

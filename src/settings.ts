@@ -33,8 +33,8 @@ export default class StoreSettingTab extends PluginSettingTab {
 				text
 					.setPlaceholder("Default: store")
 					.setValue(this.plugin.settings.folder)
-					.onChange(async (folder) => {
-						this.plugin.settings.folder = folder;
+					.onChange(async (path) => {
+						this.plugin.setFolder(path);
 						await this.plugin.saveSettings();
 					});
 
@@ -50,8 +50,8 @@ export default class StoreSettingTab extends PluginSettingTab {
 				text
 					.setPlaceholder("Example: templates/store.md")
 					.setValue(this.plugin.settings.template)
-					.onChange(async (template) => {
-						this.plugin.settings.template = template;
+					.onChange(async (path) => {
+						this.plugin.setTemplate(path);
 						await this.plugin.saveSettings();
 					});
 
