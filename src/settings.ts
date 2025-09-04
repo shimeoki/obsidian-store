@@ -5,6 +5,7 @@ import {
 	Setting,
 	TAbstractFile,
 	TFile,
+	TFolder,
 } from "obsidian";
 import Store from "./main";
 
@@ -36,6 +37,8 @@ export default class StoreSettingTab extends PluginSettingTab {
 						this.plugin.settings.folder = folder;
 						await this.plugin.saveSettings();
 					});
+
+				new FolderSuggest(this.app, text.inputEl);
 			});
 	}
 
@@ -92,5 +95,11 @@ abstract class PathSuggest<T extends TAbstractFile>
 class FileSuggest extends PathSuggest<TFile> {
 	protected items(): TFile[] {
 		return this.app.vault.getMarkdownFiles();
+	}
+}
+
+class FolderSuggest extends PathSuggest<TFolder> {
+	protected items(): TFolder[] {
+		return this.app.vault.getAllFolders(true);
 	}
 }
