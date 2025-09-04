@@ -57,4 +57,10 @@ export default class StoreSettingTab extends PluginSettingTab {
 abstract class PathSuggest<T extends TAbstractFile>
 	extends AbstractInputSuggest<T> {
 	protected abstract items(): T[];
+
+	protected getSuggestions(query: string): T[] | Promise<T[]> {
+		const items = this.items();
+		const match = query.toLowerCase();
+		return items.filter((item) => item.path.toLowerCase().includes(match));
+	}
 }
