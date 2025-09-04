@@ -70,6 +70,16 @@ abstract class PathSuggest<T extends TAbstractFile>
 	renderSuggestion(value: T, el: HTMLElement) {
 		el.setText(value.path);
 	}
+
+	selectSuggestion(value: T, evt: MouseEvent | KeyboardEvent) {
+		// note: textInputEl is unofficial api
+		const el = this.textInputEl as HTMLInputElement;
+
+		el.value = value.path;
+		el.trigger("input");
+
+		this.close();
+	}
 }
 
 class FileSuggest extends PathSuggest<TFile> {
