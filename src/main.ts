@@ -100,7 +100,12 @@ export default class Store extends Plugin {
 		return await this.folder();
 	}
 
-	setFolder(path: string) {
+	setFolder(path: string | null) {
+		if (path == null || path.length == 0) {
+			this.setFolder(DEFAULT_SETTINGS.folder);
+			return;
+		}
+
 		this.settings.folder = normalizePath(path);
 	}
 
