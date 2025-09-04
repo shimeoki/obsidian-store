@@ -18,14 +18,18 @@ export default class StoreSettingTab extends PluginSettingTab {
 	}
 
 	addFolder(containerEl: HTMLElement) {
-		new Setting(containerEl).setName("Folder").addText((text) => {
-			text.setPlaceholder("Store folder").setValue(
-				this.plugin.settings.folder,
-			).onChange(async (folder) => {
-				this.plugin.settings.folder = folder;
-				await this.plugin.saveSettings();
+		new Setting(containerEl)
+			.setName("Folder location")
+			.setDesc("Path to the store folder.")
+			.addText((text) => {
+				text
+					.setPlaceholder("Default: store")
+					.setValue(this.plugin.settings.folder)
+					.onChange(async (folder) => {
+						this.plugin.settings.folder = folder;
+						await this.plugin.saveSettings();
+					});
 			});
-		});
 	}
 
 	addTemplate(containerEl: HTMLElement) {
