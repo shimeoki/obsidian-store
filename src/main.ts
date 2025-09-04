@@ -68,4 +68,13 @@ export default class Store extends Plugin {
 		await vault.createFolder(folder);
 		return await this.folder();
 	}
+
+	async create() {
+		// note: unofficial api
+		await this.app.fileManager.createNewMarkdownFile(
+			await this.folder(),
+			this.name(),
+			"", // todo: template
+		);
+	}
 }
