@@ -23,4 +23,13 @@ export default class Store extends Plugin {
 		const newPath = `${file.parent.path}/${this.name()}.${file.extension}`;
 		await this.app.fileManager.renameFile(file, normalizePath(newPath));
 	}
+
+	async renameActive(): Promise<void> {
+		const file = this.app.workspace.getActiveFile();
+		if (file == null) {
+			return;
+		}
+
+		await this.rename(file.path);
+	}
 }
