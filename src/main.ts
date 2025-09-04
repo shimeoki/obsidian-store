@@ -1,5 +1,13 @@
 import { normalizePath, Plugin } from "obsidian";
 
+interface StoreSettings {
+	directory: string;
+}
+
+const DEFAULT_SETTINGS: Partial<StoreSettings> = {
+	directory: normalizePath("/store"),
+};
+
 export default class Store extends Plugin {
 	async onload(): Promise<void> {
 		console.log("generating a random uuid:");
