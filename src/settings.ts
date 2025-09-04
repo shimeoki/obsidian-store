@@ -72,12 +72,8 @@ abstract class PathSuggest<T extends TAbstractFile>
 	}
 
 	selectSuggestion(value: T, evt: MouseEvent | KeyboardEvent) {
-		// note: textInputEl is unofficial api
-		const el = this.textInputEl as HTMLInputElement;
-
-		el.value = value.path;
-		el.trigger("input");
-
+		this.setValue(value.path);
+		this.textInputEl.trigger("input"); // note: unofficial api
 		this.close();
 	}
 }
