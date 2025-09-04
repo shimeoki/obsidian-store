@@ -68,7 +68,18 @@ abstract class PathSuggest<T extends TAbstractFile>
 	}
 
 	renderSuggestion(value: T, el: HTMLElement) {
-		el.setText(value.path);
+		const query = this.getValue().toLowerCase();
+		const path = value.path;
+
+		const index = path.toLowerCase().indexOf(query);
+		if (index == -1) {
+			el.createSpan({ text: path });
+			return;
+		}
+
+		el.createSpan({ text: path.substring(0, index) });
+		el.createEl("b", { text: path.substring(index, index + query.length) });
+		el.createSpan({ text: path.substring(index + query.length) });
 	}
 
 	selectSuggestion(value: T, evt: MouseEvent | KeyboardEvent) {
