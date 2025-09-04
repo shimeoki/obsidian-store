@@ -1,7 +1,7 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
 import Store from "./main";
 
-export default class StoreSettingsTab extends PluginSettingTab {
+export default class StoreSettingTab extends PluginSettingTab {
 	plugin: Store;
 
 	constructor(app: App, plugin: Store) {
