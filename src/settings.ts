@@ -1,4 +1,10 @@
-import { App, PluginSettingTab, Setting } from "obsidian";
+import {
+	AbstractInputSuggest,
+	App,
+	PluginSettingTab,
+	Setting,
+	TAbstractFile,
+} from "obsidian";
 import Store from "./main";
 
 export default class StoreSettingTab extends PluginSettingTab {
@@ -46,4 +52,8 @@ export default class StoreSettingTab extends PluginSettingTab {
 					});
 			});
 	}
+}
+
+abstract class PathSuggest<T extends TAbstractFile>
+	extends AbstractInputSuggest<T> {
 }
