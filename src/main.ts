@@ -1,11 +1,11 @@
 import { normalizePath, Plugin, TFolder } from "obsidian";
 
 interface StoreSettings {
-	directory: string;
+	folder: string;
 }
 
 const DEFAULT_SETTINGS: Partial<StoreSettings> = {
-	directory: normalizePath("/store"),
+	folder: normalizePath("/store"),
 };
 
 export default class Store extends Plugin {
@@ -14,7 +14,7 @@ export default class Store extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		console.log(this.settings.directory);
+		console.log(this.settings.folder);
 	}
 
 	async onunload() {
@@ -56,16 +56,16 @@ export default class Store extends Plugin {
 		await this.rename(file.path);
 	}
 
-	async directory(): Promise<TFolder> {
+	async folder(): Promise<TFolder> {
 		const vault = this.app.vault;
-		const directory = this.settings.directory;
+		const folder = this.settings.folder;
 
-		const fromVault = vault.getFolderByPath(directory);
+		const fromVault = vault.getFolderByPath(folder);
 		if (fromVault != null) {
 			return fromVault;
 		}
 
-		await vault.createFolder(directory);
-		return await this.directory();
+		await vault.createFolder(folder);
+		return await this.folder();
 	}
 }
