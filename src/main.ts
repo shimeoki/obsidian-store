@@ -8,6 +8,7 @@ import {
 
 interface StoreSettings {
 	folder: string;
+	template?: string;
 }
 
 const DEFAULT_SETTINGS: Partial<StoreSettings> = {
