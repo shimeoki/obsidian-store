@@ -63,4 +63,8 @@ abstract class PathSuggest<T extends TAbstractFile>
 		const match = query.toLowerCase();
 		return items.filter((item) => item.path.toLowerCase().includes(match));
 	}
+
+	renderSuggestion(value: T, el: HTMLElement) {
+		el.setText(value.path);
+	}
 }
