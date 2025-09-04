@@ -4,6 +4,7 @@
 	"license": "MIT",
 	"private": true,
 	"main": "main.js",
+	"packageManager": "pnpm@10.15.1",
 	"scripts": {
 		"build": "vite build"
 	},

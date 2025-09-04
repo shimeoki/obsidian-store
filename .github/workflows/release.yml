@@ -1,0 +1,32 @@
+name: Release
+
+on:
+    push:
+        tags:
+            - "*"
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        steps:
+            - uses: actions/checkout@v5
+            - uses: pnpm/action-setup@v4
+            - uses: actions/setup-node@v5
+
+            - name: Install dependencies
+              run: pnpm install
+
+            - name: Build the plugin
+              run: pnpm build
+
+            - name: Create the release
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  tag="${GITHUB_REF#refs/tags/}"
+
+                  gh release create "$tag" \
+                      --title="$tag" --draft \
+                      main.js manifest.json
