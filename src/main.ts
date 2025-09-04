@@ -20,7 +20,7 @@ export default class Store extends Plugin {
 			return;
 		}
 
-		const newPath = `${file.parent}/${this.name()}.${file.extension}`;
+		const newPath = `${file.parent.path}/${this.name()}.${file.extension}`;
 		await this.app.fileManager.renameFile(file, normalizePath(newPath));
 	}
 }
