@@ -1,4 +1,10 @@
-import { normalizePath, Plugin, TFile, TFolder } from "obsidian";
+import {
+	normalizePath,
+	Plugin,
+	SplitDirection,
+	TFile,
+	TFolder,
+} from "obsidian";
 
 interface StoreSettings {
 	folder: string;
@@ -17,7 +23,7 @@ export default class Store extends Plugin {
 		this.addCommand({
 			id: "store-create",
 			name: "Create",
-			callback: async () => await this.createAndOpen(),
+			callback: async () => await this.createTab(),
 		});
 
 		console.log(this.settings.folder);
@@ -84,12 +90,15 @@ export default class Store extends Plugin {
 		);
 	}
 
-	async createAndOpen() {
+	async createTab() {
 		const file = await this.create();
+		const newLeaf = this.app.workspace.getLeaf("tab");
+		await newLeaf.openFile(file);
+	}
 
-		// todo: customization
-		const newLeaf = this.app.workspace.getLeaf("split");
-
+	async createSplit(direction: SplitDirection) {
+		const file = await this.create();
+		const newLeaf = this.app.workspace.getLeaf("split", direction);
 		await newLeaf.openFile(file);
 	}
 }
