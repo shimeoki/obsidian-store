@@ -11,17 +11,17 @@ const DEFAULT_SETTINGS: Partial<StoreSettings> = {
 export default class Store extends Plugin {
 	settings: StoreSettings;
 
-	async onload(): Promise<void> {
+	async onload() {
 		await this.loadSettings();
 
 		console.log(this.settings.directory);
 	}
 
-	async onunload(): Promise<void> {
+	async onunload() {
 		await this.saveSettings();
 	}
 
-	async loadSettings(): Promise<void> {
+	async loadSettings() {
 		this.settings = Object.assign(
 			{},
 			DEFAULT_SETTINGS,
@@ -29,7 +29,7 @@ export default class Store extends Plugin {
 		);
 	}
 
-	async saveSettings(): Promise<void> {
+	async saveSettings() {
 		await this.saveData(this.settings);
 	}
 
@@ -37,7 +37,7 @@ export default class Store extends Plugin {
 		return crypto.randomUUID();
 	}
 
-	async rename(path: string): Promise<void> {
+	async rename(path: string) {
 		const file = this.app.vault.getFileByPath(path);
 		if (file == null) {
 			return;
@@ -47,7 +47,7 @@ export default class Store extends Plugin {
 		await this.app.fileManager.renameFile(file, normalizePath(newPath));
 	}
 
-	async renameActive(): Promise<void> {
+	async renameActive() {
 		const file = this.app.workspace.getActiveFile();
 		if (file == null) {
 			return;
