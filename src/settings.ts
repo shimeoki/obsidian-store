@@ -44,7 +44,7 @@ export default class StoreSettingTab extends PluginSettingTab {
     private addTemplate(containerEl: HTMLElement) {
         new Setting(containerEl)
             .setName("Template location")
-            .setDesc("Path to the template for new files.")
+            .setDesc("Path to the template for new notes.")
             .addText((text) => {
                 text
                     .setPlaceholder("Example: templates/store.md")
