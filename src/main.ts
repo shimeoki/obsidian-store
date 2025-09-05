@@ -142,6 +142,11 @@ export default class Store extends Plugin {
         return crypto.randomUUID()
     }
 
+    public isName(name: string): boolean {
+        return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+            .test(name)
+    }
+
     public async move(path: string) {
         const file = this.app.vault.getFileByPath(path)
         if (file == null) {
