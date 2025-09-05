@@ -114,25 +114,25 @@ export default class Store extends Plugin {
         return crypto.randomUUID()
     }
 
-    async rename(path: string) {
+    public async move(path: string) {
         const file = this.app.vault.getFileByPath(path)
         if (file == null) {
             return
         }
 
-        const parent = file.parent != null ? file.parent.path : ""
-        const newPath = `${parent}/${this.name()}.${file.extension}`
+        const store = await this.folder()
+        const newPath = `${store.path}/${this.name()}.${file.extension}`
 
         await this.app.fileManager.renameFile(file, normalizePath(newPath))
     }
 
-    async renameActive() {
+    public async moveActive() {
         const file = this.app.workspace.getActiveFile()
         if (file == null) {
             return
         }
 
-        await this.rename(file.path)
+        await this.move(file.path)
     }
 
     async create(): Promise<TFile> {
