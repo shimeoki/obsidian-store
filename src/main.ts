@@ -22,7 +22,7 @@ const DEFAULT_SETTINGS = {
 export default class Store extends Plugin {
 	settings!: StoreSettings;
 
-	async onload() {
+	override async onload() {
 		await this.loadSettings();
 
 		this.addSettingTab(new StoreSettingTab(this.app, this));
@@ -30,7 +30,7 @@ export default class Store extends Plugin {
 		this.addCommands();
 	}
 
-	async onunload() {
+	override async onunload() {
 		await this.saveSettings();
 	}
 

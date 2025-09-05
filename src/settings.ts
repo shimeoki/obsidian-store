@@ -17,7 +17,7 @@ export default class StoreSettingTab extends PluginSettingTab {
 		this.plugin = plugin;
 	}
 
-	display() {
+	override display() {
 		const { containerEl } = this;
 		containerEl.empty();
 
@@ -68,13 +68,13 @@ abstract class PathSuggest<T extends TAbstractFile>
 	extends AbstractInputSuggest<T> {
 	protected abstract items(): T[];
 
-	protected getSuggestions(query: string): T[] | Promise<T[]> {
+	protected override getSuggestions(query: string): T[] | Promise<T[]> {
 		const items = this.items();
 		const match = query.toLowerCase();
 		return items.filter((item) => item.path.toLowerCase().includes(match));
 	}
 
-	renderSuggestion(value: T, el: HTMLElement) {
+	override renderSuggestion(value: T, el: HTMLElement) {
 		const query = this.getValue().toLowerCase();
 		const path = value.path;
 
@@ -89,7 +89,7 @@ abstract class PathSuggest<T extends TAbstractFile>
 		el.createSpan({ text: path.substring(index + query.length) });
 	}
 
-	selectSuggestion(value: T, _evt: MouseEvent | KeyboardEvent) {
+	override selectSuggestion(value: T, _evt: MouseEvent | KeyboardEvent) {
 		this.setValue(value.path);
 		this.textInputEl.trigger("input"); // note: unofficial api
 		this.close();
@@ -97,13 +97,13 @@ abstract class PathSuggest<T extends TAbstractFile>
 }
 
 class FileSuggest extends PathSuggest<TFile> {
-	protected items(): TFile[] {
+	protected override items(): TFile[] {
 		return this.app.vault.getMarkdownFiles();
 	}
 }
 
 class FolderSuggest extends PathSuggest<TFolder> {
-	protected items(): TFolder[] {
+	protected override items(): TFolder[] {
 		return this.app.vault.getAllFolders(true);
 	}
 }
