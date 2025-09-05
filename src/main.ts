@@ -22,6 +22,7 @@ export default class Store extends Plugin {
         this.addSettingTab(new StoreSettingTab(this.app, this))
 
         this.addCommands()
+        this.addMenus()
     }
 
     override async onunload() {
@@ -122,6 +123,19 @@ export default class Store extends Plugin {
             name: "Move active note to the store",
             callback: async () => await this.moveActive(),
         })
+    }
+
+    private addMenus() {
+        this.registerEvent(
+            this.app.workspace.on("file-menu", (menu, file) => {
+                menu.addItem((item) => {
+                    item
+                        .setTitle("Move to the store")
+                        .setIcon("folder-input")
+                        .onClick(async () => await this.move(file.path))
+                })
+            }),
+        )
     }
 
     public name(): string {
