@@ -138,15 +138,6 @@ export default class Store extends Plugin {
         )
     }
 
-    public name(): string {
-        return crypto.randomUUID()
-    }
-
-    public isName(name: string): boolean {
-        return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-            .test(name)
-    }
-
     public async move(path: string) {
         const file = this.app.vault.getFileByPath(path)
         if (file == null) {
@@ -154,7 +145,7 @@ export default class Store extends Plugin {
         }
 
         const store = await this.getFolder()
-        const newPath = `${store.path}/${this.name()}.${file.extension}`
+        const newPath = `${store.path}/${name()}.${file.extension}`
 
         await this.app.fileManager.renameFile(file, normalizePath(newPath))
     }
@@ -172,7 +163,7 @@ export default class Store extends Plugin {
         // note: unofficial api
         return await this.app.fileManager.createNewMarkdownFile(
             await this.getFolder(),
-            this.name(),
+            name(),
             await this.readTemplate(),
         )
     }
@@ -188,4 +179,13 @@ export default class Store extends Plugin {
         const newLeaf = this.app.workspace.getLeaf("split", direction)
         await newLeaf.openFile(file)
     }
+}
+
+function name(): string {
+    return crypto.randomUUID()
+}
+
+function isName(name: string): boolean {
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+        .test(name)
 }
