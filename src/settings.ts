@@ -18,7 +18,7 @@ export default class StoreSettingTab extends PluginSettingTab {
 	}
 
 	display() {
-		let { containerEl } = this;
+		const { containerEl } = this;
 		containerEl.empty();
 
 		this.addFolder(containerEl);
