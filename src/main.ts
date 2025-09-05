@@ -139,12 +139,10 @@ export default class Store extends Plugin {
     }
 
     public inStore(path: string): boolean {
-        const afile = this.app.vault.getAbstractFileByPath(path)
-        if (afile == null || afile instanceof TFolder) {
+        const file = this.app.vault.getFileByPath(path)
+        if (file == null) {
             return false
         }
-
-        const file = afile as TFile
 
         const parent = file.parent
         if (parent == null || parent.path != this.folder()) {
