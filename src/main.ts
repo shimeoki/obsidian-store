@@ -8,11 +8,13 @@ import {
 import StoreSettingTab from "./settings";
 
 interface StoreSettings {
+	version: number;
 	folder: string;
 	template: string | null;
 }
 
-const DEFAULT_SETTINGS: Partial<StoreSettings> = {
+const DEFAULT_SETTINGS = {
+	version: 0,
 	folder: normalizePath("store"),
 	template: null,
 };
