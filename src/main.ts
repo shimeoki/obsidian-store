@@ -106,11 +106,10 @@ export default class Store extends Plugin {
 
 	setFolder(path: string | null) {
 		if (path == null || path.length == 0) {
-			this.setFolder(DEFAULT_SETTINGS.folder);
-			return;
+			this.settings.folder = DEFAULT_SETTINGS.folder;
+		} else {
+			this.settings.folder = normalizePath(path);
 		}
-
-		this.settings.folder = normalizePath(path);
 	}
 
 	async create(): Promise<TFile> {
@@ -153,10 +152,9 @@ export default class Store extends Plugin {
 
 	setTemplate(path: string | null) {
 		if (path == null || path.length == 0) {
-			this.settings.template = null;
-			return;
+			this.settings.template = DEFAULT_SETTINGS.template;
+		} else {
+			this.settings.template = normalizePath(path);
 		}
-
-		this.settings.template = normalizePath(path);
 	}
 }
