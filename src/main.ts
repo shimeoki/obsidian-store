@@ -104,12 +104,14 @@ export default class Store extends Plugin {
 		return await this.folder();
 	}
 
-	setFolder(path: string | null) {
+	async setFolder(path: string | null) {
 		if (path == null || path.length == 0) {
 			this.settings.folder = DEFAULT_SETTINGS.folder;
 		} else {
 			this.settings.folder = normalizePath(path);
 		}
+
+		await this.saveSettings();
 	}
 
 	async create(): Promise<TFile> {
@@ -150,11 +152,13 @@ export default class Store extends Plugin {
 		return await vault.cachedRead(file);
 	}
 
-	setTemplate(path: string | null) {
+	async setTemplate(path: string | null) {
 		if (path == null || path.length == 0) {
 			this.settings.template = DEFAULT_SETTINGS.template;
 		} else {
 			this.settings.template = normalizePath(path);
 		}
+
+		await this.saveSettings();
 	}
 }

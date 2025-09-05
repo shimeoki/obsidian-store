@@ -35,10 +35,9 @@ export default class StoreSettingTab extends PluginSettingTab {
 				text
 					.setPlaceholder("Default: store")
 					.setValue(this.plugin.settings.folder)
-					.onChange(async (path) => {
-						this.plugin.setFolder(path);
-						await this.plugin.saveSettings();
-					});
+					.onChange(async (path) =>
+						await this.plugin.setFolder(path)
+					);
 
 				new FolderSuggest(this.app, text.inputEl);
 			});
@@ -56,10 +55,9 @@ export default class StoreSettingTab extends PluginSettingTab {
 							? this.plugin.settings.template
 							: "",
 					)
-					.onChange(async (path) => {
-						this.plugin.setTemplate(path);
-						await this.plugin.saveSettings();
-					});
+					.onChange(async (path) =>
+						await this.plugin.setTemplate(path)
+					);
 
 				new FileSuggest(this.app, text.inputEl);
 			});
