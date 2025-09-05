@@ -145,7 +145,7 @@ export default class Store extends Plugin {
         }
 
         const store = await this.getFolder()
-        const newPath = `${store.path}/${name()}.${file.extension}`
+        const newPath = `${store.path}/${uuid()}.${file.extension}`
 
         await this.app.fileManager.renameFile(file, normalizePath(newPath))
     }
@@ -163,7 +163,7 @@ export default class Store extends Plugin {
         // note: unofficial api
         return await this.app.fileManager.createNewMarkdownFile(
             await this.getFolder(),
-            name(),
+            uuid(),
             await this.readTemplate(),
         )
     }
@@ -181,11 +181,11 @@ export default class Store extends Plugin {
     }
 }
 
-function name(): string {
+function uuid(): string {
     return crypto.randomUUID()
 }
 
-function isName(name: string): boolean {
+function isUUID(name: string): boolean {
     return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
         .test(name)
 }
