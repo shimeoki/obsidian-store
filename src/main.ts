@@ -138,6 +138,22 @@ export default class Store extends Plugin {
         )
     }
 
+    public inStore(path: string): boolean {
+        const afile = this.app.vault.getAbstractFileByPath(path)
+        if (afile == null || afile instanceof TFolder) {
+            return false
+        }
+
+        const file = afile as TFile
+
+        const parent = file.parent
+        if (parent == null || parent.path != this.folder()) {
+            return false
+        }
+
+        return isUUID(file.basename)
+    }
+
     public async move(path: string) {
         const file = this.app.vault.getFileByPath(path)
         if (file == null) {
