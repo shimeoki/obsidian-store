@@ -120,8 +120,15 @@ export default class Store extends Plugin {
 
         this.addCommand({
             id: "store-move-active",
-            name: "Move active note to the store",
-            editorCheckCallback: (checking, _editor, _view) => {
+            name: "Move active file to the store",
+            checkCallback: (checking) => {
+                // otherwise shows if no file is open.
+                // editorCheckCallback doesn't work, because
+                // opened images don't count as "in editor"
+                if (this.app.workspace.getActiveFile() == null) {
+                    return false
+                }
+
                 if (this.activeInStore()) {
                     return false
                 }
