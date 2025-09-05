@@ -51,7 +51,11 @@ export default class StoreSettingTab extends PluginSettingTab {
 			.addText((text) => {
 				text
 					.setPlaceholder("Example: templates/store.md")
-					.setValue(this.plugin.settings.template)
+					.setValue(
+						this.plugin.settings.template != null
+							? this.plugin.settings.template
+							: "",
+					)
 					.onChange(async (path) => {
 						this.plugin.setTemplate(path);
 						await this.plugin.saveSettings();
@@ -87,7 +91,7 @@ abstract class PathSuggest<T extends TAbstractFile>
 		el.createSpan({ text: path.substring(index + query.length) });
 	}
 
-	selectSuggestion(value: T, evt: MouseEvent | KeyboardEvent) {
+	selectSuggestion(value: T, _evt: MouseEvent | KeyboardEvent) {
 		this.setValue(value.path);
 		this.textInputEl.trigger("input"); // note: unofficial api
 		this.close();

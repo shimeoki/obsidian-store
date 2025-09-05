@@ -20,7 +20,7 @@ const DEFAULT_SETTINGS = {
 };
 
 export default class Store extends Plugin {
-	settings: StoreSettings;
+	settings!: StoreSettings;
 
 	async onload() {
 		await this.loadSettings();
@@ -76,7 +76,9 @@ export default class Store extends Plugin {
 			return;
 		}
 
-		const newPath = `${file.parent.path}/${this.name()}.${file.extension}`;
+		const parent = file.parent != null ? file.parent.path : "";
+		const newPath = `${parent}/${this.name()}.${file.extension}`;
+
 		await this.app.fileManager.renameFile(file, normalizePath(newPath));
 	}
 
