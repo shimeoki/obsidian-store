@@ -7,7 +7,7 @@ interface StoreSettings {
     template: string | null
 }
 
-const DEFAULT_SETTINGS = {
+const DEFAULT_SETTINGS: StoreSettings = {
     version: 0,
     folder: normalizePath("store"),
     template: null,
