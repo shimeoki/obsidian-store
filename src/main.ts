@@ -28,7 +28,7 @@ export default class Store extends Plugin {
         await this.saveSettings()
     }
 
-    async loadSettings() {
+    public async loadSettings() {
         this.settings = Object.assign(
             {},
             DEFAULT_SETTINGS,
@@ -36,11 +36,11 @@ export default class Store extends Plugin {
         )
     }
 
-    async saveSettings() {
+    public async saveSettings() {
         await this.saveData(this.settings)
     }
 
-    async folder(): Promise<TFolder> {
+    public async folder(): Promise<TFolder> {
         const vault = this.app.vault
         const folder = this.settings.folder
 
@@ -53,7 +53,7 @@ export default class Store extends Plugin {
         return await this.folder()
     }
 
-    async setFolder(path: string) {
+    public async setFolder(path: string) {
         if (path.length == 0) {
             this.settings.folder = DEFAULT_SETTINGS.folder
         } else {
@@ -63,7 +63,7 @@ export default class Store extends Plugin {
         await this.saveSettings()
     }
 
-    async template(): Promise<string> {
+    public async template(): Promise<string> {
         const template = this.settings.template
         if (template.length == 0) {
             return ""
@@ -80,7 +80,7 @@ export default class Store extends Plugin {
         return await vault.cachedRead(file)
     }
 
-    async setTemplate(path: string) {
+    public async setTemplate(path: string) {
         if (path.length == 0) {
             this.settings.template = DEFAULT_SETTINGS.template
         } else {
@@ -90,7 +90,7 @@ export default class Store extends Plugin {
         await this.saveSettings()
     }
 
-    addCommands() {
+    private addCommands() {
         this.addCommand({
             id: "store-create-vertical-split",
             name: "Create new note in a vertical split",
@@ -116,7 +116,7 @@ export default class Store extends Plugin {
         })
     }
 
-    name(): string {
+    public name(): string {
         return crypto.randomUUID()
     }
 
@@ -141,7 +141,7 @@ export default class Store extends Plugin {
         await this.move(file.path)
     }
 
-    async create(): Promise<TFile> {
+    public async create(): Promise<TFile> {
         // note: unofficial api
         return await this.app.fileManager.createNewMarkdownFile(
             await this.folder(),
@@ -150,13 +150,13 @@ export default class Store extends Plugin {
         )
     }
 
-    async createTab() {
+    public async createTab() {
         const file = await this.create()
         const newLeaf = this.app.workspace.getLeaf("tab")
         await newLeaf.openFile(file)
     }
 
-    async createSplit(direction: SplitDirection) {
+    public async createSplit(direction: SplitDirection) {
         const file = await this.create()
         const newLeaf = this.app.workspace.getLeaf("split", direction)
         await newLeaf.openFile(file)

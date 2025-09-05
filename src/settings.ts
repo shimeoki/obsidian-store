@@ -25,7 +25,7 @@ export default class StoreSettingTab extends PluginSettingTab {
         this.addTemplate(containerEl)
     }
 
-    addFolder(containerEl: HTMLElement) {
+    private addFolder(containerEl: HTMLElement) {
         new Setting(containerEl)
             .setName("Folder location")
             .setDesc(
@@ -41,7 +41,7 @@ export default class StoreSettingTab extends PluginSettingTab {
             })
     }
 
-    addTemplate(containerEl: HTMLElement) {
+    private addTemplate(containerEl: HTMLElement) {
         new Setting(containerEl)
             .setName("Template location")
             .setDesc("Path to the template for new files.")
