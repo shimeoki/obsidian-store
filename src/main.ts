@@ -128,6 +128,10 @@ export default class Store extends Plugin {
     private addMenus() {
         this.registerEvent(
             this.app.workspace.on("file-menu", (menu, file) => {
+                if (file instanceof TFolder || this.inStore(file.path)) {
+                    return
+                }
+
                 menu.addItem((item) => {
                     item
                         .setTitle("Move to the store")
