@@ -156,6 +156,15 @@ export default class Store extends Plugin {
         return isUUID(file.basename)
     }
 
+    public activeInStore(): boolean {
+        const file = this.app.workspace.getActiveFile()
+        if (file == null) {
+            return false
+        }
+
+        return this.inStore(file.path)
+    }
+
     public async move(path: string) {
         const file = this.app.vault.getFileByPath(path)
         if (file == null) {
