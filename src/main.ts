@@ -40,17 +40,8 @@ export default class Store extends Plugin {
         await this.saveData(this.settings)
     }
 
-    public async folder(): Promise<TFolder> {
-        const vault = this.app.vault
-        const folder = this.settings.folder
-
-        const fromVault = vault.getFolderByPath(folder)
-        if (fromVault != null) {
-            return fromVault
-        }
-
-        await vault.createFolder(folder)
-        return await this.folder()
+    public folder(): string {
+        return this.settings.folder
     }
 
     public async setFolder(path: string) {
@@ -61,6 +52,19 @@ export default class Store extends Plugin {
         }
 
         await this.saveSettings()
+    }
+
+    public async getFolder(): Promise<TFolder> {
+        const vault = this.app.vault
+        const path = this.folder()
+
+        const folder = vault.getFolderByPath(path)
+        if (folder != null) {
+            return folder
+        }
+
+        await vault.createFolder(path)
+        return await this.getFolder()
     }
 
     public async template(): Promise<string> {
@@ -126,7 +130,7 @@ export default class Store extends Plugin {
             return
         }
 
-        const store = await this.folder()
+        const store = await this.getFolder()
         const newPath = `${store.path}/${this.name()}.${file.extension}`
 
         await this.app.fileManager.renameFile(file, normalizePath(newPath))
@@ -144,7 +148,7 @@ export default class Store extends Plugin {
     public async create(): Promise<TFile> {
         // note: unofficial api
         return await this.app.fileManager.createNewMarkdownFile(
-            await this.folder(),
+            await this.getFolder(),
             this.name(),
             await this.template(),
         )

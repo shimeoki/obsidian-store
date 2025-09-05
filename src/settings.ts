@@ -34,7 +34,7 @@ export default class StoreSettingTab extends PluginSettingTab {
             .addText((text) => {
                 text
                     .setPlaceholder("Default: store")
-                    .setValue(this.plugin.settings.folder)
+                    .setValue(this.plugin.folder())
                     .onChange(async (path) => await this.plugin.setFolder(path))
 
                 new FolderSuggest(this.app, text.inputEl)
