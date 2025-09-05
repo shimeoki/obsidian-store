@@ -40,6 +40,56 @@ export default class Store extends Plugin {
         await this.saveData(this.settings)
     }
 
+    async folder(): Promise<TFolder> {
+        const vault = this.app.vault
+        const folder = this.settings.folder
+
+        const fromVault = vault.getFolderByPath(folder)
+        if (fromVault != null) {
+            return fromVault
+        }
+
+        await vault.createFolder(folder)
+        return await this.folder()
+    }
+
+    async setFolder(path: string | null) {
+        if (path == null || path.length == 0) {
+            this.settings.folder = DEFAULT_SETTINGS.folder
+        } else {
+            this.settings.folder = normalizePath(path)
+        }
+
+        await this.saveSettings()
+    }
+
+    async template(): Promise<string> {
+        const template = this.settings.template
+        if (template == null) {
+            return ""
+        }
+
+        const vault = this.app.vault
+
+        const file = vault.getFileByPath(template)
+        if (file == null) {
+            this.settings.template = null
+            return ""
+        }
+
+        return await vault.cachedRead(file)
+    }
+
+    async setTemplate(path: string | null) {
+        if (path == null || path.length == 0) {
+            this.settings.template = DEFAULT_SETTINGS.template
+        } else {
+            this.settings.template = normalizePath(path)
+        }
+
+        await this.saveSettings()
+    }
+
     addCommands() {
         this.addCommand({
             id: "store-create-vertical-split",
@@ -84,30 +134,6 @@ export default class Store extends Plugin {
 
         await this.rename(file.path)
     }
-
-    async folder(): Promise<TFolder> {
-        const vault = this.app.vault
-        const folder = this.settings.folder
-
-        const fromVault = vault.getFolderByPath(folder)
-        if (fromVault != null) {
-            return fromVault
-        }
-
-        await vault.createFolder(folder)
-        return await this.folder()
-    }
-
-    async setFolder(path: string | null) {
-        if (path == null || path.length == 0) {
-            this.settings.folder = DEFAULT_SETTINGS.folder
-        } else {
-            this.settings.folder = normalizePath(path)
-        }
-
-        await this.saveSettings()
-    }
-
     async create(): Promise<TFile> {
         // note: unofficial api
         return await this.app.fileManager.createNewMarkdownFile(
@@ -127,32 +153,5 @@ export default class Store extends Plugin {
         const file = await this.create()
         const newLeaf = this.app.workspace.getLeaf("split", direction)
         await newLeaf.openFile(file)
-    }
-
-    async template(): Promise<string> {
-        const template = this.settings.template
-        if (template == null) {
-            return ""
-        }
-
-        const vault = this.app.vault
-
-        const file = vault.getFileByPath(template)
-        if (file == null) {
-            this.settings.template = null
-            return ""
-        }
-
-        return await vault.cachedRead(file)
-    }
-
-    async setTemplate(path: string | null) {
-        if (path == null || path.length == 0) {
-            this.settings.template = DEFAULT_SETTINGS.template
-        } else {
-            this.settings.template = normalizePath(path)
-        }
-
-        await this.saveSettings()
     }
 }
