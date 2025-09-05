@@ -67,21 +67,8 @@ export default class Store extends Plugin {
         return await this.getFolder()
     }
 
-    public async template(): Promise<string> {
-        const template = this.settings.template
-        if (template.length == 0) {
-            return ""
-        }
-
-        const vault = this.app.vault
-
-        const file = vault.getFileByPath(template)
-        if (file == null) {
-            await this.setTemplate("")
-            return await this.template()
-        }
-
-        return await vault.cachedRead(file)
+    public template(): string {
+        return this.settings.template
     }
 
     public async setTemplate(path: string) {
@@ -92,6 +79,23 @@ export default class Store extends Plugin {
         }
 
         await this.saveSettings()
+    }
+
+    public async readTemplate(): Promise<string> {
+        const vault = this.app.vault
+        const path = this.template()
+
+        if (path.length == 0) {
+            return ""
+        }
+
+        const file = vault.getFileByPath(path)
+        if (file == null) {
+            await this.setTemplate("")
+            return await this.readTemplate()
+        }
+
+        return await vault.cachedRead(file)
     }
 
     private addCommands() {
@@ -150,7 +154,7 @@ export default class Store extends Plugin {
         return await this.app.fileManager.createNewMarkdownFile(
             await this.getFolder(),
             this.name(),
-            await this.template(),
+            await this.readTemplate(),
         )
     }
 
