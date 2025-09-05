@@ -1,3 +1,4 @@
+import StoreSettingTab from "./settings.ts";
 import {
 	normalizePath,
 	Plugin,
@@ -5,7 +6,6 @@ import {
 	TFile,
 	TFolder,
 } from "obsidian";
-import StoreSettingTab from "./settings";
 
 interface StoreSettings {
 	version: number;

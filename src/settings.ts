@@ -1,3 +1,4 @@
+import Store from "./main.ts";
 import {
 	AbstractInputSuggest,
 	App,
@@ -7,7 +8,6 @@ import {
 	TFile,
 	TFolder,
 } from "obsidian";
-import Store from "./main";
 
 export default class StoreSettingTab extends PluginSettingTab {
 	plugin: Store;
