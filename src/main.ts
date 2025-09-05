@@ -108,6 +108,12 @@ export default class Store extends Plugin {
             name: "Create in a tab",
             callback: async () => await this.createTab(),
         })
+
+        this.addCommand({
+            id: "store-move-active",
+            name: "Move active note to the store",
+            callback: async () => await this.moveActive(),
+        })
     }
 
     name(): string {
