@@ -4,13 +4,13 @@ import { normalizePath, Plugin, SplitDirection, TFile, TFolder } from "obsidian"
 interface StoreSettings {
     version: number
     folder: string
-    template: string | null
+    template: string
 }
 
 const DEFAULT_SETTINGS: StoreSettings = {
     version: 0,
     folder: normalizePath("store"),
-    template: null,
+    template: "",
 }
 
 export default class Store extends Plugin {
@@ -53,8 +53,8 @@ export default class Store extends Plugin {
         return await this.folder()
     }
 
-    async setFolder(path: string | null) {
-        if (path == null || path.length == 0) {
+    async setFolder(path: string) {
+        if (path.length == 0) {
             this.settings.folder = DEFAULT_SETTINGS.folder
         } else {
             this.settings.folder = normalizePath(path)
@@ -65,7 +65,7 @@ export default class Store extends Plugin {
 
     async template(): Promise<string> {
         const template = this.settings.template
-        if (template == null) {
+        if (template.length == 0) {
             return ""
         }
 
@@ -73,15 +73,15 @@ export default class Store extends Plugin {
 
         const file = vault.getFileByPath(template)
         if (file == null) {
-            this.settings.template = null
-            return ""
+            await this.setTemplate("")
+            return await this.template()
         }
 
         return await vault.cachedRead(file)
     }
 
-    async setTemplate(path: string | null) {
-        if (path == null || path.length == 0) {
+    async setTemplate(path: string) {
+        if (path.length == 0) {
             this.settings.template = DEFAULT_SETTINGS.template
         } else {
             this.settings.template = normalizePath(path)

@@ -48,11 +48,7 @@ export default class StoreSettingTab extends PluginSettingTab {
             .addText((text) => {
                 text
                     .setPlaceholder("Example: templates/store.md")
-                    .setValue(
-                        this.plugin.settings.template != null
-                            ? this.plugin.settings.template
-                            : "",
-                    )
+                    .setValue(this.plugin.settings.template)
                     .onChange(async (path) =>
                         await this.plugin.setTemplate(path)
                     )
