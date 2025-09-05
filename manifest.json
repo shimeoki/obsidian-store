@@ -1,10 +1,10 @@
 {
-	"id": "store",
-	"name": "Store",
-	"description": "Manage your notes with a single store.",
-	"version": "0.1.1",
-	"minAppVersion": "1.9.12",
-	"isDesktopOnly": false,
-	"author": "shimeoki",
-	"authorUrl": "https://github.com/shimeoki"
+    "id": "store",
+    "name": "Store",
+    "description": "Manage your notes with a single store.",
+    "version": "0.1.1",
+    "minAppVersion": "1.9.12",
+    "isDesktopOnly": false,
+    "author": "shimeoki",
+    "authorUrl": "https://github.com/shimeoki"
 }
