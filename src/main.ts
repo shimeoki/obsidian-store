@@ -23,6 +23,7 @@ export default class Store extends Plugin {
 
         this.addCommands()
         this.addMenus()
+        this.addRibbonActions()
     }
 
     override async onunload() {
@@ -156,6 +157,14 @@ export default class Store extends Plugin {
                         .onClick(async () => await this.move(file.path))
                 })
             }),
+        )
+    }
+
+    private addRibbonActions() {
+        this.addRibbonIcon(
+            "folder-pen",
+            "Create new note in the store",
+            async () => await this.createTab(),
         )
     }
 
