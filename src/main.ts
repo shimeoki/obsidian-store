@@ -91,7 +91,7 @@ export default class Store extends Plugin {
         }
 
         const file = vault.getFileByPath(path)
-        if (file == null) {
+        if (file == null || file.extension != "md") {
             await this.setTemplate("")
             return await this.readTemplate()
         }
