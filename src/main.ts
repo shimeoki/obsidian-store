@@ -121,8 +121,7 @@ export default class Store extends Plugin {
         this.addCommand({
             id: "store-move-active",
             name: "Move active note to the store",
-            callback: async () => await this.moveActive(),
-            checkCallback: (checking: boolean) => {
+            editorCheckCallback: (checking, _editor, _view) => {
                 if (this.activeInStore()) {
                     return false
                 }
