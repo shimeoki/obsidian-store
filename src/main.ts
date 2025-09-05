@@ -93,19 +93,19 @@ export default class Store extends Plugin {
     addCommands() {
         this.addCommand({
             id: "store-create-vertical-split",
-            name: "Create in a vertical split",
+            name: "Create new note in a vertical split",
             callback: async () => await this.createSplit("vertical"),
         })
 
         this.addCommand({
             id: "store-create-horizontal-split",
-            name: "Create in a horizontal split",
+            name: "Create new note in a horizontal split",
             callback: async () => await this.createSplit("horizontal"),
         })
 
         this.addCommand({
             id: "store-create-tab",
-            name: "Create in a tab",
+            name: "Create new note in a tab",
             callback: async () => await this.createTab(),
         })
 
