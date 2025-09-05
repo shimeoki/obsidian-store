@@ -134,6 +134,7 @@ export default class Store extends Plugin {
 
         await this.rename(file.path)
     }
+
     async create(): Promise<TFile> {
         // note: unofficial api
         return await this.app.fileManager.createNewMarkdownFile(
