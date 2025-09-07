@@ -1,4 +1,4 @@
-import Headings from "./headings.ts"
+import Heading from "./heading.ts"
 import StoreSettingTab from "./settings.ts"
 import { normalizePath, Plugin, SplitDirection, TFile, TFolder } from "obsidian"
 
@@ -26,7 +26,7 @@ export default class Store extends Plugin {
         this.addMenus()
         this.addRibbonActions()
 
-        new Headings(this)
+        new Heading(this)
     }
 
     override async onunload() {
