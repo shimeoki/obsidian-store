@@ -257,7 +257,7 @@ export default class Store extends Plugin {
         const offset = cache.frontmatterPosition?.end.offset || 0
 
         if (headings.length == 0) {
-            // todo: add heading after the frontmatter
+            this.addHeading(file, offset)
             return
         }
 
@@ -275,6 +275,18 @@ export default class Store extends Plugin {
         }
 
         // todo: shift headings and insert new
+    }
+
+    private heading(file: TFile): string {
+        return file.basename
+    }
+
+    private async addHeading(file: TFile, offset: number) {
+        await this.app.vault.process(file, (data) => {
+            return data.substring(0, offset + 1) +
+                `\n# ${this.heading(file)}` +
+                data.substring(offset + 1)
+        })
     }
 }
 
