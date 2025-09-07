@@ -278,13 +278,13 @@ export default class Store extends Plugin {
     }
 
     private heading(file: TFile): string {
-        return file.basename
+        return `\n# ${file.basename}\n`
     }
 
     private async addHeading(file: TFile, offset: number) {
         await this.app.vault.process(file, (data) => {
             return data.substring(0, offset + 1) +
-                `\n# ${this.heading(file)}` +
+                this.heading(file) +
                 data.substring(offset + 1)
         })
     }
