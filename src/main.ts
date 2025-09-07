@@ -275,6 +275,7 @@ export default class Store extends Plugin {
         }
 
         if (headings.length == 1) {
+            // fix: doesn't work if heading consists of whitespace
             if (headings[0].heading.length == 0) {
                 this.addHeading(file, headings[0].position.start.offset)
             }
