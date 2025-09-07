@@ -2,7 +2,7 @@
     "id": "store",
     "name": "Store",
     "description": "Manage your notes within a single store.",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "minAppVersion": "1.9.12",
     "isDesktopOnly": false,
     "author": "shimeoki",
