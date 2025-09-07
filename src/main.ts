@@ -141,6 +141,19 @@ export default class Store extends Plugin {
                 return true
             },
         })
+
+        this.addCommand({
+            id: "store-generate-heading-active",
+            name: "Generate heading in active note",
+            callback: async () => {
+                const file = this.app.workspace.getActiveFile()
+                if (file == null) {
+                    return
+                }
+
+                await this.generateHeading(file.path)
+            },
+        })
     }
 
     private addMenus() {
