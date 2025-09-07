@@ -1,3 +1,4 @@
+import Headings from "./headings.ts"
 import StoreSettingTab from "./settings.ts"
 import { normalizePath, Plugin, SplitDirection, TFile, TFolder } from "obsidian"
 
@@ -24,6 +25,8 @@ export default class Store extends Plugin {
         this.addCommands()
         this.addMenus()
         this.addRibbonActions()
+
+        new Headings(this)
     }
 
     override async onunload() {
@@ -141,19 +144,6 @@ export default class Store extends Plugin {
                 return true
             },
         })
-
-        this.addCommand({
-            id: "store-generate-heading-active",
-            name: "Generate heading in active note",
-            callback: async () => {
-                const file = this.app.workspace.getActiveFile()
-                if (file == null) {
-                    return
-                }
-
-                await this.generateHeading(file.path)
-            },
-        })
     }
 
     private addMenus() {
@@ -245,93 +235,6 @@ export default class Store extends Plugin {
         const newLeaf = this.app.workspace.getLeaf("split", direction)
         await newLeaf.openFile(file)
     }
-
-    public async generateHeading(path: string) {
-        const file = this.app.vault.getFileByPath(path)
-        if (file == null || !isMarkdown(file)) {
-            return
-        }
-
-        const cache = this.app.metadataCache.getFileCache(file)
-        if (cache == null) {
-            console.warn(`store: heading: cache for '${file.path}' is empty`)
-            return
-        }
-
-        let shiftable = true
-        const headings = (cache.headings || []).filter((h) => {
-            if (h.level == 6) {
-                shiftable = false
-            }
-
-            return h.level == 1
-        })
-
-        const offset = cache.frontmatterPosition?.end.offset || 0
-
-        if (headings.length == 0) {
-            this.addHeading(file, offset)
-            return
-        }
-
-        if (headings.length == 1) {
-            // fix: doesn't work if heading consists of whitespace
-            if (headings[0].heading.length == 0) {
-                this.addHeading(file, headings[0].position.start.offset)
-            }
-
-            return
-        }
-
-        if (!shiftable) {
-            console.warn(`store: heading: unshiftable in '${file.path}'`)
-            return
-        }
-
-        this.shiftHeadings(file)
-        this.addHeading(file, offset)
-    }
-
-    private heading(file: TFile): string {
-        return `\n\n# ${file.basename}\n\n`
-    }
-
-    private async addHeading(file: TFile, offset: number) {
-        await this.app.vault.process(file, (data) => {
-            return (data.substring(0, offset).trim() +
-                this.heading(file) +
-                data.substring(offset).trim()).trim()
-        })
-    }
-
-    private async shiftHeadings(file: TFile) {
-        const cache = this.app.metadataCache.getFileCache(file)
-        if (cache == null) {
-            console.warn(`store: heading: cache for '${file.path}' is empty`)
-            return
-        }
-
-        const headings = cache.headings || []
-
-        // note: using .sort() at the end is incorrect, because it sorts
-        // based on the initial heading objects. they are already sorted by
-        // the positions, so it's not needed.
-        const positions = headings.map((h) => h.position.start.offset)
-
-        await this.app.vault.process(file, (data) => {
-            let result = ""
-
-            let position = 0
-            positions.forEach((p) => {
-                result += data.substring(position, p)
-                result += "#"
-                position = p
-            })
-
-            result += data.substring(position)
-            return result
-        })
-    }
 }
 
 function uuid(): string {
@@ -341,8 +244,4 @@ function uuid(): string {
 function isUUID(name: string): boolean {
     return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
         .test(name)
-}
-
-function isMarkdown(file: TFile): boolean {
-    return file.extension == "md"
 }
