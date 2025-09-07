@@ -263,7 +263,7 @@ export default class Store extends Plugin {
 
         if (headings.length == 1) {
             if (headings[0].heading.length == 0) {
-                // todo: replace the empty heading
+                this.addHeading(file, headings[0].position.start.offset)
             }
 
             return
@@ -283,7 +283,7 @@ export default class Store extends Plugin {
 
     private async addHeading(file: TFile, offset: number) {
         await this.app.vault.process(file, (data) => {
-            return data.substring(0, offset + 1) +
+            return data.substring(0, offset) +
                 this.heading(file) +
                 data.substring(offset + 1)
         })
