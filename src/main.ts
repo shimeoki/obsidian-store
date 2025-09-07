@@ -245,3 +245,7 @@ function isUUID(name: string): boolean {
     return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
         .test(name)
 }
+
+function isMarkdown(file: TFile): boolean {
+    return file.extension == "md"
+}
