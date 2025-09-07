@@ -274,7 +274,8 @@ export default class Store extends Plugin {
             return
         }
 
-        // todo: shift headings and insert new
+        this.shiftHeadings(file)
+        this.addHeading(file, offset)
     }
 
     private heading(file: TFile): string {
@@ -286,6 +287,35 @@ export default class Store extends Plugin {
             return (data.substring(0, offset).trim() +
                 this.heading(file) +
                 data.substring(offset).trim()).trim()
+        })
+    }
+
+    private async shiftHeadings(file: TFile) {
+        const cache = this.app.metadataCache.getFileCache(file)
+        if (cache == null) {
+            console.warn(`store: heading: cache for '${file.path}' is empty`)
+            return
+        }
+
+        const headings = cache.headings || []
+
+        // note: using .sort() at the end is incorrect, because it sorts
+        // based on the initial heading objects. they are already sorted by
+        // the positions, so it's not needed.
+        const positions = headings.map((h) => h.position.start.offset)
+
+        await this.app.vault.process(file, (data) => {
+            let result = ""
+
+            let position = 0
+            positions.forEach((p) => {
+                result += data.substring(position, p)
+                result += "#"
+                position = p
+            })
+
+            result += data.substring(position)
+            return result
         })
     }
 }
