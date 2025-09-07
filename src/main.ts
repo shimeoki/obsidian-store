@@ -232,6 +232,9 @@ export default class Store extends Plugin {
         const newLeaf = this.app.workspace.getLeaf("split", direction)
         await newLeaf.openFile(file)
     }
+
+    public async generateHeading(path: string) {
+    }
 }
 
 function uuid(): string {
