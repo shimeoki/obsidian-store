@@ -4,6 +4,7 @@ import { HeadingCache, TFile, TFolder } from "obsidian"
 enum Route {
     SKIP,
     INSERT,
+    REPLACE,
     SHIFT,
 }
 
@@ -17,25 +18,22 @@ interface Data {
     only: HeadingCache | null
 }
 
-function route(data: Data, headings: HeadingCache[], shiftable: boolean) {
+function route(headings: HeadingCache[], shiftable: boolean): Route {
     switch (headings.length) {
         case 0:
-            break
+            return Route.INSERT
         case 1:
-            data.only = headings[0]
-            if (data.only.heading.length != 0) {
-                data.route = Route.SKIP
+            if (headings[0].heading.length != 0) {
+                return Route.SKIP
+            } else {
+                return Route.REPLACE
             }
-
-            break
         default:
             if (shiftable) {
-                data.route = Route.SHIFT
+                return Route.SHIFT
             } else {
-                data.route = Route.SKIP
+                return Route.SKIP
             }
-
-            break
     }
 }
 
@@ -147,7 +145,7 @@ export default class Headings {
             return h.level == 1
         })
 
-        route(data, headings, shiftable)
+        data.route = route(headings, shiftable)
         return data
     }
 
