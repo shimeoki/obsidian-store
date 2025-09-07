@@ -234,6 +234,47 @@ export default class Store extends Plugin {
     }
 
     public async generateHeading(path: string) {
+        const file = this.app.vault.getFileByPath(path)
+        if (file == null || !isMarkdown(file)) {
+            return
+        }
+
+        const cache = this.app.metadataCache.getFileCache(file)
+        if (cache == null) {
+            console.warn(`store: heading: cache for '${file.path}' is empty`)
+            return
+        }
+
+        let shiftable = true
+        const headings = (cache.headings || []).filter((h) => {
+            if (h.level == 6) {
+                shiftable = false
+            }
+
+            return h.level == 1
+        })
+
+        const offset = cache.frontmatterPosition?.end.offset || 0
+
+        if (headings.length == 0) {
+            // todo: add heading after the frontmatter
+            return
+        }
+
+        if (headings.length == 1) {
+            if (headings[0].heading.length == 0) {
+                // todo: replace the empty heading
+            }
+
+            return
+        }
+
+        if (!shiftable) {
+            console.warn(`store: heading: unshiftable in '${file.path}'`)
+            return
+        }
+
+        // todo: shift headings and insert new
     }
 }
 
