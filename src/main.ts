@@ -1,4 +1,5 @@
 import Heading from "@/heading.ts"
+import Aliases from "@/aliases.ts"
 import SettingTab from "@/settings/tab.ts"
 import Settings from "@/settings/settings.ts"
 import Translation from "@/i18n.ts"
@@ -22,6 +23,7 @@ export default class Store extends Plugin {
         this.addRibbonActions()
 
         new Heading(this)
+        new Aliases(this)
     }
 
     override async onunload() {

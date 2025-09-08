@@ -36,6 +36,10 @@ export const RUSSIAN: Translation = {
         addHeadingActive: {
             name: "Добавить заголовок первого уровня в активную заметку",
         },
+
+        addAliasesActive: {
+            name: "Добавить псевдонимы в активную заметку",
+        },
     },
 
     menus: {
@@ -45,6 +49,10 @@ export const RUSSIAN: Translation = {
 
         addHeading: {
             title: "Добавить заголовок первого уровня",
+        },
+
+        addAliases: {
+            title: "Добавить псевдонимы",
         },
     },
 

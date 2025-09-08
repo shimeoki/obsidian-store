@@ -36,6 +36,10 @@ export const ENGLISH: Translation = {
         addHeadingActive: {
             name: "Add first-level heading in active note",
         },
+
+        addAliasesActive: {
+            name: "Add aliases in active note",
+        },
     },
 
     menus: {
@@ -45,6 +49,10 @@ export const ENGLISH: Translation = {
 
         addHeading: {
             title: "Add first-level heading",
+        },
+
+        addAliases: {
+            title: "Add aliases",
         },
     },
 
