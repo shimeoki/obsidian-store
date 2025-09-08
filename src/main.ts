@@ -1,5 +1,5 @@
 import Heading from "./heading.ts"
-import StoreSettingTab from "./settings.ts"
+import StoreSettingTab from "./settings/tab.ts"
 import { normalizePath, Plugin, SplitDirection, TFile, TFolder } from "obsidian"
 
 interface StoreSettings {

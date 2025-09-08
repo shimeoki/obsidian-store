@@ -1,4 +1,4 @@
-import Store from "./main.ts"
+import Store from "../main.ts"
 import {
     AbstractInputSuggest,
     App,
