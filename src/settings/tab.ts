@@ -1,13 +1,17 @@
 import Store from "@/main.ts"
-import { App, PluginSettingTab, Setting } from "obsidian"
+import Settings from "@/settings/settings.ts"
 import { FolderSuggest, NoteSuggest } from "@/settings/suggest.ts"
+import { DEFAULT_SETTINGS } from "@/settings/data.ts"
+import { App, PluginSettingTab, Setting } from "obsidian"
 
 export default class SettingTab extends PluginSettingTab {
     plugin: Store
+    settings: Settings
 
     constructor(app: App, plugin: Store) {
         super(app, plugin)
         this.plugin = plugin
+        this.settings = plugin.settings
     }
 
     override display() {
@@ -26,9 +30,12 @@ export default class SettingTab extends PluginSettingTab {
             )
             .addText((text) => {
                 text
-                    .setPlaceholder("Default: store")
-                    .setValue(this.plugin.folder())
-                    .onChange(async (path) => await this.plugin.setFolder(path))
+                    .setPlaceholder(DEFAULT_SETTINGS.folder)
+                    .setValue(this.settings.folder)
+                    .onChange(async (path) => {
+                        this.settings.folder = path
+                        await this.settings.save()
+                    })
 
                 new FolderSuggest(this.app, text.inputEl)
             })
@@ -41,10 +48,11 @@ export default class SettingTab extends PluginSettingTab {
             .addText((text) => {
                 text
                     .setPlaceholder("Example: templates/store.md")
-                    .setValue(this.plugin.template())
-                    .onChange(async (path) =>
-                        await this.plugin.setTemplate(path)
-                    )
+                    .setValue(this.settings.template)
+                    .onChange(async (path) => {
+                        this.settings.template = path
+                        await this.settings.save()
+                    })
 
                 new NoteSuggest(this.app, text.inputEl)
             })
