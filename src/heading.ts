@@ -40,9 +40,11 @@ function isMarkdown(f: TFile): boolean {
 
 export default class Heading {
     private readonly plugin: Store
+    private readonly translation
 
     constructor(plugin: Store) {
         this.plugin = plugin
+        this.translation = plugin.translation
         this.addCommands()
         this.addMenus()
     }
@@ -95,9 +97,10 @@ export default class Heading {
 
     private addCommands() {
         const plugin = this.plugin
+        const l10n = this.translation.commands
         plugin.addCommand({
             id: "store-add-heading",
-            name: "Add first-level heading in active note",
+            name: l10n.addHeadingActive.name,
             checkCallback: (checking) => {
                 const file = plugin.app.workspace.getActiveFile()
                 if (!file || !this.processor(file)) {
@@ -115,6 +118,7 @@ export default class Heading {
 
     private addMenus() {
         const plugin = this.plugin
+        const l10n = this.translation.menus
         plugin.registerEvent(
             plugin.app.workspace.on("file-menu", (menu, afile) => {
                 if (afile instanceof TFolder) {
@@ -128,7 +132,7 @@ export default class Heading {
 
                 menu.addItem((item) => {
                     item
-                        .setTitle("Add first-level heading")
+                        .setTitle(l10n.addHeading.title)
                         .setIcon("heading-1")
                         .onClick(async () => await this.add(file))
                 })
