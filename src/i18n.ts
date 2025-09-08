@@ -28,11 +28,13 @@ export default interface Translation {
         createTab: Command
         moveActive: Command
         addHeadingActive: Command
+        addAliasesActive: Command
     }
 
     menus: {
         move: Menu
         addHeading: Menu
+        addAliases: Menu
     }
 
     ribbonActions: {
