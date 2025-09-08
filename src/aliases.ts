@@ -1,5 +1,5 @@
 import Store from "@/main.ts"
-import { TFile } from "obsidian"
+import { TFile, TFolder } from "obsidian"
 
 function isMarkdown(f: TFile): boolean {
     return f.extension == "md"
@@ -11,6 +11,7 @@ export default class Aliases {
     constructor(plugin: Store) {
         this.plugin = plugin
         this.addCommands()
+        this.addMenus()
     }
 
     private aliases(file: TFile): string[] {
@@ -70,5 +71,28 @@ export default class Aliases {
                 return true
             },
         })
+    }
+
+    private addMenus() {
+        const plugin = this.plugin
+        plugin.registerEvent(
+            plugin.app.workspace.on("file-menu", (menu, afile) => {
+                if (afile instanceof TFolder) {
+                    return
+                }
+
+                const file = afile as TFile
+                if (this.aliases(file).length == 0) {
+                    return
+                }
+
+                menu.addItem((item) => {
+                    item
+                        .setTitle("Add aliases")
+                        .setIcon("forward")
+                        .onClick(async () => await this.add(file))
+                })
+            }),
+        )
     }
 }
