@@ -1,14 +1,19 @@
 import Heading from "@/heading.ts"
 import SettingTab from "@/settings/tab.ts"
 import Settings from "@/settings/settings.ts"
+import Translation from "@/i18n.ts"
+import translation from "@/l10n.ts"
 import { normalizePath, Plugin, SplitDirection, TFile, TFolder } from "obsidian"
 
 export default class Store extends Plugin {
     settings!: Settings
+    translation!: Translation
 
     override async onload() {
         this.settings = new Settings(this)
         await this.settings.load()
+
+        this.translation = translation()
 
         this.addSettingTab(new SettingTab(this.app, this))
 

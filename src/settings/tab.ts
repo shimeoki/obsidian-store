@@ -1,17 +1,18 @@
 import Store from "@/main.ts"
 import Settings from "@/settings/settings.ts"
 import { FolderSuggest, NoteSuggest } from "@/settings/suggest.ts"
-import { DEFAULT_SETTINGS } from "@/settings/data.ts"
 import { App, PluginSettingTab, Setting } from "obsidian"
 
 export default class SettingTab extends PluginSettingTab {
     plugin: Store
-    settings: Settings
+    private settings: Settings
+    private readonly translation
 
     constructor(app: App, plugin: Store) {
         super(app, plugin)
         this.plugin = plugin
         this.settings = plugin.settings
+        this.translation = plugin.translation.settings
     }
 
     override display() {
@@ -23,14 +24,13 @@ export default class SettingTab extends PluginSettingTab {
     }
 
     private addFolder(containerEl: HTMLElement) {
+        const l10n = this.translation.folder
         new Setting(containerEl)
-            .setName("Folder location")
-            .setDesc(
-                "Path to the store folder. Created on demand if doesn't exist.",
-            )
+            .setName(l10n.name)
+            .setDesc(l10n.description)
             .addText((text) => {
                 text
-                    .setPlaceholder(DEFAULT_SETTINGS.folder)
+                    .setPlaceholder(l10n.placeholder)
                     .setValue(this.settings.folder)
                     .onChange(async (path) => {
                         this.settings.folder = path
@@ -42,12 +42,13 @@ export default class SettingTab extends PluginSettingTab {
     }
 
     private addTemplate(containerEl: HTMLElement) {
+        const l10n = this.translation.template
         new Setting(containerEl)
-            .setName("Template location")
-            .setDesc("Path to the template for new notes.")
+            .setName(l10n.name)
+            .setDesc(l10n.description)
             .addText((text) => {
                 text
-                    .setPlaceholder("Example: templates/store.md")
+                    .setPlaceholder(l10n.placeholder)
                     .setValue(this.settings.template)
                     .onChange(async (path) => {
                         this.settings.template = path
