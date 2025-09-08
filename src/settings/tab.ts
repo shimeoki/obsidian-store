@@ -2,7 +2,7 @@ import Store from "@/main.ts"
 import { App, PluginSettingTab, Setting } from "obsidian"
 import { FolderSuggest, NoteSuggest } from "@/settings/suggest.ts"
 
-export default class StoreSettingTab extends PluginSettingTab {
+export default class SettingTab extends PluginSettingTab {
     plugin: Store
 
     constructor(app: App, plugin: Store) {

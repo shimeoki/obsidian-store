@@ -1,5 +1,5 @@
 import Heading from "@/heading.ts"
-import StoreSettingTab from "@/settings/tab.ts"
+import SettingTab from "@/settings/tab.ts"
 import { normalizePath, Plugin, SplitDirection, TFile, TFolder } from "obsidian"
 import { DEFAULT_SETTINGS, SettingsData } from "@/settings/data.ts"
 
@@ -9,7 +9,7 @@ export default class Store extends Plugin {
     override async onload() {
         await this.loadSettings()
 
-        this.addSettingTab(new StoreSettingTab(this.app, this))
+        this.addSettingTab(new SettingTab(this.app, this))
 
         this.addCommands()
         this.addMenus()
