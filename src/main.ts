@@ -59,27 +59,29 @@ export default class Store extends Plugin {
     }
 
     private addCommands() {
+        const l10n = this.translation.commands
+
         this.addCommand({
             id: "store-create-vertical-split",
-            name: "Create new note in a vertical split",
+            name: l10n.createVerticalSplit.name,
             callback: async () => await this.createSplit("vertical"),
         })
 
         this.addCommand({
             id: "store-create-horizontal-split",
-            name: "Create new note in a horizontal split",
+            name: l10n.createHorizontalSplit.name,
             callback: async () => await this.createSplit("horizontal"),
         })
 
         this.addCommand({
             id: "store-create-tab",
-            name: "Create new note in a tab",
+            name: l10n.createTab.name,
             callback: async () => await this.createTab(),
         })
 
         this.addCommand({
             id: "store-move-active",
-            name: "Move active file to the store",
+            name: l10n.moveActive.name,
             checkCallback: (checking) => {
                 // otherwise shows if no file is open.
                 // editorCheckCallback doesn't work, because
@@ -102,6 +104,7 @@ export default class Store extends Plugin {
     }
 
     private addMenus() {
+        const l10n = this.translation.menus
         this.registerEvent(
             this.app.workspace.on("file-menu", (menu, file) => {
                 if (file instanceof TFolder || this.inStore(file.path)) {
@@ -110,7 +113,7 @@ export default class Store extends Plugin {
 
                 menu.addItem((item) => {
                     item
-                        .setTitle("Move to the store")
+                        .setTitle(l10n.move.title)
                         .setIcon("folder-input")
                         .onClick(async () => await this.move(file.path))
                 })
@@ -119,9 +122,10 @@ export default class Store extends Plugin {
     }
 
     private addRibbonActions() {
+        const l10n = this.translation.ribbonActions
         this.addRibbonIcon(
             "folder-pen",
-            "Create new note in the store",
+            l10n.new.title,
             async () => await this.createTab(),
         )
     }
