@@ -1,4 +1,4 @@
-import Store from "./main.ts"
+import Store from "@/main.ts"
 import { TFile, TFolder } from "obsidian"
 
 type Processor = (data: string) => string
@@ -39,10 +39,10 @@ function isMarkdown(f: TFile): boolean {
 }
 
 export default class Heading {
-    private readonly store: Store
+    private readonly plugin: Store
 
-    constructor(store: Store) {
-        this.store = store
+    constructor(plugin: Store) {
+        this.plugin = plugin
         this.addCommands()
         this.addMenus()
     }
@@ -50,19 +50,19 @@ export default class Heading {
     public async add(file: TFile) {
         const processor = this.processor(file)
         if (processor) {
-            await this.store.app.vault.process(file, processor)
+            await this.plugin.app.vault.process(file, processor)
         }
     }
 
     private processor(file: TFile): Processor | null {
-        const store = this.store
+        const plugin = this.plugin
         const title = file.basename
 
-        if (store.inStore(file.path) || !isMarkdown(file)) {
+        if (plugin.inStore(file.path) || !isMarkdown(file)) {
             return null
         }
 
-        const meta = store.app.metadataCache.getFileCache(file)
+        const meta = plugin.app.metadataCache.getFileCache(file)
         if (meta == null) {
             return null
         }
@@ -94,12 +94,12 @@ export default class Heading {
     }
 
     private addCommands() {
-        const store = this.store
-        store.addCommand({
+        const plugin = this.plugin
+        plugin.addCommand({
             id: "store-add-heading",
             name: "Add first-level heading in active note",
             checkCallback: (checking) => {
-                const file = store.app.workspace.getActiveFile()
+                const file = plugin.app.workspace.getActiveFile()
                 if (!file || !this.processor(file)) {
                     return false
                 }
@@ -114,9 +114,9 @@ export default class Heading {
     }
 
     private addMenus() {
-        const store = this.store
-        store.registerEvent(
-            store.app.workspace.on("file-menu", (menu, afile) => {
+        const plugin = this.plugin
+        plugin.registerEvent(
+            plugin.app.workspace.on("file-menu", (menu, afile) => {
                 if (afile instanceof TFolder) {
                     return
                 }

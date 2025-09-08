@@ -8,6 +8,10 @@
         "types": [
             "obsidian-typings",
             "node"
-        ]
+        ],
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["src/*"]
+        }
     }
 }

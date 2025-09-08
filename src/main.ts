@@ -1,26 +1,16 @@
-import Heading from "./heading.ts"
-import StoreSettingTab from "./settings.ts"
+import Heading from "@/heading.ts"
+import SettingTab from "@/settings/tab.ts"
+import Settings from "@/settings/settings.ts"
 import { normalizePath, Plugin, SplitDirection, TFile, TFolder } from "obsidian"
 
-interface StoreSettings {
-    version: number
-    folder: string
-    template: string
-}
-
-const DEFAULT_SETTINGS: StoreSettings = {
-    version: 0,
-    folder: normalizePath("store"),
-    template: "",
-}
-
 export default class Store extends Plugin {
-    settings!: StoreSettings
+    settings!: Settings
 
     override async onload() {
-        await this.loadSettings()
+        this.settings = new Settings(this)
+        await this.settings.load()
 
-        this.addSettingTab(new StoreSettingTab(this.app, this))
+        this.addSettingTab(new SettingTab(this.app, this))
 
         this.addCommands()
         this.addMenus()
@@ -30,38 +20,12 @@ export default class Store extends Plugin {
     }
 
     override async onunload() {
-        await this.saveSettings()
-    }
-
-    public async loadSettings() {
-        this.settings = Object.assign(
-            {},
-            DEFAULT_SETTINGS,
-            await this.loadData(),
-        )
-    }
-
-    public async saveSettings() {
-        await this.saveData(this.settings)
-    }
-
-    public folder(): string {
-        return this.settings.folder
-    }
-
-    public async setFolder(path: string) {
-        if (path.length == 0) {
-            this.settings.folder = DEFAULT_SETTINGS.folder
-        } else {
-            this.settings.folder = normalizePath(path)
-        }
-
-        await this.saveSettings()
+        await this.settings.save()
     }
 
     public async getFolder(): Promise<TFolder> {
         const vault = this.app.vault
-        const path = this.folder()
+        const path = this.settings.folder
 
         const folder = vault.getFolderByPath(path)
         if (folder != null) {
@@ -72,23 +36,9 @@ export default class Store extends Plugin {
         return await this.getFolder()
     }
 
-    public template(): string {
-        return this.settings.template
-    }
-
-    public async setTemplate(path: string) {
-        if (path.length == 0) {
-            this.settings.template = DEFAULT_SETTINGS.template
-        } else {
-            this.settings.template = normalizePath(path)
-        }
-
-        await this.saveSettings()
-    }
-
     public async readTemplate(): Promise<string> {
         const vault = this.app.vault
-        const path = this.template()
+        const path = this.settings.template
 
         if (path.length == 0) {
             return ""
@@ -96,7 +46,7 @@ export default class Store extends Plugin {
 
         const file = vault.getFileByPath(path)
         if (file == null || file.extension != "md") {
-            await this.setTemplate("")
+            this.settings.template = ""
             return await this.readTemplate()
         }
 
@@ -178,7 +128,7 @@ export default class Store extends Plugin {
         }
 
         const parent = file.parent
-        if (parent == null || parent.path != this.folder()) {
+        if (parent == null || parent.path != this.settings.folder) {
             return false
         }
 
