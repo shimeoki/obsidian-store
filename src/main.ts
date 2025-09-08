@@ -1,21 +1,10 @@
 import Heading from "@/heading.ts"
 import StoreSettingTab from "@/settings/tab.ts"
 import { normalizePath, Plugin, SplitDirection, TFile, TFolder } from "obsidian"
-
-interface StoreSettings {
-    version: number
-    folder: string
-    template: string
-}
-
-const DEFAULT_SETTINGS: StoreSettings = {
-    version: 0,
-    folder: normalizePath("store"),
-    template: "",
-}
+import { DEFAULT_SETTINGS, SettingsData } from "@/settings/data.ts"
 
 export default class Store extends Plugin {
-    settings!: StoreSettings
+    settings!: SettingsData
 
     override async onload() {
         await this.loadSettings()
