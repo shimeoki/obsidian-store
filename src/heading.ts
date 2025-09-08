@@ -1,4 +1,4 @@
-import Store from "./main.ts"
+import Store from "@/main.ts"
 import { TFile, TFolder } from "obsidian"
 
 type Processor = (data: string) => string
