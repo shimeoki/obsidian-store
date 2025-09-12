@@ -6,6 +6,7 @@ export default class Export {
 
     constructor(plugin: Store) {
         this.plugin = plugin
+        this.addCommands()
     }
 
     private allLinkedFiles(file: TFile): TFile[] {
@@ -49,5 +50,22 @@ export default class Export {
         }
 
         return files
+    }
+
+    private addCommands() {
+        const plugin = this.plugin
+        plugin.addCommand({
+            id: "store-export-active",
+            name: "Export active",
+            callback: () => {
+                const file = plugin.app.workspace.getActiveFile()
+                if (!file) {
+                    return
+                }
+
+                const files = this.allLinkedFiles(file)
+                console.log(files.map((f) => f.path))
+            },
+        })
     }
 }
