@@ -18,12 +18,7 @@ export default class Export {
         }
 
         const files: Set<TFile> = new Set()
-        files.add(file)
-
-        const links = meta.links || []
-        const queue = links.map((l) => {
-            return { link: l.link, source: file.path }
-        })
+        const queue = [{ link: file.path, source: file.path }]
 
         while (queue.length > 0) {
             const q = queue.shift()
@@ -43,12 +38,14 @@ export default class Export {
                 continue
             }
 
+            const embeds = meta.embeds || []
             const links = meta.links || []
-            const next = links.map((l) => {
+
+            const queued = embeds.concat(links).map((l) => {
                 return { link: l.link, source: file.path }
             })
 
-            queue.push(...next)
+            queue.push(...queued)
         }
 
         return files.keys().toArray()
