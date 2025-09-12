@@ -9,7 +9,6 @@ export default class Export {
     }
 
     private allLinkedFiles(file: TFile): TFile[] {
-        const vault = this.plugin.app.vault
         const cache = this.plugin.app.metadataCache
 
         const meta = cache.getFileCache(file)
@@ -19,12 +18,17 @@ export default class Export {
 
         const files = [file]
         const links = meta.links || []
-        const queue = links.map((l) => l.link)
+        const queue = links.map((l) => {
+            return { link: l.link, source: file.path }
+        })
 
         while (queue.length > 0) {
-            const link = queue.shift() || ""
+            const q = queue.shift()
+            if (!q) {
+                break
+            }
 
-            const file = vault.getFileByPath(link)
+            const file = cache.getFirstLinkpathDest(q.link, q.source)
             if (!file) {
                 continue
             }
@@ -36,7 +40,12 @@ export default class Export {
                 continue
             }
 
-            queue.push(...(meta.links || []).map((l) => l.link))
+            const links = meta.links || []
+            const next = links.map((l) => {
+                return { link: l.link, source: file.path }
+            })
+
+            queue.push(...next)
         }
 
         return files
