@@ -17,7 +17,9 @@ export default class Export {
             return []
         }
 
-        const files = [file]
+        const files: Set<TFile> = new Set()
+        files.add(file)
+
         const links = meta.links || []
         const queue = links.map((l) => {
             return { link: l.link, source: file.path }
@@ -30,11 +32,11 @@ export default class Export {
             }
 
             const file = cache.getFirstLinkpathDest(q.link, q.source)
-            if (!file) {
+            if (!file || files.has(file)) {
                 continue
             }
 
-            files.push(file)
+            files.add(file)
 
             const meta = cache.getFileCache(file)
             if (!meta) {
@@ -49,7 +51,7 @@ export default class Export {
             queue.push(...next)
         }
 
-        return files
+        return files.keys().toArray()
     }
 
     private addCommands() {
