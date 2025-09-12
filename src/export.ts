@@ -8,13 +8,13 @@ export default class Export {
         this.plugin = plugin
     }
 
-    private allLinkedFiles(file: TFile): TFile[] | null {
+    private allLinkedFiles(file: TFile): TFile[] {
         const vault = this.plugin.app.vault
         const cache = this.plugin.app.metadataCache
 
         const meta = cache.getFileCache(file)
         if (!meta) {
-            return null
+            return []
         }
 
         const files = [file]
