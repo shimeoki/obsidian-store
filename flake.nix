@@ -4,17 +4,55 @@
     inputs = {
         nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
         systems.url = "github:nix-systems/x86_64-linux";
+
+        git-hooks = {
+            url = "github:cachix/git-hooks.nix";
+            inputs.nixpkgs.follows = "nixpkgs";
+        };
     };
 
     # source: https://nixos-and-flakes.thiscute.world/development/intro#using-zsh-fish-instead-of-bash
     outputs =
-        { nixpkgs, systems, ... }:
+        {
+            nixpkgs,
+            systems,
+            git-hooks,
+            ...
+        }:
         let
             forEachSystem = nixpkgs.lib.genAttrs (import systems);
-            pkgs = system: import nixpkgs { inherit system; };
+            getPkgs = system: import nixpkgs { inherit system; };
+
+            mkHooks =
+                system:
+                git-hooks.lib.${system}.run {
+                    src = ./.;
+                    hooks = {
+                        denofmt.enable = true;
+                    };
+                };
+
+            mkFormatter =
+                system:
+                let
+                    pkgs = getPkgs system;
+                    hooks = mkHooks system;
+                    inherit (hooks.config) package configFile;
+
+                    script = ''
+                        ${package}/bin/pre-commit run --all-files \
+                            --config ${configFile}
+                    '';
+                in
+                pkgs.writeShellScriptBin "obsidian-store-hooks" script;
 
             mkDevShell =
-                pkgs:
+                system:
+                let
+                    pkgs = getPkgs system;
+                    hooks = mkHooks system;
+                    inherit (hooks) shellHook enabledPackages;
+                in
                 pkgs.mkShell {
                     packages = with pkgs; [
                         nodejs_24
@@ -22,15 +60,18 @@
                         nushell
                     ];
 
-                    shellHook = ''
+                    buildInputs = enabledPackages;
+
+                    shellHook = shellHook + ''
                         pnpm install
                         exec nu
                     '';
                 };
 
             mkPackage =
-                pkgs:
+                system:
                 let
+                    pkgs = getPkgs system;
                     nodejs = pkgs.nodejs_24;
                     pnpm = pkgs.pnpm_10;
                 in
@@ -62,12 +103,18 @@
                 });
         in
         {
+            formatter = forEachSystem mkFormatter;
+
+            checks = forEachSystem (system: {
+                hooks = mkHooks system;
+            });
+
             devShells = forEachSystem (system: {
-                default = mkDevShell (pkgs system);
+                default = mkDevShell system;
             });
 
             packages = forEachSystem (system: {
-                default = mkPackage (pkgs system);
+                default = mkPackage system;
             });
         };
 }
