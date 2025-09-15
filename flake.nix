@@ -44,7 +44,7 @@
                             --config ${configFile}
                     '';
                 in
-                pkgs.writeShellScriptBin "obsidian-store-hooks" script;
+                pkgs.writeShellScriptBin "obsidian-store-fmt" script;
 
             mkDevShell =
                 system:
@@ -106,7 +106,7 @@
             formatter = forEachSystem mkFormatter;
 
             checks = forEachSystem (system: {
-                hooks = mkHooks system;
+                pre-commit = mkHooks system;
             });
 
             devShells = forEachSystem (system: {
