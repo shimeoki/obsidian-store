@@ -29,6 +29,12 @@
                     src = ./.;
                     hooks = {
                         denofmt.enable = true;
+
+                        nixfmt-rfc-style = {
+                            enable = true;
+                            settings.width = 80;
+                            args = [ "--indent=4" ];
+                        };
                     };
                 };
 
