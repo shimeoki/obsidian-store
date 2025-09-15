@@ -13,15 +13,16 @@
             eachSystem = nixpkgs.lib.genAttrs (import systems);
         in
         {
-            devShells = eachSystem (system: {
-                default =
-                    let
-                        pkgs = import nixpkgs { inherit system; };
-                    in
-                    pkgs.mkShell {
+            devShells = eachSystem (
+                system:
+                let
+                    pkgs = import nixpkgs { inherit system; };
+                in
+                {
+                    default = pkgs.mkShell {
                         packages = with pkgs; [
                             nodejs_24
-                            pnpm
+                            pnpm_10
                             nushell
                         ];
 
@@ -30,6 +31,7 @@
                             exec nu
                         '';
                     };
-            });
+                }
+            );
         };
 }
