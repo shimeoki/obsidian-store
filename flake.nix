@@ -33,5 +33,42 @@
                     };
                 }
             );
+
+            packages = eachSystem (
+                system:
+                let
+                    pkgs = import nixpkgs { inherit system; };
+                    nodejs = pkgs.nodejs_24;
+                    pnpm = pkgs.pnpm_10;
+                in
+                {
+                    default = pkgs.stdenv.mkDerivation (finalAttrs: {
+                        pname = "obsidian-store";
+                        version = "0.4.1";
+                        src = ./.;
+
+                        nativeBuildInputs = [
+                            nodejs
+                            pnpm.configHook
+                        ];
+
+                        pnpmDeps = pnpm.fetchDeps {
+                            inherit (finalAttrs) pname version src;
+                            fetcherVersion = 2;
+                            hash = "sha256-Aq7Z7Hjmy9iOhbd/p3XfQ2G9dmoNUaX0xh8XVbt7qSA=";
+                        };
+
+                        buildPhase = ''
+                            pnpm build
+                        '';
+
+                        installPhase = ''
+                            mkdir -p $out/store
+                            cp main.js $out/store/main.js
+                            cp manifest.json $out/store/manifest.json
+                        '';
+                    });
+                }
+            );
         };
 }
