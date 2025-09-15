@@ -27,3 +27,6 @@ dist-ssr
 # obsidian
 main.js
 data.json
+
+# flake
+/.pre-commit-config.yaml
