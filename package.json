@@ -9,10 +9,10 @@
         "build": "vite build"
     },
     "devDependencies": {
-        "@types/node": "^24.3.0",
+        "@types/node": "^24.5.2",
         "obsidian": "latest",
-        "obsidian-typings": "^4.49.0",
+        "obsidian-typings": "^4.51.0",
         "typescript": "~5.8.3",
-        "vite": "^7.1.2"
+        "vite": "^7.1.6"
     }
 }
