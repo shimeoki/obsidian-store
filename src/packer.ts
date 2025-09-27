@@ -1,7 +1,7 @@
 import Store from "@/main.ts"
 import { TFile } from "obsidian"
 
-export default class Export {
+export default class Packer {
     private readonly plugin: Store
 
     constructor(plugin: Store) {
