@@ -20,6 +20,7 @@ export default interface Translation {
     settings: {
         folder: Setting
         template: Setting
+        pack: Setting
     }
 
     commands: {

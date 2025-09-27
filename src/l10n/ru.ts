@@ -14,6 +14,12 @@ export const RUSSIAN: Translation = {
             description: "Путь до шаблона для новых заметок.",
             placeholder: "Пример: templates/store.md",
         },
+
+        pack: {
+            name: "Место упаковки",
+            description: "Путь до папки с упакованными файлами.",
+            placeholder: "pack",
+        },
     },
 
     commands: {

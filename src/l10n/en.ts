@@ -14,6 +14,12 @@ export const ENGLISH: Translation = {
             description: "Path to the template for new notes.",
             placeholder: "Example: templates/store.md",
         },
+
+        pack: {
+            name: "Pack location",
+            description: "Path to the folder for packed files",
+            placeholder: "pack",
+        },
     },
 
     commands: {
