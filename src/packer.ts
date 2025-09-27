@@ -68,13 +68,8 @@ export default class Packer {
     }
 
     private async copy(files: TFile[]) {
-        const pack = await this.getFolder()
-        if (pack.getFileCount() != 0) {
-            // TODO: send notice
-            return
-        }
-
         const vault = this.plugin.app.vault
+        const pack = await this.getFolder()
 
         for (let file of files) {
             const parent = file.parent?.path || ""
@@ -84,8 +79,10 @@ export default class Packer {
                 await vault.createFolder(folder)
             }
 
-            const packPath = normalizePath(`${pack.path}/${file.path}`)
-            await vault.copy(file, packPath)
+            const packed = normalizePath(`${pack.path}/${file.path}`)
+            if (!vault.getFileByPath(packed)) {
+                await vault.copy(file, packed)
+            }
         }
     }
 
