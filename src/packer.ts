@@ -9,6 +9,7 @@ export default class Packer {
         this.plugin = plugin
         this.translation = plugin.translation
         this.addCommands()
+        this.addMenus()
     }
 
     private allLinkedFiles(file: TFile): TFile[] {
@@ -107,5 +108,28 @@ export default class Packer {
                 return true
             },
         })
+    }
+
+    private addMenus() {
+        const plugin = this.plugin
+        const l10n = this.translation.menus
+        plugin.registerEvent(
+            plugin.app.workspace.on("file-menu", (menu, afile) => {
+                if (afile instanceof TFolder) {
+                    return
+                }
+
+                const file = afile as TFile
+
+                menu.addItem((item) => {
+                    item
+                        .setTitle(l10n.pack.title)
+                        .setIcon("package")
+                        .onClick(async () =>
+                            await this.copy(this.allLinkedFiles(file))
+                        )
+                })
+            }),
+        )
     }
 }
