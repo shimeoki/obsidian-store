@@ -46,6 +46,10 @@ export const RUSSIAN: Translation = {
         addAliasesActive: {
             name: "Добавить псевдонимы в активную заметку",
         },
+
+        packActive: {
+            name: "Упаковать активную заметку",
+        },
     },
 
     menus: {

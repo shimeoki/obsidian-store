@@ -30,6 +30,7 @@ export default interface Translation {
         moveActive: Command
         addHeadingActive: Command
         addAliasesActive: Command
+        packActive: Command
     }
 
     menus: {

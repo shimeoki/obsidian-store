@@ -46,6 +46,10 @@ export const ENGLISH: Translation = {
         addAliasesActive: {
             name: "Add aliases in active note",
         },
+
+        packActive: {
+            name: "Pack active note",
+        },
     },
 
     menus: {
