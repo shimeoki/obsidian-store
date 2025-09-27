@@ -86,6 +86,10 @@ export default class Packer {
         }
     }
 
+    private async pack(file: TFile) {
+        await this.copy(this.allLinkedFiles(file))
+    }
+
     private addCommands() {
         const l10n = this.translation.commands
         const plugin = this.plugin
@@ -99,7 +103,7 @@ export default class Packer {
                 }
 
                 if (!checking) {
-                    this.copy(this.allLinkedFiles(file))
+                    this.pack(file)
                 }
 
                 return true
@@ -122,9 +126,7 @@ export default class Packer {
                     item
                         .setTitle(l10n.pack.title)
                         .setIcon("package")
-                        .onClick(async () =>
-                            await this.copy(this.allLinkedFiles(file))
-                        )
+                        .onClick(async () => await this.pack(file))
                 })
             }),
         )
