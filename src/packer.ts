@@ -1,5 +1,5 @@
 import Store from "@/main.ts"
-import { TFile, TFolder } from "obsidian"
+import { normalizePath, TFile, TFolder } from "obsidian"
 
 export default class Packer {
     private readonly plugin: Store
@@ -62,6 +62,19 @@ export default class Packer {
 
         await vault.createFolder(path)
         return await this.getFolder()
+    }
+
+    private async copy(files: TFile[]) {
+        const folder = await this.getFolder()
+        if (folder.getFileCount() != 0) {
+            // TODO: send notice
+            return
+        }
+
+        for (let file of files) {
+            const path = normalizePath(`${folder.path}/${file.path}`)
+            await this.plugin.app.vault.copy(file, path)
+        }
     }
 
     private addCommands() {
