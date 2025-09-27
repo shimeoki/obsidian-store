@@ -3,9 +3,11 @@ import { normalizePath, TFile, TFolder } from "obsidian"
 
 export default class Packer {
     private readonly plugin: Store
+    private readonly translation
 
     constructor(plugin: Store) {
         this.plugin = plugin
+        this.translation = plugin.translation
         this.addCommands()
     }
 
@@ -87,10 +89,11 @@ export default class Packer {
     }
 
     private addCommands() {
+        const l10n = this.translation.commands
         const plugin = this.plugin
         plugin.addCommand({
             id: "store-pack-active",
-            name: "Pack active",
+            name: l10n.packActive.name,
             checkCallback: (checking) => {
                 const file = plugin.app.workspace.getActiveFile()
                 if (!file) {
