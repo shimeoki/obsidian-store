@@ -1,5 +1,5 @@
 import Store from "@/main.ts"
-import { TFile } from "obsidian"
+import { TFile, TFolder } from "obsidian"
 
 export default class Packer {
     private readonly plugin: Store
@@ -49,6 +49,19 @@ export default class Packer {
         }
 
         return files.keys().toArray()
+    }
+
+    private async getFolder(): Promise<TFolder> {
+        const vault = this.plugin.app.vault
+        const path = this.plugin.settings.pack
+
+        const folder = vault.getFolderByPath(path)
+        if (folder) {
+            return folder
+        }
+
+        await vault.createFolder(path)
+        return await this.getFolder()
     }
 
     private addCommands() {
