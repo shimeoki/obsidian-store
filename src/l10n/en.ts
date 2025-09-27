@@ -17,7 +17,7 @@ export const ENGLISH: Translation = {
 
         pack: {
             name: "Pack location",
-            description: "Path to the folder for packed files",
+            description: "Path to the folder for packed files.",
             placeholder: "pack",
         },
     },
