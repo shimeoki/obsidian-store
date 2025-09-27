@@ -89,16 +89,19 @@ export default class Packer {
     private addCommands() {
         const plugin = this.plugin
         plugin.addCommand({
-            id: "store-export-active",
-            name: "Export active",
-            callback: () => {
+            id: "store-pack-active",
+            name: "Pack active",
+            checkCallback: (checking) => {
                 const file = plugin.app.workspace.getActiveFile()
                 if (!file) {
-                    return
+                    return false
                 }
 
-                const files = this.allLinkedFiles(file)
-                console.log(files.map((f) => f.path))
+                if (!checking) {
+                    this.copy(this.allLinkedFiles(file))
+                }
+
+                return true
             },
         })
     }
