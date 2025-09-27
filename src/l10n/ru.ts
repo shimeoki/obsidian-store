@@ -64,6 +64,10 @@ export const RUSSIAN: Translation = {
         addAliases: {
             title: "Добавить псевдонимы",
         },
+
+        pack: {
+            title: "Упаковать",
+        },
     },
 
     ribbonActions: {

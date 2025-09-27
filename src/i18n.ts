@@ -37,6 +37,7 @@ export default interface Translation {
         move: Menu
         addHeading: Menu
         addAliases: Menu
+        pack: Menu
     }
 
     ribbonActions: {

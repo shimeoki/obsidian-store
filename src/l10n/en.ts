@@ -64,6 +64,10 @@ export const ENGLISH: Translation = {
         addAliases: {
             title: "Add aliases",
         },
+
+        pack: {
+            title: "Pack",
+        },
     },
 
     ribbonActions: {
