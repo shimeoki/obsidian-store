@@ -42,4 +42,16 @@ export default class Settings {
             this.data.template = normalizePath(path)
         }
     }
+
+    public get pack() {
+        return this.data.pack
+    }
+
+    public set pack(path: string) {
+        if (path.length == 0) {
+            this.data.pack = DEFAULT_SETTINGS.pack
+        } else {
+            this.data.pack = normalizePath(path)
+        }
+    }
 }
