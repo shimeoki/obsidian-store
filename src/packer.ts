@@ -65,15 +65,24 @@ export default class Packer {
     }
 
     private async copy(files: TFile[]) {
-        const folder = await this.getFolder()
-        if (folder.getFileCount() != 0) {
+        const pack = await this.getFolder()
+        if (pack.getFileCount() != 0) {
             // TODO: send notice
             return
         }
 
+        const vault = this.plugin.app.vault
+
         for (let file of files) {
-            const path = normalizePath(`${folder.path}/${file.path}`)
-            await this.plugin.app.vault.copy(file, path)
+            const parent = file.parent?.path || ""
+
+            const folder = normalizePath(`${pack.path}/${parent}`)
+            if (!vault.getFolderByPath(folder)) {
+                await vault.createFolder(folder)
+            }
+
+            const packPath = normalizePath(`${pack.path}/${file.path}`)
+            await vault.copy(file, packPath)
         }
     }
 
