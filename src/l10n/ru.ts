@@ -14,6 +14,12 @@ export const RUSSIAN: Translation = {
             description: "Путь до шаблона для новых заметок.",
             placeholder: "Пример: templates/store.md",
         },
+
+        pack: {
+            name: "Место упаковки",
+            description: "Путь до папки с упакованными файлами.",
+            placeholder: "pack",
+        },
     },
 
     commands: {
@@ -40,6 +46,10 @@ export const RUSSIAN: Translation = {
         addAliasesActive: {
             name: "Добавить псевдонимы в активную заметку",
         },
+
+        packActive: {
+            name: "Упаковать активную заметку",
+        },
     },
 
     menus: {
@@ -53,6 +63,10 @@ export const RUSSIAN: Translation = {
 
         addAliases: {
             title: "Добавить псевдонимы",
+        },
+
+        pack: {
+            title: "Упаковать",
         },
     },
 

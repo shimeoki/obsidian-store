@@ -21,6 +21,7 @@ export default class SettingTab extends PluginSettingTab {
 
         this.addFolder(containerEl)
         this.addTemplate(containerEl)
+        this.addPack(containerEl)
     }
 
     private addFolder(containerEl: HTMLElement) {
@@ -52,6 +53,24 @@ export default class SettingTab extends PluginSettingTab {
                     .setValue(this.settings.template)
                     .onChange(async (path) => {
                         this.settings.template = path
+                        await this.settings.save()
+                    })
+
+                new NoteSuggest(this.app, text.inputEl)
+            })
+    }
+
+    private addPack(containerEl: HTMLElement) {
+        const l10n = this.translation.pack
+        new Setting(containerEl)
+            .setName(l10n.name)
+            .setDesc(l10n.description)
+            .addText((text) => {
+                text
+                    .setPlaceholder(l10n.placeholder)
+                    .setValue(this.settings.pack)
+                    .onChange(async (path) => {
+                        this.settings.pack = path
                         await this.settings.save()
                     })
 

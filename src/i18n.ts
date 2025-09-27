@@ -20,6 +20,7 @@ export default interface Translation {
     settings: {
         folder: Setting
         template: Setting
+        pack: Setting
     }
 
     commands: {
@@ -29,12 +30,14 @@ export default interface Translation {
         moveActive: Command
         addHeadingActive: Command
         addAliasesActive: Command
+        packActive: Command
     }
 
     menus: {
         move: Menu
         addHeading: Menu
         addAliases: Menu
+        pack: Menu
     }
 
     ribbonActions: {

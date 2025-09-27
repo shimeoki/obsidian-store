@@ -14,6 +14,12 @@ export const ENGLISH: Translation = {
             description: "Path to the template for new notes.",
             placeholder: "Example: templates/store.md",
         },
+
+        pack: {
+            name: "Pack location",
+            description: "Path to the folder for packed files.",
+            placeholder: "pack",
+        },
     },
 
     commands: {
@@ -40,6 +46,10 @@ export const ENGLISH: Translation = {
         addAliasesActive: {
             name: "Add aliases in active note",
         },
+
+        packActive: {
+            name: "Pack active note",
+        },
     },
 
     menus: {
@@ -53,6 +63,10 @@ export const ENGLISH: Translation = {
 
         addAliases: {
             title: "Add aliases",
+        },
+
+        pack: {
+            title: "Pack",
         },
     },
 
