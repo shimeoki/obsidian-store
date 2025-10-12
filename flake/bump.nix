@@ -8,7 +8,7 @@
                 ;
         in
         {
-            apps.bump = pkgs.writeShellApplication {
+            apps.bump.program = pkgs.writeShellApplication {
                 name = "obsidian-store-bump";
 
                 runtimeInputs = with pkgs; [
