@@ -31,4 +31,16 @@ def main [bump: string] {
 
     bump manifest.json $version
     bump package.json $version
+
+    if (sys host | get name | str downcase) like nixos {
+        print 'info: use "nix run .#bump -- <bump>" on nixos to run this script'
+        exit
+    }
+
+    pnpm fmt
+    git add manifest.json
+    git add package.json
+
+    git commit -m $'chore: bump version to ($version)'
+    git tag -a $version -m $version
 }
