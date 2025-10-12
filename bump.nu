@@ -27,7 +27,7 @@ def main [bump: string] {
         _ => (error make { msg: 'invalid bump' }),
     })
 
-    let version = $'($target.major).($target.minor).($target.patch)'
+    let version = $'($target.major.0).($target.minor.0).($target.patch.0)'
 
     bump manifest.json $version
     bump package.json $version
