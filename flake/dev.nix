@@ -11,7 +11,7 @@
 
                 shellHook = ''
                     pnpm install
-                    exec nu
+                    exec nu --execute "alias bump = nix run .#bump --"
                 '';
             };
         };
