@@ -20,7 +20,7 @@ def bump [file: string, version: string]: nothing -> nothing {
 }
 
 def main [bump: string] {
-    let target = (match bump {
+    let target = (match $bump {
         major => ($current | reset patch | reset minor | increase major),
         minor => ($current | reset patch | increase minor),
         patch => ($current | increase patch),
