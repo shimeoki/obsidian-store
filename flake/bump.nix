@@ -22,7 +22,7 @@
                 };
 
                 text = ''
-                    ./bump.nu $1
+                    ./bump.nu "$1"
 
                     nix fmt
                     git add manifest.json
