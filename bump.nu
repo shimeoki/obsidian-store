@@ -33,7 +33,7 @@ def main [bump: string] {
     bump package.json $version
 
     if (sys host | get name | str downcase) like nixos {
-        print 'info: use "nix run .#bump -- <bump>" on nixos to run this script'
+        print $version
         exit
     }
 

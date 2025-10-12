@@ -1,12 +1,6 @@
-{ inputs, ... }:
 {
     perSystem =
         { pkgs, ... }:
-        let
-            inherit (pkgs.lib.importJSON "${inputs.self}/manifest.json")
-                version
-                ;
-        in
         {
             apps.bump.program = pkgs.writeShellApplication {
                 name = "obsidian-store-bump";
@@ -17,19 +11,15 @@
                     nix
                 ];
 
-                runtimeEnv = {
-                    VERSION = version;
-                };
-
                 text = ''
-                    ./bump.nu "$1"
+                    version="$(./bump.nu "$1")"
 
                     nix fmt
                     git add manifest.json
                     git add package.json
 
-                    git commit -m "chore: bump version to $VERSION"
-                    git tag -a "$VERSION" -m "$VERSION"
+                    git commit -m "chore: bump version to $version"
+                    git tag -a "$version" -m "$version"
                 '';
             };
         };
