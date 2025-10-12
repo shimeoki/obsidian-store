@@ -22,6 +22,7 @@
 
             imports = [
                 # keep-sorted start
+                ./flake/bump.nix
                 ./flake/dev.nix
                 ./flake/fmt.nix
                 ./flake/package.nix

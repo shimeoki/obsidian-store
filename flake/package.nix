@@ -1,6 +1,5 @@
 { inputs, ... }:
 let
-    version = "0.5.0";
     hash = "sha256-Mqc1hRqaHJ0KTCPSv7N9MwFRCntCKTppPtwY7fIkPFY=";
 in
 {
@@ -13,7 +12,9 @@ in
         {
             packages.default = pkgs.stdenv.mkDerivation (finalAttrs: {
                 pname = "obsidian-store";
-                inherit version;
+                inherit (pkgs.lib.importJSON "${inputs.self}/manifest.json")
+                    version
+                    ;
 
                 src = "${inputs.self}";
 
