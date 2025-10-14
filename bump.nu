@@ -32,7 +32,7 @@ def main [bump: string] {
     bump manifest.json $version
     bump package.json $version
 
-    if (sys host | get name | str downcase) like nixos {
+    if (which nix | is-not-empty) {
         print $version
         exit
     }
