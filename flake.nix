@@ -25,7 +25,7 @@
                 ./flake/bump.nix
                 ./flake/dev.nix
                 ./flake/fmt.nix
-                ./flake/package.nix
+                ./flake/pkg.nix
                 # keep-sorted end
             ];
         };
