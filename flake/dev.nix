@@ -6,12 +6,10 @@
                 packages = with pkgs; [
                     nodejs_24
                     pnpm_10
-                    nushell
                 ];
 
                 shellHook = ''
                     pnpm install
-                    exec nu --execute "alias bump = nix run .#bump --"
                 '';
             };
         };

@@ -1,6 +1,6 @@
 { inputs, ... }:
 let
-    hash = "sha256-Mqc1hRqaHJ0KTCPSv7N9MwFRCntCKTppPtwY7fIkPFY=";
+    hash = "sha256-95g7dJWuWi9cg2ElkWwt1ToRt6lBXGoXBzpFfVIvZh4=";
 in
 {
     perSystem =
@@ -34,9 +34,9 @@ in
                 '';
 
                 installPhase = ''
-                    mkdir -p $out/store
-                    cp main.js $out/store/main.js
-                    cp manifest.json $out/store/manifest.json
+                    mkdir -p $out
+                    cp main.js $out/main.js
+                    cp manifest.json $out/manifest.json
                 '';
             });
         };
