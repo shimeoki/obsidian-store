@@ -32,9 +32,9 @@ export default class SettingTab extends PluginSettingTab {
             .addText((text) => {
                 text
                     .setPlaceholder(l10n.placeholder)
-                    .setValue(this.settings.folder)
+                    .setValue(this.settings.data.folder)
                     .onChange(async (path) => {
-                        this.settings.folder = path
+                        this.settings.data.folder = path
                         await this.settings.save()
                     })
 
@@ -50,9 +50,9 @@ export default class SettingTab extends PluginSettingTab {
             .addText((text) => {
                 text
                     .setPlaceholder(l10n.placeholder)
-                    .setValue(this.settings.template)
+                    .setValue(this.settings.data.template)
                     .onChange(async (path) => {
-                        this.settings.template = path
+                        this.settings.data.template = path
                         await this.settings.save()
                     })
 
@@ -68,9 +68,9 @@ export default class SettingTab extends PluginSettingTab {
             .addText((text) => {
                 text
                     .setPlaceholder(l10n.placeholder)
-                    .setValue(this.settings.pack)
+                    .setValue(this.settings.data.pack)
                     .onChange(async (path) => {
-                        this.settings.pack = path
+                        this.settings.data.pack = path
                         await this.settings.save()
                     })
 
