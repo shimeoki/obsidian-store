@@ -32,11 +32,6 @@ def main [bump: string] {
     bump manifest.json $version
     bump package.json $version
 
-    if (which nix | is-not-empty) {
-        print $version
-        exit
-    }
-
     pnpm fmt
     git add manifest.json
     git add package.json
