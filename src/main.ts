@@ -1,6 +1,7 @@
 import Heading from "@/heading.ts"
 import Aliases from "@/aliases.ts"
 import Packer from "@/packer.ts"
+import Archiver from "@/archiver.ts"
 import SettingTab from "@/settings/tab.ts"
 import Settings from "@/settings/settings.ts"
 import Translation from "@/i18n.ts"
@@ -26,6 +27,7 @@ export default class Store extends Plugin {
         new Heading(this)
         new Aliases(this)
         new Packer(this)
+        new Archiver(this)
     }
 
     override async onunload() {
