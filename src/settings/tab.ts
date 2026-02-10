@@ -74,7 +74,7 @@ export default class SettingTab extends PluginSettingTab {
                         await this.settings.save()
                     })
 
-                new NoteSuggest(this.app, text.inputEl)
+                new FolderSuggest(this.app, text.inputEl)
             })
     }
 }
