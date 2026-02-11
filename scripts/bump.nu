@@ -27,12 +27,14 @@ def main [bump: string] {
         _ => (error make { msg: 'invalid bump' }),
     })
 
+    nix fmt
+    nix flake check
+
     let version = $'($target.major.0).($target.minor.0).($target.patch.0)'
 
     bump manifest.json $version
     bump package.json $version
 
-    pnpm fmt
     git add manifest.json
     git add package.json
 
