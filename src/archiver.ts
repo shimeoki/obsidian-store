@@ -9,6 +9,7 @@ export default class Archiver {
         this.plugin = plugin
         this.translation = plugin.translation
         this.addMenus()
+        this.addCommands()
     }
 
     private async folder(): Promise<TFolder> {
@@ -24,13 +25,48 @@ export default class Archiver {
         return await this.folder()
     }
 
-    private async archive(folder: TFolder) {
+    private async getTags(f: TFile): Promise<string[]> {
         const cache = this.plugin.app.metadataCache
         const fm = this.plugin.app.fileManager
-        const tag = this.plugin.settings.data.archive.tag
-        const archive = await this.folder()
 
-        const queue = [folder]
+        const meta = cache.getFileCache(f)
+        if (meta) {
+            return meta.frontmatter?.tags || []
+        }
+
+        let tags: string[] = []
+        try {
+            await fm.processFrontMatter(f, (front) => {
+                tags = front?.tags || []
+            })
+        } catch {
+            return []
+        }
+
+        return tags
+    }
+
+    private async hasTag(f: TFile): Promise<boolean> {
+        const tag = this.plugin.settings.data.archive.tag
+        const tags = await this.getTags(f)
+        return !!tags.find((t) => t == tag)
+    }
+
+    private async archiveFile(f: TFile) {
+        const fm = this.plugin.app.fileManager
+        const folder = await this.folder()
+
+        if (!(await this.hasTag(f))) {
+            return
+        }
+
+        // FIXME: don't just call crypto uuid here
+        const name = `${crypto.randomUUID()}.${f.extension}`
+        await fm.renameFile(f, normalizePath(`${folder.path}/${name}`))
+    }
+
+    private async archiveFolder(f: TFolder) {
+        const queue = [f]
 
         while (queue.length > 0) {
             const q = queue.shift()
@@ -38,31 +74,12 @@ export default class Archiver {
                 break
             }
 
-            for (const f of q.children) {
-                if (f instanceof TFolder) {
-                    queue.push(f)
-                    continue
+            for (const af of q.children) {
+                if (af instanceof TFolder) {
+                    queue.push(af)
+                } else if (af instanceof TFile) {
+                    await this.archiveFile(af)
                 }
-
-                if (!(f instanceof TFile)) {
-                    continue
-                }
-
-                const meta = cache.getFileCache(f)
-                if (!meta) {
-                    // FIXME: don't skip if no cache
-                    continue
-                }
-
-                const tags: string[] = meta.frontmatter?.tags || []
-                if (!tags.find((t) => t == tag)) {
-                    continue
-                }
-
-                // FIXME: don't just call crypto uuid here
-                const name = `${crypto.randomUUID()}.${f.extension}`
-                const path = normalizePath(`${archive.path}/${name}`)
-                await fm.renameFile(f, path)
             }
         }
     }
@@ -79,9 +96,30 @@ export default class Archiver {
                     item
                         .setTitle("Archive")
                         .setIcon("archive")
-                        .onClick(async () => await this.archive(file))
+                        .onClick(async () => await this.archiveFolder(file))
                 })
             }),
         )
+    }
+
+    private addCommands() {
+        const plugin = this.plugin
+        plugin.addCommand({
+            id: "store-archive",
+            name: "Archive current note",
+            // TODO: don't show on no tag
+            checkCallback: (checking) => {
+                const file = plugin.app.workspace.getActiveFile()
+                if (!file) {
+                    return false
+                }
+
+                if (!checking) {
+                    this.archiveFile(file)
+                }
+
+                return true
+            },
+        })
     }
 }
