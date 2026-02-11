@@ -94,7 +94,7 @@ export default class Packer {
         const l10n = this.translation.commands
         const plugin = this.plugin
         plugin.addCommand({
-            id: "store-pack-active",
+            id: "pack-active",
             name: l10n.packActive.name,
             checkCallback: (checking) => {
                 const file = plugin.app.workspace.getActiveFile()

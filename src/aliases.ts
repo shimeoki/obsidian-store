@@ -59,7 +59,7 @@ export default class Aliases {
         const plugin = this.plugin
         const l10n = this.translation.commands
         plugin.addCommand({
-            id: "store-add-aliases",
+            id: "add-aliases",
             name: l10n.addAliasesActive.name,
             checkCallback: (checking) => {
                 const file = plugin.app.workspace.getActiveFile()

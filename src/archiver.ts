@@ -136,7 +136,7 @@ export default class Archiver {
         const plugin = this.plugin
         const l10n = this.translation.commands
         plugin.addCommand({
-            id: "store-archive-active",
+            id: "archive-active",
             name: l10n.archiveActive.name,
             checkCallback: (checking) => {
                 const file = plugin.app.workspace.getActiveFile()

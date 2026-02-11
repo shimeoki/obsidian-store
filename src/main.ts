@@ -68,25 +68,25 @@ export default class Store extends Plugin {
         const l10n = this.translation.commands
 
         this.addCommand({
-            id: "store-create-vertical-split",
+            id: "create-vertical-split",
             name: l10n.createVerticalSplit.name,
             callback: async () => await this.createSplit("vertical"),
         })
 
         this.addCommand({
-            id: "store-create-horizontal-split",
+            id: "create-horizontal-split",
             name: l10n.createHorizontalSplit.name,
             callback: async () => await this.createSplit("horizontal"),
         })
 
         this.addCommand({
-            id: "store-create-tab",
+            id: "create-tab",
             name: l10n.createTab.name,
             callback: async () => await this.createTab(),
         })
 
         this.addCommand({
-            id: "store-move-active",
+            id: "move-active",
             name: l10n.moveActive.name,
             checkCallback: (checking) => {
                 // otherwise shows if no file is open.

@@ -99,7 +99,7 @@ export default class Heading {
         const plugin = this.plugin
         const l10n = this.translation.commands
         plugin.addCommand({
-            id: "store-add-heading",
+            id: "add-heading",
             name: l10n.addHeadingActive.name,
             checkCallback: (checking) => {
                 const file = plugin.app.workspace.getActiveFile()
