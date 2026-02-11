@@ -31,6 +31,7 @@ export default interface Translation {
         addHeadingActive: Command
         addAliasesActive: Command
         packActive: Command
+        archiveActive: Command
     }
 
     menus: {
@@ -38,6 +39,14 @@ export default interface Translation {
         addHeading: Menu
         addAliases: Menu
         pack: Menu
+
+        archiveNotes: Menu & {
+            folder: (p: string) => string
+            count: (n: number) => string
+            empty: string
+        }
+
+        archiveNote: Menu
     }
 
     ribbonActions: {

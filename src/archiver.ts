@@ -83,16 +83,17 @@ export default class Archiver {
 
     private addMenus() {
         const plugin = this.plugin
+        const l10n = this.translation.menus
         plugin.registerEvent(
             plugin.app.workspace.on("file-menu", (menu, af) => {
                 if (af instanceof TFolder) {
                     menu.addItem((item) => {
                         item
-                            .setTitle("Archive notes in folder")
+                            .setTitle(l10n.archiveNotes.title)
                             .setIcon("folder-archive")
                             .onClick(async () => {
                                 const notice = new Notice(
-                                    `Archiving notes in '${af.path}'...`,
+                                    l10n.archiveNotes.folder(af.path),
                                     0,
                                 )
 
@@ -100,10 +101,12 @@ export default class Archiver {
 
                                 if (count > 0) {
                                     notice.setMessage(
-                                        `Archived ${count} note(s).`,
+                                        l10n.archiveNotes.count(count),
                                     )
                                 } else {
-                                    notice.setMessage(`No notes archived.`)
+                                    notice.setMessage(
+                                        l10n.archiveNotes.empty,
+                                    )
                                 }
 
                                 setTimeout(() => notice.hide(), 3000)
@@ -120,7 +123,7 @@ export default class Archiver {
 
                     menu.addItem((item) => {
                         item
-                            .setTitle("Archive note")
+                            .setTitle(l10n.archiveNote.title)
                             .setIcon("file-archive")
                             .onClick(() => this.archiveNote(af))
                     })
@@ -131,9 +134,10 @@ export default class Archiver {
 
     private addCommands() {
         const plugin = this.plugin
+        const l10n = this.translation.commands
         plugin.addCommand({
-            id: "store-archive",
-            name: "Archive current note",
+            id: "store-archive-active",
+            name: l10n.archiveActive.name,
             checkCallback: (checking) => {
                 const file = plugin.app.workspace.getActiveFile()
                 if (!file || !this.hasTag(this.getTags(file))) {
