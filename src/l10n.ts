@@ -1,15 +1,18 @@
 import { getLanguage } from "obsidian"
 import Translation from "@/i18n.ts"
-import { ENGLISH } from "@/l10n/en.ts"
-import { RUSSIAN } from "@/l10n/ru.ts"
 
-export default function translation(): Translation {
+// keep-sorted start
+import en from "./l10n/en.ts"
+import ru from "./l10n/ru.ts"
+// keep-sorted end
+
+export default function getTranslation(): Translation {
     switch (getLanguage()) {
         case "en":
-            return ENGLISH
+            return en
         case "ru":
-            return RUSSIAN
+            return ru
         default:
-            return ENGLISH
+            return en
     }
 }

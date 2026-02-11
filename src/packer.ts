@@ -3,11 +3,9 @@ import { normalizePath, TFile, TFolder } from "obsidian"
 
 export default class Packer {
     private readonly plugin: Store
-    private readonly translation
 
     constructor(plugin: Store) {
         this.plugin = plugin
-        this.translation = plugin.translation
         this.addCommands()
         this.addMenus()
     }
@@ -56,7 +54,7 @@ export default class Packer {
 
     private async getFolder(): Promise<TFolder> {
         const vault = this.plugin.app.vault
-        const path = this.plugin.settings.data.pack
+        const path = this.plugin.settings.pack
 
         const folder = vault.getFolderByPath(path)
         if (folder) {
@@ -91,10 +89,10 @@ export default class Packer {
     }
 
     private addCommands() {
-        const l10n = this.translation.commands
+        const l10n = this.plugin.translation.commands
         const plugin = this.plugin
         plugin.addCommand({
-            id: "store-pack-active",
+            id: "pack-active",
             name: l10n.packActive.name,
             checkCallback: (checking) => {
                 const file = plugin.app.workspace.getActiveFile()
@@ -113,7 +111,7 @@ export default class Packer {
 
     private addMenus() {
         const plugin = this.plugin
-        const l10n = this.translation.menus
+        const l10n = this.plugin.translation.menus
         plugin.registerEvent(
             plugin.app.workspace.on("file-menu", (menu, afile) => {
                 if (afile instanceof TFolder) {

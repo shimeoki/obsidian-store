@@ -7,11 +7,9 @@ function isMarkdown(f: TFile): boolean {
 
 export default class Aliases {
     private readonly plugin: Store
-    private readonly translation
 
     constructor(plugin: Store) {
         this.plugin = plugin
-        this.translation = plugin.translation
         this.addCommands()
         this.addMenus()
     }
@@ -57,9 +55,9 @@ export default class Aliases {
 
     private addCommands() {
         const plugin = this.plugin
-        const l10n = this.translation.commands
+        const l10n = this.plugin.translation.commands
         plugin.addCommand({
-            id: "store-add-aliases",
+            id: "add-aliases",
             name: l10n.addAliasesActive.name,
             checkCallback: (checking) => {
                 const file = plugin.app.workspace.getActiveFile()
@@ -78,7 +76,7 @@ export default class Aliases {
 
     private addMenus() {
         const plugin = this.plugin
-        const l10n = this.translation.menus
+        const l10n = this.plugin.translation.menus
         plugin.registerEvent(
             plugin.app.workspace.on("file-menu", (menu, afile) => {
                 if (afile instanceof TFolder) {

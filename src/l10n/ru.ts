@@ -1,6 +1,6 @@
 import Translation from "@/i18n.ts"
 
-export const RUSSIAN: Translation = {
+export default {
     settings: {
         folder: {
             name: "Место папки",
@@ -90,4 +90,4 @@ export const RUSSIAN: Translation = {
             title: "Создать новую заметку в сторе",
         },
     },
-}
+} as const satisfies Translation

@@ -1,22 +1,23 @@
+import { normalizePath, Plugin, SplitDirection, TFile, TFolder } from "obsidian"
+
 import Heading from "@/heading.ts"
 import Aliases from "@/aliases.ts"
 import Packer from "@/packer.ts"
 import Archiver from "@/archiver.ts"
-import SettingTab from "@/settings/tab.ts"
-import Settings from "@/settings/settings.ts"
+import SettingTab from "@/tab.ts"
+
 import Translation from "@/i18n.ts"
-import translation from "@/l10n.ts"
-import { normalizePath, Plugin, SplitDirection, TFile, TFolder } from "obsidian"
+import getTranslation from "@/l10n.ts"
+
+import { defaultSettings, normalize, Settings } from "./settings.ts"
 
 export default class Store extends Plugin {
     settings!: Settings
     translation!: Translation
 
     override async onload() {
-        this.settings = new Settings(this)
-        await this.settings.load()
-
-        this.translation = translation()
+        this.settings = await this.loadSettings()
+        this.translation = getTranslation()
 
         this.addSettingTab(new SettingTab(this.app, this))
 
@@ -31,12 +32,31 @@ export default class Store extends Plugin {
     }
 
     override async onunload() {
-        await this.settings.save()
+        await this.saveSettings()
+    }
+
+    // TODO: more verification
+    public async loadSettings() {
+        const settings = defaultSettings()
+        const data = await this.loadData()
+
+        if (data) {
+            Object.assign(settings, data)
+            if (data.archive) {
+                Object.assign(settings.archive, data.archive)
+            }
+        }
+
+        return settings
+    }
+
+    public async saveSettings() {
+        await this.saveData(normalize(this.settings))
     }
 
     public async getFolder(): Promise<TFolder> {
         const vault = this.app.vault
-        const path = this.settings.data.folder
+        const path = this.settings.folder
 
         const folder = vault.getFolderByPath(path)
         if (folder != null) {
@@ -49,7 +69,7 @@ export default class Store extends Plugin {
 
     public async readTemplate(): Promise<string> {
         const vault = this.app.vault
-        const path = this.settings.data.template
+        const path = this.settings.template
 
         if (path.length == 0) {
             return ""
@@ -57,7 +77,7 @@ export default class Store extends Plugin {
 
         const file = vault.getFileByPath(path)
         if (file == null || file.extension != "md") {
-            this.settings.data.template = ""
+            this.settings.template = ""
             return await this.readTemplate()
         }
 
@@ -68,25 +88,25 @@ export default class Store extends Plugin {
         const l10n = this.translation.commands
 
         this.addCommand({
-            id: "store-create-vertical-split",
+            id: "create-vertical-split",
             name: l10n.createVerticalSplit.name,
             callback: async () => await this.createSplit("vertical"),
         })
 
         this.addCommand({
-            id: "store-create-horizontal-split",
+            id: "create-horizontal-split",
             name: l10n.createHorizontalSplit.name,
             callback: async () => await this.createSplit("horizontal"),
         })
 
         this.addCommand({
-            id: "store-create-tab",
+            id: "create-tab",
             name: l10n.createTab.name,
             callback: async () => await this.createTab(),
         })
 
         this.addCommand({
-            id: "store-move-active",
+            id: "move-active",
             name: l10n.moveActive.name,
             checkCallback: (checking) => {
                 // otherwise shows if no file is open.
@@ -143,7 +163,7 @@ export default class Store extends Plugin {
         }
 
         const parent = file.parent
-        if (parent == null || parent.path != this.settings.data.folder) {
+        if (parent == null || parent.path != this.settings.folder) {
             return false
         }
 
