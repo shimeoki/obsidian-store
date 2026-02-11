@@ -1,7 +1,8 @@
+import { App, PluginSettingTab, Setting } from "obsidian"
+
 import Store from "@/main.ts"
 import Settings from "@/settings/settings.ts"
-import { FolderSuggest, NoteSuggest } from "@/settings/suggest.ts"
-import { App, PluginSettingTab, Setting } from "obsidian"
+import { FolderSuggest, NoteSuggest } from "@/suggest.ts"
 
 export default class SettingTab extends PluginSettingTab {
     plugin: Store
