@@ -1,6 +1,7 @@
 import Heading from "@/heading.ts"
 import Aliases from "@/aliases.ts"
 import Packer from "@/packer.ts"
+import Archiver from "@/archiver.ts"
 import SettingTab from "@/settings/tab.ts"
 import Settings from "@/settings/settings.ts"
 import Translation from "@/i18n.ts"
@@ -26,6 +27,7 @@ export default class Store extends Plugin {
         new Heading(this)
         new Aliases(this)
         new Packer(this)
+        new Archiver(this)
     }
 
     override async onunload() {
@@ -34,7 +36,7 @@ export default class Store extends Plugin {
 
     public async getFolder(): Promise<TFolder> {
         const vault = this.app.vault
-        const path = this.settings.folder
+        const path = this.settings.data.folder
 
         const folder = vault.getFolderByPath(path)
         if (folder != null) {
@@ -47,7 +49,7 @@ export default class Store extends Plugin {
 
     public async readTemplate(): Promise<string> {
         const vault = this.app.vault
-        const path = this.settings.template
+        const path = this.settings.data.template
 
         if (path.length == 0) {
             return ""
@@ -55,7 +57,7 @@ export default class Store extends Plugin {
 
         const file = vault.getFileByPath(path)
         if (file == null || file.extension != "md") {
-            this.settings.template = ""
+            this.settings.data.template = ""
             return await this.readTemplate()
         }
 
@@ -141,7 +143,7 @@ export default class Store extends Plugin {
         }
 
         const parent = file.parent
-        if (parent == null || parent.path != this.settings.folder) {
+        if (parent == null || parent.path != this.settings.data.folder) {
             return false
         }
 

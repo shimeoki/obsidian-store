@@ -56,7 +56,7 @@ export default class Packer {
 
     private async getFolder(): Promise<TFolder> {
         const vault = this.plugin.app.vault
-        const path = this.plugin.settings.pack
+        const path = this.plugin.settings.data.pack
 
         const folder = vault.getFolderByPath(path)
         if (folder) {

@@ -50,6 +50,10 @@ export const ENGLISH: Translation = {
         packActive: {
             name: "Pack active note",
         },
+
+        archiveActive: {
+            name: "Archive active note",
+        },
     },
 
     menus: {
@@ -67,6 +71,17 @@ export const ENGLISH: Translation = {
 
         pack: {
             title: "Pack",
+        },
+
+        archiveNotes: {
+            title: "Archive notes in folder",
+            folder: (p) => `Archiving notes in '${p}'...`,
+            count: (n) => `Archived ${n} note(s).`,
+            empty: "No notes archived.",
+        },
+
+        archiveNote: {
+            title: "Archive note",
         },
     },
 

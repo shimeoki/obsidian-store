@@ -50,6 +50,10 @@ export const RUSSIAN: Translation = {
         packActive: {
             name: "Упаковать активную заметку",
         },
+
+        archiveActive: {
+            name: "Заархивировать активную заметку",
+        },
     },
 
     menus: {
@@ -67,6 +71,17 @@ export const RUSSIAN: Translation = {
 
         pack: {
             title: "Упаковать",
+        },
+
+        archiveNotes: {
+            title: "Заархивировать заметки в папке",
+            folder: (p) => `Заметки архивируются в '${p}'...`,
+            count: (n) => `Заархивировано заметок: ${n}.`,
+            empty: "Заметки для архивации не были найдены.",
+        },
+
+        archiveNote: {
+            title: "Заархивировать заметку",
         },
     },
 
