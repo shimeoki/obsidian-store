@@ -1,14 +1,12 @@
 {
     "compilerOptions": {
         "strict": true,
+        "allowImportingTsExtensions": true,
+
         "target": "esnext",
         "module": "esnext",
         "moduleResolution": "bundler",
-        "allowImportingTsExtensions": true,
-        "types": [
-            "obsidian-typings",
-            "node"
-        ],
+
         "baseUrl": ".",
         "paths": {
             "@/*": ["src/*"]

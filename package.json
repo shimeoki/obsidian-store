@@ -4,16 +4,14 @@
     "license": "MIT",
     "private": true,
     "main": "main.js",
-    "packageManager": "pnpm@10.15.1",
+    "packageManager": "pnpm@10.28.0",
     "scripts": {
         "build": "vite build",
         "fmt": "deno fmt"
     },
     "devDependencies": {
-        "@types/node": "^25.2.3",
         "deno": "^2.6.8",
         "obsidian": "latest",
-        "obsidian-typings": "^4.99.0",
         "typescript": "~5.9.3",
         "vite": "^7.3.1"
     }

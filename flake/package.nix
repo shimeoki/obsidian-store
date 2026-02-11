@@ -1,7 +1,7 @@
 { inputs, lib, ... }:
 let
     manifest = lib.importJSON "${inputs.self}/manifest.json";
-    hash = "sha256-7f+5/w1eBqJ7824VcKJOWzIDsGGgJy+dIGZlYk6zLa8=";
+    hash = "sha256-+oX3kERF+y58gJBggoA9KcERMaPDuhH9puDlWLNzDRo=";
 in
 {
     perSystem =
