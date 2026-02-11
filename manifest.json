@@ -3,7 +3,7 @@
     "name": "Store",
     "description": "Manage your notes within a single store.",
     "version": "0.5.1",
-    "minAppVersion": "1.9.12",
+    "minAppVersion": "1.11.7",
     "isDesktopOnly": false,
     "author": "shimeoki",
     "authorUrl": "https://github.com/shimeoki"

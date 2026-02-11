@@ -10,11 +10,11 @@
         "fmt": "deno fmt"
     },
     "devDependencies": {
-        "@types/node": "^24.5.2",
-        "deno": "^2.5.4",
+        "@types/node": "^25.2.3",
+        "deno": "^2.6.8",
         "obsidian": "latest",
-        "obsidian-typings": "^4.51.0",
-        "typescript": "~5.8.3",
-        "vite": "^7.1.6"
+        "obsidian-typings": "^4.99.0",
+        "typescript": "~5.9.3",
+        "vite": "^7.3.1"
     }
 }

@@ -1,32 +1,32 @@
-{ inputs, ... }:
+{ inputs, lib, ... }:
 let
-    hash = "sha256-95g7dJWuWi9cg2ElkWwt1ToRt6lBXGoXBzpFfVIvZh4=";
+    manifest = lib.importJSON "${inputs.self}/manifest.json";
+    hash = "sha256-7f+5/w1eBqJ7824VcKJOWzIDsGGgJy+dIGZlYk6zLa8=";
 in
 {
     perSystem =
         { pkgs, ... }:
         let
-            nodejs = pkgs.nodejs_24;
-            pnpm = pkgs.pnpm_10;
-        in
-        {
-            packages.default = pkgs.stdenv.mkDerivation (finalAttrs: {
+            inherit (pkgs) pnpmConfigHook;
+            nodejs = pkgs.nodejs_25;
+            pnpm = pkgs.pnpm_10.override { inherit nodejs; };
+
+            package = pkgs.stdenv.mkDerivation (finalAttrs: {
                 pname = "obsidian-store";
-                inherit (pkgs.lib.importJSON "${inputs.self}/manifest.json")
-                    version
-                    ;
+                inherit (manifest) version;
 
                 src = "${inputs.self}";
 
                 nativeBuildInputs = [
                     nodejs
-                    pnpm.configHook
+                    pnpm
+                    pnpmConfigHook
                 ];
 
-                pnpmDeps = pnpm.fetchDeps {
+                pnpmDeps = pkgs.fetchPnpmDeps {
                     inherit (finalAttrs) pname version src;
-                    inherit hash;
-                    fetcherVersion = 2;
+                    inherit hash pnpm;
+                    fetcherVersion = 3;
                 };
 
                 buildPhase = ''
@@ -39,5 +39,9 @@ in
                     cp manifest.json $out/manifest.json
                 '';
             });
+        in
+        {
+            packages.default = package;
+            checks.default = package;
         };
 }
