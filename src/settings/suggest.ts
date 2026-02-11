@@ -27,7 +27,7 @@ abstract class PathSuggest<T extends TAbstractFile>
 
     override selectSuggestion(value: T, _evt: MouseEvent | KeyboardEvent) {
         this.setValue(value.path)
-        this.textInputEl.trigger("input") // note: unofficial api
+        this.textInputEl.trigger("input") // NOTE: unofficial api
         this.close()
     }
 }

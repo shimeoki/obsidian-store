@@ -181,12 +181,10 @@ export default class Store extends Plugin {
     }
 
     public async create(): Promise<TFile> {
-        // note: unofficial api
-        return await this.app.fileManager.createNewMarkdownFile(
-            await this.getFolder(),
-            uuid(),
-            await this.readTemplate(),
-        )
+        const folder = await this.getFolder()
+        const path = normalizePath(`${folder.path}/${uuid()}.md`)
+        const template = await this.readTemplate()
+        return await this.app.vault.create(path, template)
     }
 
     public async createTab() {
