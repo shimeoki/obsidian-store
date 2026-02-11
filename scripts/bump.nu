@@ -35,6 +35,8 @@ def main [bump: string] {
     bump manifest.json $version
     bump package.json $version
 
+    nix fmt
+
     git add manifest.json
     git add package.json
 
