@@ -7,12 +7,14 @@ export default defineConfig({
             "@": resolve(__dirname, "src"),
         },
     },
+
     build: {
         lib: {
             entry: resolve(__dirname, "src/main.ts"),
             formats: ["cjs"],
             fileName: "main",
         },
+
         outDir: ".",
         emptyOutDir: false,
         rollupOptions: {
