@@ -1,5 +1,5 @@
 import Store from "@/main.ts"
-import { normalizePath, TFile, TFolder } from "obsidian"
+import { normalizePath, Notice, TFile, TFolder } from "obsidian"
 
 export default class Archiver {
     private readonly plugin: Store
@@ -25,48 +25,41 @@ export default class Archiver {
         return await this.folder()
     }
 
-    private async getTags(f: TFile): Promise<string[]> {
+    // TODO: what if no cache?
+    private getTags(f: TFile) {
         const cache = this.plugin.app.metadataCache
-        const fm = this.plugin.app.fileManager
 
         const meta = cache.getFileCache(f)
         if (meta) {
             return meta.frontmatter?.tags || []
         }
 
-        let tags: string[] = []
-        try {
-            await fm.processFrontMatter(f, (front) => {
-                tags = front?.tags || []
-            })
-        } catch {
-            return []
-        }
-
-        return tags
+        return []
     }
 
-    private async hasTag(f: TFile): Promise<boolean> {
+    private hasTag(tags: string[]) {
         const tag = this.plugin.settings.data.archive.tag
-        const tags = await this.getTags(f)
         return !!tags.find((t) => t == tag)
     }
 
-    private async archiveFile(f: TFile) {
-        const fm = this.plugin.app.fileManager
-        const folder = await this.folder()
-
-        if (!(await this.hasTag(f))) {
-            return
+    private async archiveNote(f: TFile) {
+        if (!this.hasTag(this.getTags(f))) {
+            return false
         }
 
         // FIXME: don't just call crypto uuid here
         const name = `${crypto.randomUUID()}.${f.extension}`
+        const folder = await this.folder()
+
+        const fm = this.plugin.app.fileManager
         await fm.renameFile(f, normalizePath(`${folder.path}/${name}`))
+
+        return true
     }
 
-    private async archiveFolder(f: TFolder) {
+    private async archiveNotes(f: TFolder) {
         const queue = [f]
+        let count = 0
 
         while (queue.length > 0) {
             const q = queue.shift()
@@ -78,26 +71,60 @@ export default class Archiver {
                 if (af instanceof TFolder) {
                     queue.push(af)
                 } else if (af instanceof TFile) {
-                    await this.archiveFile(af)
+                    if (await this.archiveNote(af)) {
+                        count++
+                    }
                 }
             }
         }
+
+        return count
     }
 
     private addMenus() {
         const plugin = this.plugin
         plugin.registerEvent(
-            plugin.app.workspace.on("file-menu", (menu, file) => {
-                if (!(file instanceof TFolder)) {
+            plugin.app.workspace.on("file-menu", (menu, af) => {
+                if (af instanceof TFolder) {
+                    menu.addItem((item) => {
+                        item
+                            .setTitle("Archive notes in folder")
+                            .setIcon("folder-archive")
+                            .onClick(async () => {
+                                const notice = new Notice(
+                                    `Archiving notes in '${af.path}'...`,
+                                    0,
+                                )
+
+                                const count = await this.archiveNotes(af)
+
+                                if (count > 0) {
+                                    notice.setMessage(
+                                        `Archived ${count} note(s).`,
+                                    )
+                                } else {
+                                    notice.setMessage(`No notes archived.`)
+                                }
+
+                                setTimeout(() => notice.hide(), 3000)
+                            })
+                    })
+
                     return
                 }
 
-                menu.addItem((item) => {
-                    item
-                        .setTitle("Archive")
-                        .setIcon("archive")
-                        .onClick(async () => await this.archiveFolder(file))
-                })
+                if (af instanceof TFile) {
+                    if (!this.hasTag(this.getTags(af))) {
+                        return
+                    }
+
+                    menu.addItem((item) => {
+                        item
+                            .setTitle("Archive note")
+                            .setIcon("file-archive")
+                            .onClick(() => this.archiveNote(af))
+                    })
+                }
             }),
         )
     }
@@ -107,15 +134,14 @@ export default class Archiver {
         plugin.addCommand({
             id: "store-archive",
             name: "Archive current note",
-            // TODO: don't show on no tag
             checkCallback: (checking) => {
                 const file = plugin.app.workspace.getActiveFile()
-                if (!file) {
+                if (!file || !this.hasTag(this.getTags(file))) {
                     return false
                 }
 
                 if (!checking) {
-                    this.archiveFile(file)
+                    this.archiveNote(file)
                 }
 
                 return true
