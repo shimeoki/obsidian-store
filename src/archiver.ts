@@ -3,18 +3,16 @@ import { normalizePath, Notice, TFile, TFolder } from "obsidian"
 
 export default class Archiver {
     private readonly plugin: Store
-    private readonly translation
 
     constructor(plugin: Store) {
         this.plugin = plugin
-        this.translation = plugin.translation
         this.addMenus()
         this.addCommands()
     }
 
     private async folder(): Promise<TFolder> {
         const vault = this.plugin.app.vault
-        const path = this.plugin.settings.data.archive.folder
+        const path = this.plugin.settings.archive.folder
 
         const folder = vault.getFolderByPath(path)
         if (folder != null) {
@@ -38,7 +36,7 @@ export default class Archiver {
     }
 
     private hasTag(tags: string[]) {
-        const tag = this.plugin.settings.data.archive.tag
+        const tag = this.plugin.settings.archive.tag
         return !!tags.find((t) => t == tag)
     }
 
@@ -83,7 +81,7 @@ export default class Archiver {
 
     private addMenus() {
         const plugin = this.plugin
-        const l10n = this.translation.menus
+        const l10n = this.plugin.translation.menus
         plugin.registerEvent(
             plugin.app.workspace.on("file-menu", (menu, af) => {
                 if (af instanceof TFolder) {
@@ -134,7 +132,7 @@ export default class Archiver {
 
     private addCommands() {
         const plugin = this.plugin
-        const l10n = this.translation.commands
+        const l10n = this.plugin.translation.commands
         plugin.addCommand({
             id: "archive-active",
             name: l10n.archiveActive.name,
