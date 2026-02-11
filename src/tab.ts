@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting } from "obsidian"
+import { App, PluginSettingTab, Setting, SettingGroup } from "obsidian"
 
 import Store from "@/main.ts"
 import { FolderSuggest, NoteSuggest } from "@/suggest.ts"
@@ -15,16 +15,15 @@ export default class SettingTab extends PluginSettingTab {
         const { containerEl } = this
         containerEl.empty()
 
-        this.addFolder(containerEl)
-        this.addTemplate(containerEl)
-        this.addPack(containerEl)
+        new SettingGroup(containerEl)
+            .addSetting((s) => this.addFolder(s))
+            .addSetting((s) => this.addTemplate(s))
+            .addSetting((s) => this.addPack(s))
     }
 
-    private addFolder(containerEl: HTMLElement) {
+    private addFolder(setting: Setting) {
         const l10n = this.plugin.translation.settings.folder
-        new Setting(containerEl)
-            .setName(l10n.name)
-            .setDesc(l10n.description)
+        setting.setName(l10n.name).setDesc(l10n.description)
             .addText((text) => {
                 text
                     .setPlaceholder(l10n.placeholder)
@@ -38,11 +37,9 @@ export default class SettingTab extends PluginSettingTab {
             })
     }
 
-    private addTemplate(containerEl: HTMLElement) {
+    private addTemplate(setting: Setting) {
         const l10n = this.plugin.translation.settings.template
-        new Setting(containerEl)
-            .setName(l10n.name)
-            .setDesc(l10n.description)
+        setting.setName(l10n.name).setDesc(l10n.description)
             .addText((text) => {
                 text
                     .setPlaceholder(l10n.placeholder)
@@ -56,11 +53,9 @@ export default class SettingTab extends PluginSettingTab {
             })
     }
 
-    private addPack(containerEl: HTMLElement) {
+    private addPack(setting: Setting) {
         const l10n = this.plugin.translation.settings.pack
-        new Setting(containerEl)
-            .setName(l10n.name)
-            .setDesc(l10n.description)
+        setting.setName(l10n.name).setDesc(l10n.description)
             .addText((text) => {
                 text
                     .setPlaceholder(l10n.placeholder)
