@@ -1,6 +1,6 @@
 import Translation from "@/i18n.ts"
 
-export const ENGLISH: Translation = {
+export default {
     settings: {
         folder: {
             name: "Folder Location",
@@ -90,4 +90,4 @@ export const ENGLISH: Translation = {
             title: "Create new note in the store",
         },
     },
-}
+} as const satisfies Translation

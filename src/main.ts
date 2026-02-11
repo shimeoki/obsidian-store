@@ -1,12 +1,14 @@
+import { normalizePath, Plugin, SplitDirection, TFile, TFolder } from "obsidian"
+
 import Heading from "@/heading.ts"
 import Aliases from "@/aliases.ts"
 import Packer from "@/packer.ts"
 import Archiver from "@/archiver.ts"
 import SettingTab from "@/settings/tab.ts"
 import Settings from "@/settings/settings.ts"
+
 import Translation from "@/i18n.ts"
-import translation from "@/l10n.ts"
-import { normalizePath, Plugin, SplitDirection, TFile, TFolder } from "obsidian"
+import getTranslation from "@/l10n.ts"
 
 export default class Store extends Plugin {
     settings!: Settings
@@ -16,7 +18,7 @@ export default class Store extends Plugin {
         this.settings = new Settings(this)
         await this.settings.load()
 
-        this.translation = translation()
+        this.translation = getTranslation()
 
         this.addSettingTab(new SettingTab(this.app, this))
 
