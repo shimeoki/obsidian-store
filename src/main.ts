@@ -1,7 +1,6 @@
 import { normalizePath, Plugin, SplitDirection, TFile, TFolder } from "obsidian"
 
 import Heading from "@/heading.ts"
-import Packer from "@/packer.ts"
 import Archiver from "@/archiver.ts"
 import SettingTab from "@/tab.ts"
 
@@ -25,7 +24,6 @@ export default class Store extends Plugin {
         this.addRibbonActions()
 
         new Heading(this)
-        new Packer(this)
         new Archiver(this)
     }
 
@@ -142,6 +140,23 @@ export default class Store extends Plugin {
                 return true
             },
         })
+
+        this.addCommand({
+            id: "pack-active",
+            name: l10n.packActive.name,
+            checkCallback: (checking) => {
+                const file = this.app.workspace.getActiveFile()
+                if (!file) {
+                    return false
+                }
+
+                if (!checking) {
+                    this.pack(file)
+                }
+
+                return true
+            },
+        })
     }
 
     private addMenus() {
@@ -178,6 +193,23 @@ export default class Store extends Plugin {
                         .setTitle(l10n.addAliases.title)
                         .setIcon("forward")
                         .onClick(async () => await this.addAliases(file))
+                })
+            }),
+        )
+
+        this.registerEvent(
+            this.app.workspace.on("file-menu", (menu, afile) => {
+                if (afile instanceof TFolder) {
+                    return
+                }
+
+                const file = afile as TFile
+
+                menu.addItem((item) => {
+                    item
+                        .setTitle(l10n.pack.title)
+                        .setIcon("package")
+                        .onClick(async () => await this.pack(file))
                 })
             }),
         )
@@ -291,6 +323,84 @@ export default class Store extends Plugin {
             file,
             (fm) => fm.aliases = aliases,
         )
+    }
+
+    private getAllLinkedFiles(file: TFile): TFile[] {
+        const cache = this.app.metadataCache
+
+        const meta = cache.getFileCache(file)
+        if (!meta) {
+            return []
+        }
+
+        const files: Set<TFile> = new Set()
+        const queue = [{ link: file.path, source: file.path }]
+
+        while (queue.length > 0) {
+            const q = queue.shift()
+            if (!q) {
+                break
+            }
+
+            const file = cache.getFirstLinkpathDest(q.link, q.source)
+            if (!file || files.has(file)) {
+                continue
+            }
+
+            files.add(file)
+
+            const meta = cache.getFileCache(file)
+            if (!meta) {
+                continue
+            }
+
+            const embeds = meta.embeds || []
+            const links = meta.links || []
+
+            const queued = embeds.concat(links).map((l) => {
+                return { link: l.link, source: file.path }
+            })
+
+            queue.push(...queued)
+        }
+
+        return files.keys().toArray()
+    }
+
+    private async getPackFolder(): Promise<TFolder> {
+        const vault = this.app.vault
+        const path = this.settings.pack
+
+        const folder = vault.getFolderByPath(path)
+        if (folder) {
+            return folder
+        }
+
+        await vault.createFolder(path)
+        return await this.getPackFolder()
+    }
+
+    private async copy(files: TFile[]) {
+        const vault = this.app.vault
+        const pack = await this.getPackFolder()
+
+        for (let file of files) {
+            const parent = file.parent?.path || ""
+
+            const folder = normalizePath(`${pack.path}/${parent}`)
+            if (!vault.getFolderByPath(folder)) {
+                await vault.createFolder(folder)
+            }
+
+            const packed = normalizePath(`${pack.path}/${file.path}`)
+            if (!vault.getFileByPath(packed)) {
+                await vault.copy(file, packed)
+            }
+        }
+    }
+
+    private async pack(file: TFile) {
+        await this.copy(this.getAllLinkedFiles(file))
     }
 }
 
