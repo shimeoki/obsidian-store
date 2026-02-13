@@ -55,6 +55,31 @@ export default {
                     "Whether to enable aliases generation based on the headings.",
             },
         },
+
+        assets: {
+            title: "Assets",
+
+            enable: {
+                name: "Automatic processing",
+                desc:
+                    "Whether to process immutable assets (PNG's, JPEG's, PDF's) and rename them based on their hash while storing notes.",
+            },
+        },
+
+        archive: {
+            title: "Archive",
+
+            enable: {
+                name: "Automatic processing",
+                desc:
+                    "Whether to archive notes with the required tag while storing notes. Doesn't disable the feature entirely.",
+            },
+
+            tag: {
+                name: "Tag",
+                desc: "Name of the tag for the note to be archived.",
+            },
+        },
     },
 
     commands: {

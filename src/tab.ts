@@ -26,6 +26,8 @@ export default class SettingTab extends PluginSettingTab {
 
         this.addFolders(containerEl)
         this.addNotes(containerEl)
+        this.addAssets(containerEl)
+        this.addArchive(containerEl)
     }
 
     private addFolders(el: HTMLElement) {
@@ -111,6 +113,46 @@ export default class SettingTab extends PluginSettingTab {
                             await this.plugin.saveSettings()
                         })
                 )
+        })
+    }
+
+    private addAssets(el: HTMLElement) {
+        const l10n = this.plugin.translation.settings.assets
+        new SettingGroup(el).setHeading(l10n.title).addSetting((s) => {
+            s.setName(l10n.enable.name).setDesc(l10n.enable.desc)
+                .addToggle((toggle) =>
+                    toggle
+                        .setValue(this.plugin.settings.assets.enable)
+                        .onChange(async (v) => {
+                            this.plugin.settings.assets.enable = v
+                            await this.plugin.saveSettings()
+                        })
+                )
+        })
+    }
+
+    private addArchive(el: HTMLElement) {
+        const l10n = this.plugin.translation.settings.archive
+        new SettingGroup(el).setHeading(l10n.title).addSetting((s) => {
+            s.setName(l10n.enable.name).setDesc(l10n.enable.desc)
+                .addToggle((toggle) =>
+                    toggle
+                        .setValue(this.plugin.settings.assets.enable)
+                        .onChange(async (v) => {
+                            this.plugin.settings.assets.enable = v
+                            await this.plugin.saveSettings()
+                        })
+                )
+        }).addSetting((s) => {
+            s.setName(l10n.tag.name).setDesc(l10n.tag.desc)
+                .addText((text) => {
+                    text.setPlaceholder(DEFAULT_SETTINGS.archive.tag)
+                        .setValue(this.plugin.settings.archive.tag)
+                        .onChange(async (text) => {
+                            this.plugin.settings.archive.tag = text
+                            await this.plugin.saveSettings()
+                        })
+                })
         })
     }
 

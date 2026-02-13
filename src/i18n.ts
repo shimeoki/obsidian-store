@@ -36,6 +36,17 @@ export default interface Translation {
             heading: Setting
             aliases: Setting
         }
+
+        assets: {
+            title: string
+            enable: Setting
+        }
+
+        archive: {
+            title: string
+            enable: Setting
+            tag: Setting
+        }
     }
 
     commands: {
