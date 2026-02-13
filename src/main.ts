@@ -1,8 +1,10 @@
 import {
+    Menu,
     normalizePath,
     Notice,
     Plugin,
     SplitDirection,
+    TAbstractFile,
     TFile,
     TFolder,
 } from "obsidian"
@@ -11,6 +13,12 @@ import { defaultSettings, normalize, Settings } from "@/settings.ts"
 import SettingTab from "@/tab.ts"
 import Translation from "@/i18n.ts"
 import getTranslation from "@/l10n.ts"
+
+interface MenuItemData {
+    title: string
+    icon: string
+    cb: () => any
+}
 
 export default class Store extends Plugin {
     settings!: Settings
@@ -193,127 +201,115 @@ export default class Store extends Plugin {
         })
     }
 
+    private addAbstractFileMenu(cb: (menu: Menu, file: TAbstractFile) => any) {
+        this.registerEvent(this.app.workspace.on("file-menu", cb))
+    }
+
+    private addFileMenu(cb: (menu: Menu, file: TFile) => any) {
+        this.addAbstractFileMenu((menu, file) => {
+            if (file instanceof TFile) {
+                cb(menu, file)
+            }
+        })
+    }
+
+    private addFolderMenu(cb: (menu: Menu, file: TFolder) => any) {
+        this.addAbstractFileMenu((menu, file) => {
+            if (file instanceof TFolder) {
+                cb(menu, file)
+            }
+        })
+    }
+
+    private addMenuItem(menu: Menu, data: MenuItemData) {
+        menu.addItem((item) =>
+            item
+                .setTitle(data.title)
+                .setIcon(data.icon)
+                .onClick(data.cb)
+        )
+    }
+
     private addMenus() {
         const l10n = this.translation.menus
 
-        this.registerEvent(
-            this.app.workspace.on("file-menu", (menu, file) => {
-                if (file instanceof TFolder || this.inStore(file.path)) {
-                    return
-                }
+        this.addFileMenu((menu, file) => {
+            if (this.inStore(file.path)) {
+                return
+            }
 
-                menu.addItem((item) => {
-                    item
-                        .setTitle(l10n.move.title)
-                        .setIcon("folder-input")
-                        .onClick(async () => await this.move(file.path))
-                })
-            }),
-        )
+            this.addMenuItem(menu, {
+                title: l10n.move.title,
+                icon: "folder-input",
+                cb: async () => this.move(file.path),
+            })
+        })
 
-        this.registerEvent(
-            this.app.workspace.on("file-menu", (menu, afile) => {
-                if (afile instanceof TFolder) {
-                    return
-                }
+        this.addFileMenu((menu, file) => {
+            if (this.getAliases(file).length == 0) {
+                return
+            }
 
-                const file = afile as TFile
-                if (this.getAliases(file).length == 0) {
-                    return
-                }
+            this.addMenuItem(menu, {
+                title: l10n.addAliases.title,
+                icon: "forward",
+                cb: async () => this.addAliases(file),
+            })
+        })
 
-                menu.addItem((item) => {
-                    item
-                        .setTitle(l10n.addAliases.title)
-                        .setIcon("forward")
-                        .onClick(async () => await this.addAliases(file))
-                })
-            }),
-        )
+        this.addFileMenu((menu, file) => {
+            this.addMenuItem(menu, {
+                title: l10n.pack.title,
+                icon: "package",
+                cb: async () => this.pack(file),
+            })
+        })
 
-        this.registerEvent(
-            this.app.workspace.on("file-menu", (menu, afile) => {
-                if (afile instanceof TFolder) {
-                    return
-                }
+        this.addFileMenu((menu, file) => {
+            if (!this.headingProcessor(file)) {
+                return
+            }
 
-                const file = afile as TFile
+            this.addMenuItem(menu, {
+                title: l10n.addHeading.title,
+                icon: "heading-1",
+                cb: async () => this.addHeading(file),
+            })
+        })
 
-                menu.addItem((item) => {
-                    item
-                        .setTitle(l10n.pack.title)
-                        .setIcon("package")
-                        .onClick(async () => await this.pack(file))
-                })
-            }),
-        )
+        this.addFileMenu((menu, file) => {
+            if (!this.hasArchiveTag(this.getTags(file))) {
+                return
+            }
 
-        this.registerEvent(
-            this.app.workspace.on("file-menu", (menu, af) => {
-                if (af instanceof TFolder) {
-                    menu.addItem((item) => {
-                        item
-                            .setTitle(l10n.archiveNotes.title)
-                            .setIcon("folder-archive")
-                            .onClick(async () => {
-                                const notice = new Notice(
-                                    l10n.archiveNotes.folder(af.path),
-                                    0,
-                                )
+            this.addMenuItem(menu, {
+                title: l10n.archiveNote.title,
+                icon: "file-archive",
+                cb: async () => this.archiveNote(file),
+            })
+        })
 
-                                const count = await this.archiveNotes(af)
+        this.addFolderMenu((menu, file) => {
+            this.addMenuItem(menu, {
+                title: l10n.archiveNotes.title,
+                icon: "folder-archive",
+                cb: async () => {
+                    const notice = new Notice(
+                        l10n.archiveNotes.folder(file.path),
+                        0,
+                    )
 
-                                if (count > 0) {
-                                    notice.setMessage(
-                                        l10n.archiveNotes.count(count),
-                                    )
-                                } else {
-                                    notice.setMessage(
-                                        l10n.archiveNotes.empty,
-                                    )
-                                }
-
-                                setTimeout(() => notice.hide(), 3000)
-                            })
-                    })
-
-                    return
-                }
-
-                if (af instanceof TFile) {
-                    if (!this.hasArchiveTag(this.getTags(af))) {
-                        return
+                    const count = await this.archiveNotes(file)
+                    if (count > 0) {
+                        notice.setMessage(l10n.archiveNotes.count(count))
+                    } else {
+                        notice.setMessage(l10n.archiveNotes.empty)
                     }
 
-                    menu.addItem((item) => {
-                        item
-                            .setTitle(l10n.archiveNote.title)
-                            .setIcon("file-archive")
-                            .onClick(() => this.archiveNote(af))
-                    })
-                }
-            }),
-        )
-
-        this.registerEvent(
-            this.app.workspace.on("file-menu", (menu, afile) => {
-                if (afile instanceof TFolder) {
-                    return
-                }
-
-                const file = afile as TFile
-                if (!this.headingProcessor(file)) {
-                    return
-                }
-
-                menu.addItem((item) => {
-                    item
-                        .setTitle(l10n.addHeading.title)
-                        .setIcon("heading-1")
-                        .onClick(async () => await this.addHeading(file))
-                })
-            }),
-        )
+                    setTimeout(() => notice.hide(), 3000)
+                },
+            })
+        })
     }
 
     private addRibbonActions() {
