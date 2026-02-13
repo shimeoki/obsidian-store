@@ -42,13 +42,28 @@ export default class Store extends Plugin {
     // TODO: more verification
     public async loadSettings() {
         const settings = defaultSettings()
-        const data = await this.loadData()
 
-        if (data) {
-            Object.assign(settings, data)
-            if (data.archive) {
-                Object.assign(settings.archive, data.archive)
-            }
+        const data = await this.loadData()
+        if (!data) {
+            return settings
+        }
+
+        Object.assign(settings, data)
+
+        if (data.folders) {
+            Object.assign(settings.folders, data.folders)
+        }
+
+        if (data.notes) {
+            Object.assign(settings.notes, data.notes)
+        }
+
+        if (data.assets) {
+            Object.assign(settings.assets, data.assets)
+        }
+
+        if (data.archive) {
+            Object.assign(settings.archive, data.archive)
         }
 
         return settings
@@ -60,7 +75,7 @@ export default class Store extends Plugin {
 
     public async getFolder(): Promise<TFolder> {
         const vault = this.app.vault
-        const path = this.settings.folder
+        const path = this.settings.folders.notes
 
         const folder = vault.getFolderByPath(path)
         if (folder != null) {
@@ -73,7 +88,7 @@ export default class Store extends Plugin {
 
     public async readTemplate(): Promise<string> {
         const vault = this.app.vault
-        const path = this.settings.template
+        const path = this.settings.notes.template
 
         if (path.length == 0) {
             return ""
@@ -81,7 +96,7 @@ export default class Store extends Plugin {
 
         const file = vault.getFileByPath(path)
         if (file == null || file.extension != "md") {
-            this.settings.template = ""
+            this.settings.notes.template = ""
             return await this.readTemplate()
         }
 
@@ -329,7 +344,7 @@ export default class Store extends Plugin {
         }
 
         const parent = file.parent
-        if (parent == null || parent.path != this.settings.folder) {
+        if (parent == null || parent.path != this.settings.folders.notes) {
             return false
         }
 
@@ -466,7 +481,7 @@ export default class Store extends Plugin {
 
     private async getPackFolder(): Promise<TFolder> {
         const vault = this.app.vault
-        const path = this.settings.pack
+        const path = this.settings.folders.pack
 
         const folder = vault.getFolderByPath(path)
         if (folder) {
@@ -502,7 +517,7 @@ export default class Store extends Plugin {
 
     private async getArchiveFolder(): Promise<TFolder> {
         const vault = this.app.vault
-        const path = this.settings.archive.folder
+        const path = this.settings.folders.archive
 
         const folder = vault.getFolderByPath(path)
         if (folder != null) {

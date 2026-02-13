@@ -2,24 +2,54 @@ import { normalizePath } from "obsidian"
 
 export interface Settings {
     version: number
-    folder: string
-    template: string
-    pack: string
+
+    folders: {
+        notes: string
+        assets: string
+        archive: string
+        pack: string
+    }
+
+    notes: {
+        template: string
+        templates: string
+        heading: boolean
+        aliases: boolean
+    }
+
+    assets: {
+        enable: boolean
+    }
 
     archive: {
-        folder: string
+        enable: boolean
         tag: string
     }
 }
 
-const DEFAULT_SETTINGS: Settings = {
+export const DEFAULT_SETTINGS: Settings = {
     version: 0,
-    folder: "store",
-    template: "",
-    pack: "pack",
+
+    folders: {
+        notes: "notes",
+        assets: "assets",
+        archive: "archive",
+        pack: "pack",
+    },
+
+    notes: {
+        template: "",
+        templates: "",
+        heading: true,
+        aliases: true,
+    },
+
+    assets: {
+        enable: true,
+    },
 
     archive: {
-        folder: "archive",
+        enable: true,
         tag: "archive",
     },
 }
@@ -27,35 +57,52 @@ const DEFAULT_SETTINGS: Settings = {
 export function defaultSettings() {
     const settings = {} as Settings
     Object.assign(settings, DEFAULT_SETTINGS)
+    Object.assign(settings.folders, DEFAULT_SETTINGS.folders)
+    Object.assign(settings.notes, DEFAULT_SETTINGS.notes)
+    Object.assign(settings.assets, DEFAULT_SETTINGS.assets)
     Object.assign(settings.archive, DEFAULT_SETTINGS.archive)
     return settings
 }
 
+function normalizeOrDefault(custom: string, defaults: string) {
+    if (!custom) {
+        return defaults
+    } else {
+        return normalizePath(custom)
+    }
+}
+
 // TODO: support for undefined settings
 export function normalize(settings: Settings) {
-    if (!settings.folder) {
-        settings.folder = DEFAULT_SETTINGS.folder
-    } else {
-        settings.folder = normalizePath(settings.folder)
-    }
+    settings.folders.notes = normalizeOrDefault(
+        settings.folders.notes,
+        DEFAULT_SETTINGS.folders.notes,
+    )
 
-    if (!settings.template) {
-        settings.template = DEFAULT_SETTINGS.template
-    } else {
-        settings.template = normalizePath(settings.template)
-    }
+    settings.folders.assets = normalizeOrDefault(
+        settings.folders.assets,
+        DEFAULT_SETTINGS.folders.assets,
+    )
 
-    if (!settings.pack) {
-        settings.pack = DEFAULT_SETTINGS.pack
-    } else {
-        settings.pack = normalizePath(settings.pack)
-    }
+    settings.folders.archive = normalizeOrDefault(
+        settings.folders.archive,
+        DEFAULT_SETTINGS.folders.archive,
+    )
 
-    if (!settings.archive.folder) {
-        settings.archive.folder = DEFAULT_SETTINGS.archive.folder
-    } else {
-        settings.archive.folder = normalizePath(settings.archive.folder)
-    }
+    settings.folders.pack = normalizeOrDefault(
+        settings.folders.pack,
+        DEFAULT_SETTINGS.folders.pack,
+    )
+
+    settings.notes.template = normalizeOrDefault(
+        settings.notes.template,
+        DEFAULT_SETTINGS.notes.template,
+    )
+
+    settings.notes.templates = normalizeOrDefault(
+        settings.notes.templates,
+        DEFAULT_SETTINGS.notes.templates,
+    )
 
     if (!settings.archive.tag) {
         settings.archive.tag = DEFAULT_SETTINGS.archive.tag

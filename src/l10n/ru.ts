@@ -2,23 +2,39 @@ import Translation from "@/i18n.ts"
 
 export default {
     settings: {
-        folder: {
-            name: "Место папки",
-            description:
-                "Путь до папки стора. Будет создана если не существует.",
-            placeholder: "store",
+        folders: {
+            heading: "Папки",
+
+            notes: {
+                name: "Заметки",
+                desc: "Место склада заметок.",
+            },
+
+            assets: {
+                name: "Ресурсы",
+                desc: "Место неизменяемых ресурсов: PNG, JPEG и PDF файлов.",
+            },
+
+            archive: {
+                name: "Архив",
+                desc:
+                    "Место архива заметок. Рекомендуется указать эту папку в 'исключённых папках' Obsidian'а.",
+            },
+
+            pack: {
+                name: "Пакет",
+                desc: "Место 'упакованных' заметок.",
+            },
         },
 
-        template: {
-            name: "Место шаблона",
-            description: "Путь до шаблона для новых заметок.",
-            placeholder: "Пример: templates/store.md",
-        },
+        notes: {
+            heading: "Заметки",
 
-        pack: {
-            name: "Место упаковки",
-            description: "Путь до папки с упакованными файлами.",
-            placeholder: "pack",
+            template: {
+                name: "Шаблон",
+                desc: "Место шаблона по умолчанию для новых заметок.",
+                placeholder: "Пример: templates/store.md",
+            },
         },
     },
 

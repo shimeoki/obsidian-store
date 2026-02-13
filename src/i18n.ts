@@ -1,7 +1,6 @@
-interface Setting {
+interface FolderSetting {
     name: string
-    description: string
-    placeholder: string
+    desc: string
 }
 
 interface Command {
@@ -18,9 +17,23 @@ interface RibbonAction {
 
 export default interface Translation {
     settings: {
-        folder: Setting
-        template: Setting
-        pack: Setting
+        folders: {
+            heading: string
+            notes: FolderSetting
+            assets: FolderSetting
+            archive: FolderSetting
+            pack: FolderSetting
+        }
+
+        notes: {
+            heading: string
+
+            template: {
+                name: string
+                desc: string
+                placeholder: string
+            }
+        }
     }
 
     commands: {

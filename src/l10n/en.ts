@@ -2,23 +2,40 @@ import Translation from "@/i18n.ts"
 
 export default {
     settings: {
-        folder: {
-            name: "Folder Location",
-            description:
-                "Path to the store folder. Created on demand if doesn't exist.",
-            placeholder: "store",
+        folders: {
+            heading: "Folders",
+
+            notes: {
+                name: "Notes",
+                desc: "Location for all stored notes.",
+            },
+
+            assets: {
+                name: "Assets",
+                desc:
+                    "Location for all stored immutable assets: PNG, JPEG and PDF files.",
+            },
+
+            archive: {
+                name: "Archive",
+                desc:
+                    "Location for all archived notes. It's recommended to keep this folder in Obsidian's 'excluded files'.",
+            },
+
+            pack: {
+                name: "Pack",
+                desc: "Location for the 'packed' files.",
+            },
         },
 
-        template: {
-            name: "Template location",
-            description: "Path to the template for new notes.",
-            placeholder: "Example: templates/store.md",
-        },
+        notes: {
+            heading: "Notes",
 
-        pack: {
-            name: "Pack location",
-            description: "Path to the folder for packed files.",
-            placeholder: "pack",
+            template: {
+                name: "Template",
+                desc: "Location of the default template for new notes.",
+                placeholder: "Example: templates/store.md",
+            },
         },
     },
 
