@@ -14,10 +14,58 @@ import SettingTab from "@/tab.ts"
 import Translation from "@/i18n.ts"
 import getTranslation from "@/l10n.ts"
 
-interface MenuItemData {
+type Folder = "notes" | "assets" | "archive" | "pack"
+
+type Processor = (data: string) => string
+
+type MenuItemData = {
     title: string
     icon: string
     cb: () => any
+}
+
+function uuid(): string {
+    return crypto.randomUUID()
+}
+
+function isUUID(name: string): boolean {
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+        .test(name)
+}
+
+function isMarkdown(f?: TFile): boolean {
+    return f?.extension.toLowerCase() == "md"
+}
+
+function heading(title: string): string {
+    return `\n\n# ${title}\n\n`
+}
+
+function inserter(title: string, offset: number): Processor {
+    return replacer(title, offset, offset)
+}
+
+function replacer(title: string, start: number, end: number): Processor {
+    return (data) => {
+        const before = data.substring(0, start).trimEnd()
+        const after = data.substring(end).trimStart()
+        return (before + heading(title) + after).trim()
+    }
+}
+
+function shifter(indices: number[]): Processor {
+    return (data) => {
+        const lines = data.split("\n")
+        indices.forEach((i) => lines[i] = "#" + lines[i])
+        return lines.join("\n")
+    }
+}
+
+function combine(...processors: Processor[]): Processor {
+    return (data) => {
+        processors.forEach((p) => data = p(data))
+        return data
+    }
 }
 
 export default class Store extends Plugin {
@@ -626,51 +674,5 @@ export default class Store extends Plugin {
                 const indexes = headings.map((h) => h.position.start.line)
                 return combine(shifter(indexes), inserter(title, offset))
         }
-    }
-}
-
-function uuid(): string {
-    return crypto.randomUUID()
-}
-
-function isUUID(name: string): boolean {
-    return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-        .test(name)
-}
-
-function isMarkdown(f: TFile): boolean {
-    return f.extension == "md"
-}
-
-type Processor = (data: string) => string
-
-function heading(title: string): string {
-    return `\n\n# ${title}\n\n`
-}
-
-function inserter(title: string, offset: number): Processor {
-    return replacer(title, offset, offset)
-}
-
-function replacer(title: string, start: number, end: number): Processor {
-    return (data) => {
-        const before = data.substring(0, start).trimEnd()
-        const after = data.substring(end).trimStart()
-        return (before + heading(title) + after).trim()
-    }
-}
-
-function shifter(indexes: number[]): Processor {
-    return (data) => {
-        const lines = data.split("\n")
-        indexes.forEach((i) => lines[i] = "#" + lines[i])
-        return lines.join("\n")
-    }
-}
-
-function combine(...processors: Processor[]): Processor {
-    return (data) => {
-        processors.forEach((p) => data = p(data))
-        return data
     }
 }
