@@ -1,17 +1,21 @@
-interface FolderSetting {
+type Setting = {
     name: string
     desc: string
 }
 
-interface Command {
+type PlaceholderSetting = Setting & {
+    placeholder: string
+}
+
+type Command = {
     name: string
 }
 
-interface Menu {
+type Menu = {
     title: string
 }
 
-interface RibbonAction {
+type RibbonAction = {
     title: string
 }
 
@@ -19,27 +23,18 @@ export default interface Translation {
     settings: {
         folders: {
             title: string
-
-            notes: FolderSetting
-            assets: FolderSetting
-            archive: FolderSetting
-            pack: FolderSetting
+            notes: Setting
+            assets: Setting
+            archive: Setting
+            pack: Setting
         }
 
         notes: {
             title: string
-
-            template: {
-                name: string
-                desc: string
-                placeholder: string
-            }
-
-            templates: {
-                name: string
-                desc: string
-                placeholder: string
-            }
+            template: PlaceholderSetting
+            templates: PlaceholderSetting
+            heading: Setting
+            aliases: Setting
         }
     }
 

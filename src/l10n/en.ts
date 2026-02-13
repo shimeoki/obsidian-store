@@ -42,6 +42,18 @@ export default {
                 desc: "Location of the template folder for new notes.",
                 placeholder: "Example: templates",
             },
+
+            heading: {
+                name: "Heading generation",
+                desc:
+                    "Whether to enable heading generation based on the original filename.",
+            },
+
+            aliases: {
+                name: "Aliases generation",
+                desc:
+                    "Whether to enable aliases generation based on the headings.",
+            },
         },
     },
 

@@ -91,6 +91,26 @@ export default class SettingTab extends PluginSettingTab {
 
                     new FolderSuggest(this.app, text.inputEl)
                 })
+        }).addSetting((s) => {
+            s.setName(l10n.heading.name).setDesc(l10n.heading.desc)
+                .addToggle((toggle) =>
+                    toggle
+                        .setValue(this.plugin.settings.notes.heading)
+                        .onChange(async (v) => {
+                            this.plugin.settings.notes.heading = v
+                            await this.plugin.saveSettings()
+                        })
+                )
+        }).addSetting((s) => {
+            s.setName(l10n.aliases.name).setDesc(l10n.aliases.desc)
+                .addToggle((toggle) =>
+                    toggle
+                        .setValue(this.plugin.settings.notes.aliases)
+                        .onChange(async (v) => {
+                            this.plugin.settings.notes.aliases = v
+                            await this.plugin.saveSettings()
+                        })
+                )
         })
     }
 
