@@ -35,6 +35,12 @@ export default {
                 desc: "Место шаблона по умолчанию для новых заметок.",
                 placeholder: "Пример: templates/store.md",
             },
+
+            templates: {
+                name: "Шаблоны",
+                desc: "Место папки с шаблонами для новых заметок.",
+                placeholder: "Пример: templates",
+            },
         },
     },
 

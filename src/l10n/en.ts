@@ -36,6 +36,12 @@ export default {
                 desc: "Location of the default template for new notes.",
                 placeholder: "Example: templates/store.md",
             },
+
+            templates: {
+                name: "Templates",
+                desc: "Location of the template folder for new notes.",
+                placeholder: "Example: templates",
+            },
         },
     },
 

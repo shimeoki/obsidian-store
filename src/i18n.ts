@@ -33,6 +33,12 @@ export default interface Translation {
                 desc: string
                 placeholder: string
             }
+
+            templates: {
+                name: string
+                desc: string
+                placeholder: string
+            }
         }
     }
 

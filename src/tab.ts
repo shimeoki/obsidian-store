@@ -79,6 +79,18 @@ export default class SettingTab extends PluginSettingTab {
 
                     new NoteSuggest(this.app, text.inputEl)
                 })
+        }).addSetting((s) => {
+            s.setName(l10n.templates.name).setDesc(l10n.templates.desc)
+                .addText((text) => {
+                    text.setPlaceholder(l10n.templates.placeholder)
+                        .setValue(this.plugin.settings.notes.templates)
+                        .onChange(async (v) => {
+                            this.plugin.settings.notes.templates = v
+                            await this.plugin.saveSettings()
+                        })
+
+                    new FolderSuggest(this.app, text.inputEl)
+                })
         })
     }
 
