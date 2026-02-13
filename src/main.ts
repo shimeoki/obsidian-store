@@ -148,6 +148,18 @@ export default class Store extends Plugin {
         return vault.getFolderByPath(path)!
     }
 
+    // source: https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API/Non-cryptographic_uses_of_subtle_crypto#hashing_a_file
+    private async fileHash(file: TFile) {
+        const fileBuffer = await this.app.vault.readBinary(file)
+        const hashBuffer = await crypto.subtle.digest("SHA-256", fileBuffer)
+
+        const uint8View = new Uint8Array(hashBuffer)
+        const hashString = Array.from(uint8View)
+            .map((b) => b.toString(16).padStart(2, "0")).join("")
+
+        return `sha256-${hashString}`
+    }
+
     public async readTemplate(): Promise<string> {
         const vault = this.app.vault
         const path = this.settings.notes.template
