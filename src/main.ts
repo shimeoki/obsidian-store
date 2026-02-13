@@ -1,7 +1,6 @@
 import { normalizePath, Plugin, SplitDirection, TFile, TFolder } from "obsidian"
 
 import Heading from "@/heading.ts"
-import Aliases from "@/aliases.ts"
 import Packer from "@/packer.ts"
 import Archiver from "@/archiver.ts"
 import SettingTab from "@/tab.ts"
@@ -26,7 +25,6 @@ export default class Store extends Plugin {
         this.addRibbonActions()
 
         new Heading(this)
-        new Aliases(this)
         new Packer(this)
         new Archiver(this)
     }
@@ -127,10 +125,28 @@ export default class Store extends Plugin {
                 return true
             },
         })
+
+        this.addCommand({
+            id: "add-aliases",
+            name: l10n.addAliasesActive.name,
+            checkCallback: (checking) => {
+                const file = this.app.workspace.getActiveFile()
+                if (!file || this.getAliases(file).length == 0) {
+                    return false
+                }
+
+                if (!checking) {
+                    this.addAliases(file)
+                }
+
+                return true
+            },
+        })
     }
 
     private addMenus() {
         const l10n = this.translation.menus
+
         this.registerEvent(
             this.app.workspace.on("file-menu", (menu, file) => {
                 if (file instanceof TFolder || this.inStore(file.path)) {
@@ -145,10 +161,31 @@ export default class Store extends Plugin {
                 })
             }),
         )
+
+        this.registerEvent(
+            this.app.workspace.on("file-menu", (menu, afile) => {
+                if (afile instanceof TFolder) {
+                    return
+                }
+
+                const file = afile as TFile
+                if (this.getAliases(file).length == 0) {
+                    return
+                }
+
+                menu.addItem((item) => {
+                    item
+                        .setTitle(l10n.addAliases.title)
+                        .setIcon("forward")
+                        .onClick(async () => await this.addAliases(file))
+                })
+            }),
+        )
     }
 
     private addRibbonActions() {
         const l10n = this.translation.ribbonActions
+
         this.addRibbonIcon(
             "folder-pen",
             l10n.new.title,
@@ -218,6 +255,43 @@ export default class Store extends Plugin {
         const newLeaf = this.app.workspace.getLeaf("split", direction)
         await newLeaf.openFile(file)
     }
+
+    private getAliases(file: TFile): string[] {
+        if (!isMarkdown(file)) {
+            return []
+        }
+
+        const meta = this.app.metadataCache.getFileCache(file)
+        if (!meta) {
+            return []
+        }
+
+        const headings = meta.headings || []
+        const aliases: string[] = meta.frontmatter?.aliases || []
+
+        const titles = headings
+            .filter((h) => h.level == 1)
+            .map((h) => h.heading)
+            .filter((h) => h != "" && !aliases.some((a) => a == h))
+
+        if (titles.length == 0) {
+            return []
+        }
+
+        return aliases.concat(titles)
+    }
+
+    public async addAliases(file: TFile) {
+        const aliases = this.getAliases(file).filter((a) => a) // non-null
+        if (aliases.length == 0) {
+            return
+        }
+
+        await this.app.fileManager.processFrontMatter(
+            file,
+            (fm) => fm.aliases = aliases,
+        )
+    }
 }
 
 function uuid(): string {
@@ -227,4 +301,8 @@ function uuid(): string {
 function isUUID(name: string): boolean {
     return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
         .test(name)
+}
+
+function isMarkdown(f: TFile): boolean {
+    return f.extension == "md"
 }
