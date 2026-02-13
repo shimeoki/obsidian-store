@@ -30,7 +30,7 @@ export default class SettingTab extends PluginSettingTab {
 
     private addFolders(el: HTMLElement) {
         const l10n = this.plugin.translation.settings.folders
-        new SettingGroup(el).setHeading(l10n.heading).addSetting((s) =>
+        new SettingGroup(el).setHeading(l10n.title).addSetting((s) =>
             this.addFolder(s, {
                 name: l10n.notes.name,
                 desc: l10n.notes.desc,
@@ -67,7 +67,7 @@ export default class SettingTab extends PluginSettingTab {
 
     private addNotes(el: HTMLElement) {
         const l10n = this.plugin.translation.settings.notes
-        new SettingGroup(el).setHeading(l10n.heading).addSetting((s) => {
+        new SettingGroup(el).setHeading(l10n.title).addSetting((s) => {
             s.setName(l10n.template.name).setDesc(l10n.template.desc)
                 .addText((text) => {
                     text.setPlaceholder(l10n.template.placeholder)

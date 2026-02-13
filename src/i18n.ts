@@ -18,7 +18,8 @@ interface RibbonAction {
 export default interface Translation {
     settings: {
         folders: {
-            heading: string
+            title: string
+
             notes: FolderSetting
             assets: FolderSetting
             archive: FolderSetting
@@ -26,7 +27,7 @@ export default interface Translation {
         }
 
         notes: {
-            heading: string
+            title: string
 
             template: {
                 name: string

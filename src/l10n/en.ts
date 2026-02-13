@@ -3,7 +3,7 @@ import Translation from "@/i18n.ts"
 export default {
     settings: {
         folders: {
-            heading: "Folders",
+            title: "Folders",
 
             notes: {
                 name: "Notes",
@@ -29,7 +29,7 @@ export default {
         },
 
         notes: {
-            heading: "Notes",
+            title: "Notes",
 
             template: {
                 name: "Template",

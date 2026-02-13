@@ -3,7 +3,7 @@ import Translation from "@/i18n.ts"
 export default {
     settings: {
         folders: {
-            heading: "Папки",
+            title: "Папки",
 
             notes: {
                 name: "Заметки",
@@ -28,7 +28,7 @@ export default {
         },
 
         notes: {
-            heading: "Заметки",
+            title: "Заметки",
 
             template: {
                 name: "Шаблон",
