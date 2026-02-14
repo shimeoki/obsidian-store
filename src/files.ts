@@ -1,15 +1,7 @@
 import { TFile, TFolder } from "obsidian"
 
-export function isNote(f?: TFile): boolean {
-    if (!f || f.extension.toLowerCase() != "md") {
-        return false
-    }
-
-    if (f.path.toLowerCase().endsWith(".excalidraw.md")) {
-        return false
-    }
-
-    return true
+export function isNote(f: TFile): boolean {
+    return f.extension.toLowerCase() == "md"
 }
 
 export function forEachFile(f: TFolder, cb: (f: TFile) => void) {

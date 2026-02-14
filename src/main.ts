@@ -1,28 +1,22 @@
-import {
-    Menu,
-    normalizePath,
-    Notice,
-    Plugin,
-    SplitDirection,
-    TAbstractFile,
-    TFile,
-    TFolder,
-} from "obsidian"
+import { normalizePath, Plugin, SplitDirection, TFile, TFolder } from "obsidian"
 
-import { defaultSettings, normalize, Settings } from "@/settings.ts"
 import SettingTab from "@/tab.ts"
 import Translation from "@/i18n.ts"
 import getTranslation from "@/l10n.ts"
+import { forEachFile, isNote } from "@/files.ts"
+import { TemplatesModal } from "@/modals.ts"
+import {
+    defaultSettings,
+    ExcludeSetting,
+    FeatureSetting,
+    normalize,
+    Settings,
+} from "@/settings.ts"
 
+type CheckCallback = (checking: boolean) => boolean
+type FileCallback = (f: TFile) => void
 type Folder = "notes" | "assets" | "archive" | "pack"
-
 type Processor = (data: string) => string
-
-type MenuItemData = {
-    title: string
-    icon: string
-    cb: () => any
-}
 
 function uuid(): string {
     return crypto.randomUUID()
@@ -35,10 +29,6 @@ function isUUID(name: string): boolean {
 
 function isHash(name: string): boolean {
     return /^sha256-[0-9a-f]{64}$/i.test(name)
-}
-
-function isMarkdown(f?: TFile): boolean {
-    return f?.extension.toLowerCase() == "md"
 }
 
 function heading(title: string): string {
@@ -84,7 +74,6 @@ export default class Store extends Plugin {
 
         this.addCommands()
         this.addMenus()
-        this.addRibbonActions()
     }
 
     override async onunload() {
@@ -102,12 +91,26 @@ export default class Store extends Plugin {
 
         Object.assign(settings, data)
 
-        if (data.folders) {
-            Object.assign(settings.folders, data.folders)
+        if (data.templates) {
+            Object.assign(settings.templates, data.templates)
         }
 
-        if (data.notes) {
-            Object.assign(settings.notes, data.notes)
+        if (data.pack) {
+            Object.assign(settings.pack, data.pack)
+        }
+
+        if (data.heading) {
+            Object.assign(settings.heading, data.heading)
+            if (data.heading.exclude) {
+                Object.assign(settings.heading.exclude, data.heading.exclude)
+            }
+        }
+
+        if (data.aliases) {
+            Object.assign(settings.aliases, data.aliases)
+            if (data.aliases.exclude) {
+                Object.assign(settings.aliases.exclude, data.aliases.exclude)
+            }
         }
 
         if (data.assets) {
@@ -125,21 +128,62 @@ export default class Store extends Plugin {
         await this.saveData(normalize(this.settings))
     }
 
+    private exclude(file: TFile, exclude: ExcludeSetting): boolean {
+        for (const path of exclude.paths) {
+            const re = new RegExp(path)
+            if (re.test(file.path)) {
+                return true
+            }
+        }
+
+        const meta = this.app.metadataCache.getFileCache(file)
+        if (!meta || !meta.frontmatter) {
+            return false
+        }
+
+        for (const prop of exclude.props) {
+            // what if equals to false?
+            if (meta.frontmatter[prop]) {
+                return true
+            }
+        }
+
+        const tags: string[] = meta.frontmatter.tags || []
+        if (tags.length == 0) {
+            return false
+        }
+
+        for (const tag of exclude.tags) {
+            if (tags.some((t) => t == tag)) {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    private skip(file: TFile, feature: FeatureSetting): boolean {
+        if (!feature.enable) {
+            return true
+        }
+
+        return this.exclude(file, feature.exclude)
+    }
+
     private folderPath(name: Folder): string {
-        const folders = this.settings.folders
         switch (name) {
             case "notes":
-                return folders.notes
+                return this.settings.folder
             case "assets":
-                return folders.assets
+                return this.settings.assets.folder
             case "archive":
-                return folders.archive
+                return this.settings.archive.folder
             case "pack":
-                return folders.pack
+                return this.settings.pack.folder
         }
     }
 
-    public async getFolder(name: Folder): Promise<TFolder> {
+    private async getFolder(name: Folder): Promise<TFolder> {
         const vault = this.app.vault
         const path = this.folderPath(name)
 
@@ -152,9 +196,14 @@ export default class Store extends Plugin {
         return vault.getFolderByPath(path)!
     }
 
+    private inFolder(f: TFile, name: Folder): boolean {
+        const parent = f.parent
+        return !!parent && parent.path == this.folderPath(name)
+    }
+
     // source: https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API/Non-cryptographic_uses_of_subtle_crypto#hashing_a_file
-    private async fileHash(file: TFile) {
-        const fileBuffer = await this.app.vault.readBinary(file)
+    private async fileHash(f: TFile) {
+        const fileBuffer = await this.app.vault.readBinary(f)
         const hashBuffer = await crypto.subtle.digest("SHA-256", fileBuffer)
 
         const uint8View = new Uint8Array(hashBuffer)
@@ -164,121 +213,240 @@ export default class Store extends Plugin {
         return `sha256-${hashString}`
     }
 
-    public async readTemplate(): Promise<string> {
-        const vault = this.app.vault
-        const path = this.settings.notes.template
+    private async moveNote(f: TFile, ty: Folder) {
+        let rename = false
 
-        if (path.length == 0) {
-            return ""
+        let folder: TFolder
+        if (this.inFolder(f, ty)) {
+            folder = f.parent!
+        } else {
+            folder = await this.getFolder(ty)
+            rename = true
         }
 
-        const file = vault.getFileByPath(path)
-        if (file == null || file.extension != "md") {
-            this.settings.notes.template = ""
-            return await this.readTemplate()
+        let name: string
+        if (isUUID(f.basename)) {
+            name = f.basename
+        } else {
+            name = uuid()
+            rename = true
         }
 
-        return await vault.cachedRead(file)
+        if (rename) {
+            const path = normalizePath(`${folder.path}/${name}.${f.extension}`)
+            await this.app.fileManager.renameFile(f, path)
+        }
     }
 
-    public inStore(path: string): boolean {
-        const file = this.app.vault.getFileByPath(path)
-        if (file == null) {
-            return false
-        }
-
-        const parent = file.parent
-        if (parent == null || parent.path != this.settings.folders.notes) {
-            return false
-        }
-
-        return isUUID(file.basename)
+    // TODO: path & tag checks
+    private async storeNote(f: TFile) {
+        await this.moveNote(f, "notes")
     }
 
-    public activeInStore(): boolean {
-        const file = this.app.workspace.getActiveFile()
-        if (file == null) {
-            return false
+    // TODO: path & tag checks
+    private async storeAsset(f: TFile) {
+        let rename = false
+
+        let folder: TFolder
+        if (this.inFolder(f, "assets")) {
+            folder = f.parent!
+        } else {
+            folder = await this.getFolder("assets")
+            rename = true
         }
 
-        return this.inStore(file.path)
-    }
+        let name: string
+        if (isHash(f.basename)) {
+            name = f.basename
+        } else {
+            name = await this.fileHash(f)
+            rename = true
+        }
 
-    public async move(path: string) {
-        const file = this.app.vault.getFileByPath(path)
-        if (file == null) {
+        if (!rename) {
             return
         }
 
-        const store = await this.getFolder("notes")
-        const newPath = `${store.path}/${uuid()}.${file.extension}`
+        const path = normalizePath(`${folder.path}/${name}.${f.extension}`)
 
-        await this.app.fileManager.renameFile(file, normalizePath(newPath))
+        const old = this.app.vault.getFileByPath(path)
+        if (old) {
+            await this.app.vault.delete(old)
+        }
+
+        await this.app.fileManager.renameFile(f, path)
     }
 
-    public async moveActive() {
-        const file = this.app.workspace.getActiveFile()
-        if (file == null) {
+    private async addHeading(f: TFile) {
+        if (this.skip(f, this.settings.heading)) {
             return
         }
 
-        await this.move(file.path)
+        const processor = this.headingProcessor(f)
+        if (processor) {
+            await this.app.vault.process(f, processor)
+        }
     }
 
-    public async create(): Promise<TFile> {
-        const folder = await this.getFolder("notes")
-        const path = normalizePath(`${folder.path}/${uuid()}.md`)
-        const template = await this.readTemplate()
-        return await this.app.vault.create(path, template)
-    }
-
-    public async createTab() {
-        const file = await this.create()
-        const newLeaf = this.app.workspace.getLeaf("tab")
-        await newLeaf.openFile(file)
-    }
-
-    public async createSplit(direction: SplitDirection) {
-        const file = await this.create()
-        const newLeaf = this.app.workspace.getLeaf("split", direction)
-        await newLeaf.openFile(file)
-    }
-
-    private getAliases(file: TFile): string[] {
-        if (!isMarkdown(file)) {
-            return []
+    private headingProcessor(f: TFile): Processor | null {
+        const title = f.basename
+        if (isUUID(title)) {
+            return null
         }
 
-        const meta = this.app.metadataCache.getFileCache(file)
+        const meta = this.app.metadataCache.getFileCache(f)
         if (!meta) {
-            return []
+            return null
         }
 
         const headings = meta.headings || []
+        const titles = headings.filter((h) => h.level == 1)
+        const shiftable = !headings.some((h) => h.level == 6)
+        const offset = meta.frontmatterPosition?.end.offset || 0
+
+        switch (titles.length) {
+            case 0: // insert after the frontmatter if no titles
+                return inserter(title, offset)
+            case 1: // replace the only title if blank, otherwise skip
+                const only = titles[0]
+                if (only.heading.length != 0) {
+                    return null
+                }
+
+                const pos = only.position
+                return replacer(title, pos.start.offset, pos.end.offset)
+            default: // try to shift all headings to insert the title
+                if (!shiftable) {
+                    return null
+                }
+
+                const indexes = headings.map((h) => h.position.start.line)
+                return combine(shifter(indexes), inserter(title, offset))
+        }
+    }
+
+    private async addAliases(f: TFile) {
+        if (this.skip(f, this.settings.aliases)) {
+            return
+        }
+
+        const meta = this.app.metadataCache.getFileCache(f)
+        if (!meta) {
+            return
+        }
+
+        let process = false
         const aliases: string[] = meta.frontmatter?.aliases || []
 
+        if (
+            !this.settings.heading.enable && !isUUID(f.basename) &&
+            !aliases.some((a) => a == f.basename)
+        ) {
+            aliases.push(f.basename)
+            process = true
+        }
+
+        const headings = meta.headings || []
         const titles = headings
             .filter((h) => h.level == 1)
             .map((h) => h.heading)
             .filter((h) => h != "" && !aliases.some((a) => a == h))
 
-        if (titles.length == 0) {
-            return []
+        if (titles.length > 0) {
+            aliases.concat(titles)
+            process = true
         }
 
-        return aliases.concat(titles)
+        if (process) {
+            await this.app.fileManager.processFrontMatter(
+                f,
+                (fm) => fm.aliases = aliases,
+            )
+        }
     }
 
-    public async addAliases(file: TFile) {
-        const aliases = this.getAliases(file).filter((a) => a) // non-null
-        if (aliases.length == 0) {
-            return
+    // TODO: what if no cache?
+    private getTags(f: TFile): string[] {
+        const cache = this.app.metadataCache
+
+        const meta = cache.getFileCache(f)
+        if (meta) {
+            return meta.frontmatter?.tags || []
         }
 
-        await this.app.fileManager.processFrontMatter(
-            file,
-            (fm) => fm.aliases = aliases,
-        )
+        return []
+    }
+
+    private hasArchiveTag(tags: string[]): boolean {
+        const tag = this.settings.archive.tag
+        return !!tags.find((t) => t == tag)
+    }
+
+    private async archiveNote(f: TFile): Promise<boolean> {
+        if (!this.settings.archive.enable) {
+            return false
+        }
+
+        if (!this.hasArchiveTag(this.getTags(f))) {
+            return false
+        }
+
+        await this.moveNote(f, "archive")
+        return true
+    }
+
+    private async storeFile(f: TFile) {
+        if (!isNote(f)) {
+            return await this.storeAsset(f)
+        }
+
+        await this.addHeading(f)
+        await this.addAliases(f)
+
+        const archived = await this.archiveNote(f)
+        if (!archived) {
+            await this.storeNote(f)
+        }
+    }
+
+    private storeFolder(folder: TFolder) {
+        forEachFile(folder, async (f) => await this.storeFile(f))
+    }
+
+    private async read(path: string): Promise<string> {
+        const f = this.app.vault.getFileByPath(path)
+        if (!f || !isNote(f)) {
+            return ""
+        }
+
+        return await this.app.vault.cachedRead(f)
+    }
+
+    private async createFile(template: string): Promise<TFile> {
+        const folder = await this.getFolder("notes")
+        const path = normalizePath(`${folder.path}/${uuid()}.md`)
+        return await this.app.vault.create(path, template)
+    }
+
+    private async openTab(f: TFile, current: boolean) {
+        await this.app.workspace.getLeaf(!current).openFile(f)
+    }
+
+    private async openSplit(f: TFile, direction: SplitDirection) {
+        await this.app.workspace.getLeaf("split", direction).openFile(f)
+    }
+
+    private async createFrom(path: string): Promise<TFile> {
+        const template = await this.read(path)
+        return await this.createFile(template)
+    }
+
+    private selectTemplate(cb: (f: TFile) => Promise<void>) {
+        new TemplatesModal(
+            this.app,
+            this.settings.templates.folder,
+            async (f) => await cb(await this.createFrom(f.path)),
+        ).open()
     }
 
     private getAllLinkedFiles(file: TFile): TFile[] {
@@ -327,17 +495,17 @@ export default class Store extends Plugin {
         const vault = this.app.vault
         const pack = await this.getFolder("pack")
 
-        for (let file of files) {
-            const parent = file.parent?.path || ""
+        for (const f of files) {
+            const parent = f.parent?.path || ""
 
             const folder = normalizePath(`${pack.path}/${parent}`)
             if (!vault.getFolderByPath(folder)) {
                 await vault.createFolder(folder)
             }
 
-            const packed = normalizePath(`${pack.path}/${file.path}`)
+            const packed = normalizePath(`${pack.path}/${f.path}`)
             if (!vault.getFileByPath(packed)) {
-                await vault.copy(file, packed)
+                await vault.copy(f, packed)
             }
         }
     }
@@ -346,337 +514,128 @@ export default class Store extends Plugin {
         await this.copy(this.getAllLinkedFiles(file))
     }
 
-    // TODO: what if no cache?
-    private getTags(f: TFile) {
-        const cache = this.app.metadataCache
-
-        const meta = cache.getFileCache(f)
-        if (meta) {
-            return meta.frontmatter?.tags || []
-        }
-
-        return []
-    }
-
-    private hasArchiveTag(tags: string[]) {
-        const tag = this.settings.archive.tag
-        return !!tags.find((t) => t == tag)
-    }
-
-    private async archiveNote(f: TFile) {
-        if (!this.hasArchiveTag(this.getTags(f))) {
-            return false
-        }
-
-        const name = `${uuid()}.${f.extension}`
-        const folder = await this.getFolder("archive")
-
-        const fm = this.app.fileManager
-        await fm.renameFile(f, normalizePath(`${folder.path}/${name}`))
-
-        return true
-    }
-
-    private async archiveNotes(f: TFolder) {
-        const queue = [f]
-        let count = 0
-
-        while (queue.length > 0) {
-            const q = queue.shift()
-            if (!q) {
-                break
+    private activeFileCommand(cb: FileCallback): CheckCallback {
+        return (checking) => {
+            const f = this.app.workspace.getActiveFile()
+            if (!f) {
+                return false
             }
 
-            for (const af of q.children) {
-                if (af instanceof TFolder) {
-                    queue.push(af)
-                } else if (af instanceof TFile) {
-                    if (await this.archiveNote(af)) {
-                        count++
-                    }
-                }
+            if (!checking) {
+                cb(f)
             }
-        }
 
-        return count
-    }
-
-    public async addHeading(file: TFile) {
-        const processor = this.headingProcessor(file)
-        if (processor) {
-            await this.app.vault.process(file, processor)
+            return true
         }
     }
 
-    private headingProcessor(file: TFile): Processor | null {
-        const title = file.basename
-
-        if (this.inStore(file.path) || !isMarkdown(file)) {
-            return null
-        }
-
-        const meta = this.app.metadataCache.getFileCache(file)
-        if (meta == null) {
-            return null
-        }
-
-        const headings = meta.headings || []
-        const titles = headings.filter((h) => h.level == 1)
-        const shiftable = !headings.some((h) => h.level == 6)
-        const offset = meta.frontmatterPosition?.end.offset || 0
-
-        switch (titles.length) {
-            case 0: // insert after the frontmatter if no titles
-                return inserter(title, offset)
-            case 1: // replace the only title if blank, otherwise skip
-                const only = titles[0]
-                if (only.heading.length != 0) {
-                    return null
-                }
-
-                const pos = only.position
-                return replacer(title, pos.start.offset, pos.end.offset)
-            default: // try to shift all headings to insert the title
-                if (!shiftable) {
-                    return null
-                }
-
-                const indexes = headings.map((h) => h.position.start.line)
-                return combine(shifter(indexes), inserter(title, offset))
-        }
-    }
-
+    // TODO: l10n
     private addCommands() {
-        const l10n = this.translation.commands
-
         this.addCommand({
-            id: "create-vertical-split",
-            name: l10n.createVerticalSplit.name,
-            callback: async () => await this.createSplit("vertical"),
+            id: "create-new-tab-default",
+            name: "Create new note in new tab (default template)",
+            callback: async () =>
+                await this.openTab(
+                    await this.createFrom(this.settings.templates.default),
+                    false,
+                ),
         })
 
         this.addCommand({
-            id: "create-horizontal-split",
-            name: l10n.createHorizontalSplit.name,
-            callback: async () => await this.createSplit("horizontal"),
+            id: "create-current-tab-default",
+            name: "Create new note in current tab (default template)",
+            callback: async () =>
+                await this.openTab(
+                    await this.createFrom(this.settings.templates.default),
+                    true,
+                ),
         })
 
         this.addCommand({
-            id: "create-tab",
-            name: l10n.createTab.name,
-            callback: async () => await this.createTab(),
+            id: "create-vertical-split-default",
+            name: "Create new note in vertical split (default template)",
+            callback: async () =>
+                await this.openSplit(
+                    await this.createFrom(this.settings.templates.default),
+                    "vertical",
+                ),
         })
 
         this.addCommand({
-            id: "move-active",
-            name: l10n.moveActive.name,
-            checkCallback: (checking) => {
-                // otherwise shows if no file is open.
-                // editorCheckCallback doesn't work, because
-                // opened images don't count as "in editor"
-                if (this.app.workspace.getActiveFile() == null) {
-                    return false
-                }
-
-                if (this.activeInStore()) {
-                    return false
-                }
-
-                if (!checking) {
-                    this.moveActive()
-                }
-
-                return true
-            },
+            id: "create-horizontal-split-default",
+            name: "Create new note in horizontal split (default template)",
+            callback: async () =>
+                await this.openSplit(
+                    await this.createFrom(this.settings.templates.default),
+                    "horizontal",
+                ),
         })
 
         this.addCommand({
-            id: "add-aliases",
-            name: l10n.addAliasesActive.name,
-            checkCallback: (checking) => {
-                const file = this.app.workspace.getActiveFile()
-                if (!file || this.getAliases(file).length == 0) {
-                    return false
-                }
-
-                if (!checking) {
-                    this.addAliases(file)
-                }
-
-                return true
-            },
+            id: "create-new-tab-select",
+            name: "Create new note in new tab (select template)",
+            callback: () =>
+                this.selectTemplate(async (f) => await this.openTab(f, false)),
         })
 
         this.addCommand({
-            id: "pack-active",
-            name: l10n.packActive.name,
-            checkCallback: (checking) => {
-                const file = this.app.workspace.getActiveFile()
-                if (!file) {
-                    return false
-                }
-
-                if (!checking) {
-                    this.pack(file)
-                }
-
-                return true
-            },
+            id: "create-current-tab-select",
+            name: "Create new note in current tab (select template)",
+            callback: () =>
+                this.selectTemplate(async (f) => await this.openTab(f, true)),
         })
 
         this.addCommand({
-            id: "archive-active",
-            name: l10n.archiveActive.name,
-            checkCallback: (checking) => {
-                const file = this.app.workspace.getActiveFile()
-                if (!file || !this.hasArchiveTag(this.getTags(file))) {
-                    return false
-                }
-
-                if (!checking) {
-                    this.archiveNote(file)
-                }
-
-                return true
-            },
+            id: "create-vertical-split-select",
+            name: "Create new note in vertical split (select template)",
+            callback: () =>
+                this.selectTemplate(async (f) =>
+                    await this.openSplit(f, "vertical")
+                ),
         })
 
         this.addCommand({
-            id: "add-heading",
-            name: l10n.addHeadingActive.name,
-            checkCallback: (checking) => {
-                const file = this.app.workspace.getActiveFile()
-                if (!file || !this.headingProcessor(file)) {
-                    return false
-                }
+            id: "create-horizontal-split-select",
+            name: "Create new note in horizontal split (select template)",
+            callback: () =>
+                this.selectTemplate(async (f) =>
+                    await this.openSplit(f, "horizontal")
+                ),
+        })
 
-                if (!checking) {
-                    this.addHeading(file)
-                }
+        // editorCheckCallback doesn't work, because
+        // opened images don't count as "in editor"
 
-                return true
-            },
+        this.addCommand({
+            id: "store-current",
+            name: "Store current file",
+            checkCallback: this.activeFileCommand((f) => this.storeFile(f)),
+        })
+
+        this.addCommand({
+            id: "pack-current",
+            name: "Pack current file",
+            checkCallback: this.activeFileCommand((f) => this.pack(f)),
         })
     }
 
-    private addAbstractFileMenu(cb: (menu: Menu, file: TAbstractFile) => any) {
-        this.registerEvent(this.app.workspace.on("file-menu", cb))
-    }
-
-    private addFileMenu(cb: (menu: Menu, file: TFile) => any) {
-        this.addAbstractFileMenu((menu, file) => {
-            if (file instanceof TFile) {
-                cb(menu, file)
-            }
-        })
-    }
-
-    private addFolderMenu(cb: (menu: Menu, file: TFolder) => any) {
-        this.addAbstractFileMenu((menu, file) => {
-            if (file instanceof TFolder) {
-                cb(menu, file)
-            }
-        })
-    }
-
-    private addMenuItem(menu: Menu, data: MenuItemData) {
-        menu.addItem((item) =>
-            item
-                .setTitle(data.title)
-                .setIcon(data.icon)
-                .onClick(data.cb)
-        )
-    }
-
+    // TODO: l10n
     private addMenus() {
-        const l10n = this.translation.menus
-
-        this.addFileMenu((menu, file) => {
-            if (this.inStore(file.path)) {
-                return
+        this.registerEvent(this.app.workspace.on("file-menu", (menu, file) => {
+            if (file instanceof TFile) {
+                menu.addItem((item) =>
+                    item.setTitle("Store").setIcon("store")
+                        .onClick(() => this.storeFile(file))
+                ).addItem((item) =>
+                    item.setTitle("Pack").setIcon("package")
+                        .onClick(() => this.pack(file))
+                )
+            } else if (file instanceof TFolder) {
+                menu.addItem((item) =>
+                    item.setTitle("Store").setIcon("store")
+                        .onClick(() => this.storeFolder(file))
+                )
             }
-
-            this.addMenuItem(menu, {
-                title: l10n.move.title,
-                icon: "folder-input",
-                cb: async () => this.move(file.path),
-            })
-        })
-
-        this.addFileMenu((menu, file) => {
-            if (this.getAliases(file).length == 0) {
-                return
-            }
-
-            this.addMenuItem(menu, {
-                title: l10n.addAliases.title,
-                icon: "forward",
-                cb: async () => this.addAliases(file),
-            })
-        })
-
-        this.addFileMenu((menu, file) => {
-            this.addMenuItem(menu, {
-                title: l10n.pack.title,
-                icon: "package",
-                cb: async () => this.pack(file),
-            })
-        })
-
-        this.addFileMenu((menu, file) => {
-            if (!this.headingProcessor(file)) {
-                return
-            }
-
-            this.addMenuItem(menu, {
-                title: l10n.addHeading.title,
-                icon: "heading-1",
-                cb: async () => this.addHeading(file),
-            })
-        })
-
-        this.addFileMenu((menu, file) => {
-            if (!this.hasArchiveTag(this.getTags(file))) {
-                return
-            }
-
-            this.addMenuItem(menu, {
-                title: l10n.archiveNote.title,
-                icon: "file-archive",
-                cb: async () => this.archiveNote(file),
-            })
-        })
-
-        this.addFolderMenu((menu, file) => {
-            this.addMenuItem(menu, {
-                title: l10n.archiveNotes.title,
-                icon: "folder-archive",
-                cb: async () => {
-                    const notice = new Notice(
-                        l10n.archiveNotes.folder(file.path),
-                        0,
-                    )
-
-                    const count = await this.archiveNotes(file)
-                    if (count > 0) {
-                        notice.setMessage(l10n.archiveNotes.count(count))
-                    } else {
-                        notice.setMessage(l10n.archiveNotes.empty)
-                    }
-
-                    setTimeout(() => notice.hide(), 3000)
-                },
-            })
-        })
-    }
-
-    private addRibbonActions() {
-        const l10n = this.translation.ribbonActions
-
-        this.addRibbonIcon(
-            "folder-pen",
-            l10n.new.title,
-            async () => await this.createTab(),
-        )
+        }))
     }
 }

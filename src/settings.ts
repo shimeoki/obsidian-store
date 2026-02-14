@@ -1,28 +1,41 @@
 import { normalizePath } from "obsidian"
 
+export interface FeatureSetting {
+    enable: boolean
+    exclude: ExcludeSetting
+}
+
+export interface ExcludeSetting {
+    paths: string[]
+    props: string[]
+    tags: string[]
+}
+
 export interface Settings {
     version: number
 
-    folders: {
-        notes: string
-        assets: string
-        archive: string
-        pack: string
+    folder: string
+
+    templates: {
+        default: string
+        folder: string
     }
 
-    notes: {
-        template: string
-        templates: string
-        heading: boolean
-        aliases: boolean
+    pack: {
+        folder: string
     }
+
+    heading: FeatureSetting
+    aliases: FeatureSetting
 
     assets: {
         enable: boolean
+        folder: string
     }
 
     archive: {
         enable: boolean
+        folder: string
         tag: string
     }
 }
@@ -30,41 +43,62 @@ export interface Settings {
 export const DEFAULT_SETTINGS: Settings = {
     version: 0,
 
-    folders: {
-        notes: "notes",
-        assets: "assets",
-        archive: "archive",
-        pack: "pack",
+    folder: "store",
+
+    templates: {
+        default: "",
+        folder: "",
     },
 
-    notes: {
-        template: "",
-        templates: "",
-        heading: true,
-        aliases: true,
+    pack: {
+        folder: "pack",
+    },
+
+    heading: {
+        enable: true,
+        exclude: {
+            paths: [],
+            props: ["excalidraw-plugin", "kanban-plugin"],
+            tags: [],
+        },
+    },
+
+    aliases: {
+        enable: true,
+        exclude: {
+            paths: [],
+            props: ["excalidraw-plugin", "kanban-plugin"],
+            tags: [],
+        },
     },
 
     assets: {
         enable: true,
+        folder: "assets",
     },
 
     archive: {
         enable: true,
+        folder: "archive",
         tag: "archive",
     },
 }
 
-export function defaultSettings() {
+export function defaultSettings(): Settings {
     const settings = {} as Settings
     Object.assign(settings, DEFAULT_SETTINGS)
-    Object.assign(settings.folders, DEFAULT_SETTINGS.folders)
-    Object.assign(settings.notes, DEFAULT_SETTINGS.notes)
+    Object.assign(settings.templates, DEFAULT_SETTINGS.templates)
+    Object.assign(settings.pack, DEFAULT_SETTINGS.pack)
+    Object.assign(settings.heading, DEFAULT_SETTINGS.heading)
+    Object.assign(settings.heading.exclude, DEFAULT_SETTINGS.heading.exclude)
+    Object.assign(settings.aliases, DEFAULT_SETTINGS.aliases)
+    Object.assign(settings.aliases.exclude, DEFAULT_SETTINGS.aliases.exclude)
     Object.assign(settings.assets, DEFAULT_SETTINGS.assets)
     Object.assign(settings.archive, DEFAULT_SETTINGS.archive)
     return settings
 }
 
-function normalizeOrDefault(custom: string, defaults: string) {
+function normalizeOrDefault(custom: string, defaults: string): string {
     if (!custom) {
         return defaults
     } else {
@@ -73,35 +107,30 @@ function normalizeOrDefault(custom: string, defaults: string) {
 }
 
 // TODO: support for undefined settings
-export function normalize(settings: Settings) {
-    settings.folders.notes = normalizeOrDefault(
-        settings.folders.notes,
-        DEFAULT_SETTINGS.folders.notes,
+export function normalize(settings: Settings): Settings {
+    settings.folder = normalizeOrDefault(
+        settings.folder,
+        DEFAULT_SETTINGS.folder,
     )
 
-    settings.folders.assets = normalizeOrDefault(
-        settings.folders.assets,
-        DEFAULT_SETTINGS.folders.assets,
+    settings.templates.folder = normalizeOrDefault(
+        settings.templates.folder,
+        DEFAULT_SETTINGS.templates.folder,
     )
 
-    settings.folders.archive = normalizeOrDefault(
-        settings.folders.archive,
-        DEFAULT_SETTINGS.folders.archive,
+    settings.pack.folder = normalizeOrDefault(
+        settings.pack.folder,
+        DEFAULT_SETTINGS.pack.folder,
     )
 
-    settings.folders.pack = normalizeOrDefault(
-        settings.folders.pack,
-        DEFAULT_SETTINGS.folders.pack,
+    settings.assets.folder = normalizeOrDefault(
+        settings.assets.folder,
+        DEFAULT_SETTINGS.assets.folder,
     )
 
-    settings.notes.template = normalizeOrDefault(
-        settings.notes.template,
-        DEFAULT_SETTINGS.notes.template,
-    )
-
-    settings.notes.templates = normalizeOrDefault(
-        settings.notes.templates,
-        DEFAULT_SETTINGS.notes.templates,
+    settings.archive.folder = normalizeOrDefault(
+        settings.archive.folder,
+        DEFAULT_SETTINGS.archive.folder,
     )
 
     if (!settings.archive.tag) {
