@@ -1,45 +1,25 @@
-import { App, FuzzySuggestModal, normalizePath, TFile, TFolder } from "obsidian"
-import { isMarkdown } from "./main"
+import { App, FuzzySuggestModal, normalizePath, TFile } from "obsidian"
+import { forEachFile, isNote } from "@/files.ts"
 
 export class TemplatesModal extends FuzzySuggestModal<TFile> {
     private readonly templates: string
-    private readonly cb: (file: TFile) => void
+    private readonly cb: (f: TFile) => void
 
-    constructor(app: App, templates: string, cb: (file: TFile) => void) {
+    constructor(app: App, templates: string, cb: (f: TFile) => void) {
         super(app)
         this.templates = normalizePath(templates)
         this.cb = cb
     }
 
     override getItems(): TFile[] {
+        const notes: TFile[] = []
+
         const folder = this.app.vault.getFolderByPath(this.templates)
-        if (!folder) {
-            return []
+        if (folder) {
+            forEachFile(folder, (f) => isNote(f) && notes.push(f))
         }
 
-        const files: TFile[] = []
-
-        const queue = [folder]
-        while (queue.length > 0) {
-            const f = queue.shift()
-            if (!f) {
-                break
-            }
-
-            for (const file of f.children) {
-                if (file instanceof TFolder) {
-                    queue.push(file)
-                } else if (file instanceof TFile) {
-                    if (!isMarkdown(file)) {
-                        continue
-                    }
-
-                    files.push(file)
-                }
-            }
-        }
-
-        return files
+        return notes
     }
 
     override getItemText(item: TFile): string {
