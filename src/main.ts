@@ -319,22 +319,9 @@ export default class Store extends Plugin {
         return files.keys().toArray()
     }
 
-    private async getPackFolder(): Promise<TFolder> {
-        const vault = this.app.vault
-        const path = this.settings.folders.pack
-
-        const folder = vault.getFolderByPath(path)
-        if (folder) {
-            return folder
-        }
-
-        await vault.createFolder(path)
-        return await this.getPackFolder()
-    }
-
     private async copy(files: TFile[]) {
         const vault = this.app.vault
-        const pack = await this.getPackFolder()
+        const pack = await this.getFolder("pack")
 
         for (let file of files) {
             const parent = file.parent?.path || ""
@@ -353,19 +340,6 @@ export default class Store extends Plugin {
 
     private async pack(file: TFile) {
         await this.copy(this.getAllLinkedFiles(file))
-    }
-
-    private async getArchiveFolder(): Promise<TFolder> {
-        const vault = this.app.vault
-        const path = this.settings.folders.archive
-
-        const folder = vault.getFolderByPath(path)
-        if (folder != null) {
-            return folder
-        }
-
-        await vault.createFolder(path)
-        return await this.getArchiveFolder()
     }
 
     // TODO: what if no cache?
@@ -391,7 +365,7 @@ export default class Store extends Plugin {
         }
 
         const name = `${uuid()}.${f.extension}`
-        const folder = await this.getArchiveFolder()
+        const folder = await this.getFolder("archive")
 
         const fm = this.app.fileManager
         await fm.renameFile(f, normalizePath(`${folder.path}/${name}`))
