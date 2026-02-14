@@ -33,6 +33,10 @@ function isUUID(name: string): boolean {
         .test(name)
 }
 
+function isHash(name: string): boolean {
+    return /^sha256-[0-9a-f]{64}$/i.test(name)
+}
+
 function isMarkdown(f?: TFile): boolean {
     return f?.extension.toLowerCase() == "md"
 }
