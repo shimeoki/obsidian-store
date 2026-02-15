@@ -1,5 +1,5 @@
-import { App, FuzzySuggestModal, normalizePath, TFile } from "obsidian"
-import { forEachFile, isNote } from "@/files.ts"
+import { App, FuzzySuggestModal, normalizePath, TFile, Vault } from "obsidian"
+import { isNote } from "@/files.ts"
 
 export class TemplatesModal extends FuzzySuggestModal<TFile> {
     private readonly templates: string
@@ -16,7 +16,11 @@ export class TemplatesModal extends FuzzySuggestModal<TFile> {
 
         const folder = this.app.vault.getFolderByPath(this.templates)
         if (folder) {
-            forEachFile(folder, (f) => isNote(f) && notes.push(f))
+            Vault.recurseChildren(folder, (f) => {
+                if (f instanceof TFile && isNote(f)) {
+                    notes.push(f)
+                }
+            })
         }
 
         return notes

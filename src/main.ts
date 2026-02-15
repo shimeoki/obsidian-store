@@ -1,9 +1,9 @@
 import { normalizePath, Plugin, SplitDirection, TFile, TFolder } from "obsidian"
 
+import { isNote, recurseFiles } from "@/files.ts"
 import SettingTab from "@/tab.ts"
 import Translation from "@/i18n.ts"
 import getTranslation from "@/l10n.ts"
-import { forEachFile, isNote } from "@/files.ts"
 import { TemplatesModal } from "@/modals.ts"
 import {
     defaultSettings,
@@ -245,6 +245,10 @@ export default class Store extends Plugin {
 
     // TODO: path & tag checks
     private async storeAsset(f: TFile) {
+        if (!this.settings.assets.enable) {
+            return
+        }
+
         let rename = false
 
         let folder: TFolder
@@ -271,7 +275,7 @@ export default class Store extends Plugin {
 
         const old = this.app.vault.getFileByPath(path)
         if (old) {
-            await this.app.vault.delete(old)
+            await this.app.fileManager.trashFile(old)
         }
 
         await this.app.fileManager.renameFile(f, path)
@@ -409,8 +413,8 @@ export default class Store extends Plugin {
         }
     }
 
-    private storeFolder(folder: TFolder) {
-        forEachFile(folder, async (f) => await this.storeFile(f))
+    private async storeFolder(folder: TFolder) {
+        await recurseFiles(folder, async (f) => await this.storeFile(f))
     }
 
     private async read(path: string): Promise<string> {

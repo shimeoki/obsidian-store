@@ -1,10 +1,12 @@
 import { TFile, TFolder } from "obsidian"
 
+type FileCallback = (f: TFile) => Promise<void>
+
 export function isNote(f: TFile): boolean {
     return f.extension.toLowerCase() == "md"
 }
 
-export function forEachFile(f: TFolder, cb: (f: TFile) => void) {
+export async function recurseFiles(f: TFolder, cb: FileCallback) {
     const folders = [f]
     while (folders.length > 0) {
         const folder = folders.shift()
@@ -12,11 +14,12 @@ export function forEachFile(f: TFolder, cb: (f: TFile) => void) {
             break
         }
 
-        for (const file of folder.children) {
+        const children = [...folder.children] // snapshot
+        for (const file of children) {
             if (file instanceof TFolder) {
                 folders.push(file)
             } else if (file instanceof TFile) {
-                cb(file)
+                await cb(file)
             }
         }
     }
