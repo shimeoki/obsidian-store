@@ -23,7 +23,7 @@ export interface Settings {
         folder: string
     }
 
-    heading: FeatureSetting
+    h1: FeatureSetting
     aliases: FeatureSetting
 
     assets: {
@@ -52,7 +52,7 @@ export const DEFAULT_SETTINGS: Settings = {
         folder: "pack",
     },
 
-    heading: {
+    h1: {
         enable: true,
         exclude: {
             props: ["excalidraw-plugin", "kanban-plugin"],
@@ -83,8 +83,8 @@ export function defaultSettings(): Settings {
     Object.assign(settings, DEFAULT_SETTINGS)
     Object.assign(settings.templates, DEFAULT_SETTINGS.templates)
     Object.assign(settings.pack, DEFAULT_SETTINGS.pack)
-    Object.assign(settings.heading, DEFAULT_SETTINGS.heading)
-    Object.assign(settings.heading.exclude, DEFAULT_SETTINGS.heading.exclude)
+    Object.assign(settings.h1, DEFAULT_SETTINGS.h1)
+    Object.assign(settings.h1.exclude, DEFAULT_SETTINGS.h1.exclude)
     Object.assign(settings.aliases, DEFAULT_SETTINGS.aliases)
     Object.assign(settings.aliases.exclude, DEFAULT_SETTINGS.aliases.exclude)
     Object.assign(settings.assets, DEFAULT_SETTINGS.assets)

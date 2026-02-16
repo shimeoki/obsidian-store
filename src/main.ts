@@ -100,9 +100,9 @@ export default class Store extends Plugin {
         }
 
         if (data.heading) {
-            Object.assign(settings.heading, data.heading)
+            Object.assign(settings.h1, data.heading)
             if (data.heading.exclude) {
-                Object.assign(settings.heading.exclude, data.heading.exclude)
+                Object.assign(settings.h1.exclude, data.heading.exclude)
             }
         }
 
@@ -263,7 +263,7 @@ export default class Store extends Plugin {
     }
 
     private async addHeading(f: TFile) {
-        if (this.skip(f, this.settings.heading)) {
+        if (this.skip(f, this.settings.h1)) {
             return
         }
 
@@ -324,7 +324,7 @@ export default class Store extends Plugin {
         const aliases: string[] = meta.frontmatter?.aliases || []
 
         if (
-            !this.settings.heading.enable && !isUUID(f.basename) &&
+            !this.settings.h1.enable && !isUUID(f.basename) &&
             !aliases.some((a) => a == f.basename)
         ) {
             aliases.push(f.basename)
