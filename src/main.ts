@@ -129,32 +129,13 @@ export default class Store extends Plugin {
     }
 
     private exclude(file: TFile, exclude: ExcludeSetting): boolean {
-        for (const path of exclude.paths) {
-            const re = new RegExp(path)
-            if (re.test(file.path)) {
-                return true
-            }
-        }
-
         const meta = this.app.metadataCache.getFileCache(file)
         if (!meta || !meta.frontmatter) {
             return false
         }
 
         for (const prop of exclude.props) {
-            // what if equals to false?
-            if (meta.frontmatter[prop]) {
-                return true
-            }
-        }
-
-        const tags: string[] = meta.frontmatter.tags || []
-        if (tags.length == 0) {
-            return false
-        }
-
-        for (const tag of exclude.tags) {
-            if (tags.some((t) => t == tag)) {
+            if (meta.frontmatter[prop] != undefined) {
                 return true
             }
         }

@@ -6,9 +6,7 @@ export interface FeatureSetting {
 }
 
 export interface ExcludeSetting {
-    paths: string[]
     props: string[]
-    tags: string[]
 }
 
 export interface Settings {
@@ -57,18 +55,14 @@ export const DEFAULT_SETTINGS: Settings = {
     heading: {
         enable: true,
         exclude: {
-            paths: [],
             props: ["excalidraw-plugin", "kanban-plugin"],
-            tags: [],
         },
     },
 
     aliases: {
         enable: true,
         exclude: {
-            paths: [],
             props: ["excalidraw-plugin", "kanban-plugin"],
-            tags: [],
         },
     },
 
