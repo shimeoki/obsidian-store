@@ -1,4 +1,4 @@
-import { App, FuzzySuggestModal, normalizePath, TFile, Vault } from "obsidian"
+import { App, FuzzySuggestModal, TFile, Vault } from "obsidian"
 import { isNote } from "@/files.ts"
 
 export class TemplatesModal extends FuzzySuggestModal<TFile> {
@@ -7,7 +7,7 @@ export class TemplatesModal extends FuzzySuggestModal<TFile> {
 
     constructor(app: App, templates: string, cb: (f: TFile) => void) {
         super(app)
-        this.templates = normalizePath(templates)
+        this.templates = templates
         this.cb = cb
     }
 
