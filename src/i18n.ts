@@ -1,3 +1,7 @@
+type SettingGroup = {
+    heading: string
+}
+
 type Setting = {
     name: string
     desc: string
@@ -15,67 +19,58 @@ type Menu = {
     title: string
 }
 
-type RibbonAction = {
-    title: string
-}
-
 export default interface Translation {
     settings: {
-        folders: {
-            title: string
-            notes: Setting
-            assets: Setting
-            archive: Setting
-            pack: Setting
+        general: {
+            folder: Setting
         }
 
-        notes: {
-            title: string
-            template: PlaceholderSetting
-            templates: PlaceholderSetting
-            heading: Setting
-            aliases: Setting
+        templates: SettingGroup & {
+            default: PlaceholderSetting
+            folder: PlaceholderSetting
         }
 
-        assets: {
-            title: string
+        pack: SettingGroup & {
+            folder: Setting
+        }
+
+        h1: SettingGroup & {
             enable: Setting
         }
 
-        archive: {
-            title: string
+        aliases: SettingGroup & {
             enable: Setting
+        }
+
+        assets: SettingGroup & {
+            enable: Setting
+            folder: Setting
+        }
+
+        archive: SettingGroup & {
+            enable: Setting
+            folder: Setting
             tag: Setting
         }
     }
 
     commands: {
-        createVerticalSplit: Command
-        createHorizontalSplit: Command
-        createTab: Command
-        moveActive: Command
-        addHeadingActive: Command
-        addAliasesActive: Command
-        packActive: Command
-        archiveActive: Command
+        createNewTabDefault: Command
+        createCurrentTabDefault: Command
+        createVerticalSplitDefault: Command
+        createHorizontalSplitDefault: Command
+
+        createNewTabSelect: Command
+        createCurrentTabSelect: Command
+        createVerticalSplitSelect: Command
+        createHorizontalSplitSelect: Command
+
+        storeCurrent: Command
+        packCurrent: Command
     }
 
     menus: {
-        move: Menu
-        addHeading: Menu
-        addAliases: Menu
+        store: Menu
         pack: Menu
-
-        archiveNotes: Menu & {
-            folder: (p: string) => string
-            count: (n: number) => string
-            empty: string
-        }
-
-        archiveNote: Menu
-    }
-
-    ribbonActions: {
-        new: RibbonAction
     }
 }

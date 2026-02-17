@@ -2,152 +2,142 @@ import Translation from "@/i18n.ts"
 
 export default {
     settings: {
-        folders: {
-            title: "Folders",
-
-            notes: {
-                name: "Notes",
-                desc: "Location for all stored notes.",
-            },
-
-            assets: {
-                name: "Assets",
-                desc:
-                    "Location for all stored immutable assets: PNG, JPEG and PDF files.",
-            },
-
-            archive: {
-                name: "Archive",
-                desc:
-                    "Location for all archived notes. It's recommended to keep this folder in Obsidian's 'excluded files'.",
-            },
-
-            pack: {
-                name: "Pack",
-                desc: "Location for the 'packed' files.",
+        general: {
+            folder: {
+                name: "Store folder location",
+                desc: "Stored notes will be placed here.",
             },
         },
 
-        notes: {
-            title: "Notes",
+        templates: {
+            heading: "Templates",
 
-            template: {
-                name: "Template",
-                desc: "Location of the default template for new notes.",
-                placeholder: "Example: templates/store.md",
+            default: {
+                name: "File location",
+                desc: "Choose a note to use as a default template.",
+                placeholder: "Example: templates/default.md",
             },
 
-            templates: {
-                name: "Templates",
-                desc: "Location of the template folder for new notes.",
+            folder: {
+                name: "Folder location",
+                desc: "Notes in this folder will be available as templates.",
                 placeholder: "Example: templates",
             },
+        },
 
-            heading: {
-                name: "Heading generation",
-                desc:
-                    "Whether to enable heading generation based on the original filename.",
+        pack: {
+            heading: "Pack",
+
+            folder: {
+                name: "Folder location",
+                desc: "Packed files will be placed here.",
             },
+        },
 
-            aliases: {
-                name: "Aliases generation",
+        h1: {
+            heading: "H1",
+
+            enable: {
+                name: "Automatic generation",
                 desc:
-                    "Whether to enable aliases generation based on the headings.",
+                    "Whether to enable level 1 heading generation based on the filename.",
+            },
+        },
+
+        aliases: {
+            heading: "Aliases",
+
+            enable: {
+                name: "Automatic generation",
+                desc:
+                    "Whether to enable aliases generation based on the filename and level 1 heading.",
             },
         },
 
         assets: {
-            title: "Assets",
+            heading: "Assets",
 
             enable: {
-                name: "Automatic processing",
+                name: "Storing",
                 desc:
-                    "Whether to process immutable assets (PNG's, JPEG's, PDF's) and rename them based on their hash while storing notes.",
+                    "Whether to enable storing for other files (not notes) in the vault.",
+            },
+
+            folder: {
+                name: "Folder location",
+                desc: "Stored assets will be placed here.",
             },
         },
 
         archive: {
-            title: "Archive",
+            heading: "Archive",
 
             enable: {
-                name: "Automatic processing",
-                desc:
-                    "Whether to archive notes with the required tag while storing notes. Doesn't disable the feature entirely.",
+                name: "Archiving",
+                desc: "Whether to enable archiving for notes.",
+            },
+
+            folder: {
+                name: "Folder location",
+                desc: "Archived notes will be placed here.",
             },
 
             tag: {
-                name: "Tag",
-                desc: "Name of the tag for the note to be archived.",
+                name: "Tag name",
+                desc: "Notes with this tag will be archived",
             },
         },
     },
 
     commands: {
-        createVerticalSplit: {
-            name: "Create new note in a vertical split",
+        createNewTabDefault: {
+            name: "Create new note in new tab (default template)",
         },
 
-        createHorizontalSplit: {
-            name: "Create new note in a horizontal split",
+        createCurrentTabDefault: {
+            name: "Create new note in current tab (default template)",
         },
 
-        createTab: {
-            name: "Create new note in a tab",
+        createVerticalSplitDefault: {
+            name: "Create new note in vertical split (default template)",
         },
 
-        moveActive: {
-            name: "Move active file to the store",
+        createHorizontalSplitDefault: {
+            name: "Create new note in horizontal split (default template)",
         },
 
-        addHeadingActive: {
-            name: "Add first-level heading in active note",
+        createNewTabSelect: {
+            name: "Create new note in new tab (select template)",
         },
 
-        addAliasesActive: {
-            name: "Add aliases in active note",
+        createCurrentTabSelect: {
+            name: "Create new note in current tab (select template)",
         },
 
-        packActive: {
-            name: "Pack active note",
+        createVerticalSplitSelect: {
+            name: "Create new note in vertical split (select template)",
         },
 
-        archiveActive: {
-            name: "Archive active note",
+        createHorizontalSplitSelect: {
+            name: "Create new note in horizontal split (select template)",
+        },
+
+        storeCurrent: {
+            name: "Store current file",
+        },
+
+        packCurrent: {
+            name: "Pack current file",
         },
     },
 
     menus: {
-        move: {
-            title: "Move to the store",
-        },
-
-        addHeading: {
-            title: "Add first-level heading",
-        },
-
-        addAliases: {
-            title: "Add aliases",
+        store: {
+            title: "Store",
         },
 
         pack: {
             title: "Pack",
-        },
-
-        archiveNotes: {
-            title: "Archive notes in folder",
-            folder: (p) => `Archiving notes in '${p}'...`,
-            count: (n) => `Archived ${n} note(s).`,
-            empty: "No notes archived.",
-        },
-
-        archiveNote: {
-            title: "Archive note",
-        },
-    },
-
-    ribbonActions: {
-        new: {
-            title: "Create new note in the store",
         },
     },
 } as const satisfies Translation

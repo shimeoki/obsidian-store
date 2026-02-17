@@ -514,11 +514,12 @@ export default class Store extends Plugin {
         }
     }
 
-    // TODO: l10n
     private addCommands() {
+        const l10n = this.translation.commands
+
         this.addCommand({
             id: "create-new-tab-default",
-            name: "Create new note in new tab (default template)",
+            name: l10n.createNewTabDefault.name,
             callback: async () =>
                 await this.openTab(
                     await this.createFrom(this.settings.templates.default),
@@ -528,7 +529,7 @@ export default class Store extends Plugin {
 
         this.addCommand({
             id: "create-current-tab-default",
-            name: "Create new note in current tab (default template)",
+            name: l10n.createCurrentTabDefault.name,
             callback: async () =>
                 await this.openTab(
                     await this.createFrom(this.settings.templates.default),
@@ -538,7 +539,7 @@ export default class Store extends Plugin {
 
         this.addCommand({
             id: "create-vertical-split-default",
-            name: "Create new note in vertical split (default template)",
+            name: l10n.createVerticalSplitDefault.name,
             callback: async () =>
                 await this.openSplit(
                     await this.createFrom(this.settings.templates.default),
@@ -548,7 +549,7 @@ export default class Store extends Plugin {
 
         this.addCommand({
             id: "create-horizontal-split-default",
-            name: "Create new note in horizontal split (default template)",
+            name: l10n.createHorizontalSplitDefault.name,
             callback: async () =>
                 await this.openSplit(
                     await this.createFrom(this.settings.templates.default),
@@ -558,21 +559,21 @@ export default class Store extends Plugin {
 
         this.addCommand({
             id: "create-new-tab-select",
-            name: "Create new note in new tab (select template)",
+            name: l10n.createNewTabSelect.name,
             callback: () =>
                 this.selectTemplate(async (f) => await this.openTab(f, false)),
         })
 
         this.addCommand({
             id: "create-current-tab-select",
-            name: "Create new note in current tab (select template)",
+            name: l10n.createCurrentTabSelect.name,
             callback: () =>
                 this.selectTemplate(async (f) => await this.openTab(f, true)),
         })
 
         this.addCommand({
             id: "create-vertical-split-select",
-            name: "Create new note in vertical split (select template)",
+            name: l10n.createVerticalSplitSelect.name,
             callback: () =>
                 this.selectTemplate(async (f) =>
                     await this.openSplit(f, "vertical")
@@ -581,7 +582,7 @@ export default class Store extends Plugin {
 
         this.addCommand({
             id: "create-horizontal-split-select",
-            name: "Create new note in horizontal split (select template)",
+            name: l10n.createHorizontalSplitSelect.name,
             callback: () =>
                 this.selectTemplate(async (f) =>
                     await this.openSplit(f, "horizontal")
@@ -593,31 +594,31 @@ export default class Store extends Plugin {
 
         this.addCommand({
             id: "store-current",
-            name: "Store current file",
+            name: l10n.storeCurrent.name,
             checkCallback: this.activeFileCommand((f) => this.storeFile(f)),
         })
 
         this.addCommand({
             id: "pack-current",
-            name: "Pack current file",
+            name: l10n.packCurrent.name,
             checkCallback: this.activeFileCommand((f) => this.pack(f)),
         })
     }
 
-    // TODO: l10n
     private addMenus() {
+        const l10n = this.translation.menus
         this.registerEvent(this.app.workspace.on("file-menu", (menu, file) => {
             if (file instanceof TFile) {
                 menu.addItem((item) =>
-                    item.setTitle("Store").setIcon("store")
+                    item.setTitle(l10n.store.title).setIcon("store")
                         .onClick(() => this.storeFile(file))
                 ).addItem((item) =>
-                    item.setTitle("Pack").setIcon("package")
+                    item.setTitle(l10n.pack.title).setIcon("package")
                         .onClick(() => this.pack(file))
                 )
             } else if (file instanceof TFolder) {
                 menu.addItem((item) =>
-                    item.setTitle("Store").setIcon("store")
+                    item.setTitle(l10n.store.title).setIcon("store")
                         .onClick(() => this.storeFolder(file))
                 )
             }
