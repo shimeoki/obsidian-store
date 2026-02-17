@@ -10,8 +10,8 @@ export default function getTranslation(): Translation {
     switch (getLanguage()) {
         case "en":
             return en
-        // case "ru":
-        //     return ru
+        case "ru":
+            return ru
         default:
             return en
     }
