@@ -2,92 +2,142 @@ import Translation from "@/i18n.ts"
 
 export default {
     settings: {
-        folder: {
-            name: "Folder Location",
-            description:
-                "Path to the store folder. Created on demand if doesn't exist.",
-            placeholder: "store",
+        general: {
+            folder: {
+                name: "Store folder location",
+                desc: "Stored notes will be placed here.",
+            },
         },
 
-        template: {
-            name: "Template location",
-            description: "Path to the template for new notes.",
-            placeholder: "Example: templates/store.md",
+        templates: {
+            heading: "Templates",
+
+            default: {
+                name: "File location",
+                desc: "Choose a note to use as a default template.",
+                placeholder: "Example: templates/default.md",
+            },
+
+            folder: {
+                name: "Folder location",
+                desc: "Notes in this folder will be available as templates.",
+                placeholder: "Example: templates",
+            },
         },
 
         pack: {
-            name: "Pack location",
-            description: "Path to the folder for packed files.",
-            placeholder: "pack",
+            heading: "Pack",
+
+            folder: {
+                name: "Folder location",
+                desc: "Packed files will be placed here.",
+            },
+        },
+
+        h1: {
+            heading: "H1",
+
+            enable: {
+                name: "Automatic generation",
+                desc:
+                    "Whether to enable level 1 heading generation based on the filename.",
+            },
+        },
+
+        aliases: {
+            heading: "Aliases",
+
+            enable: {
+                name: "Automatic generation",
+                desc:
+                    "Whether to enable aliases generation based on the filename and level 1 heading.",
+            },
+        },
+
+        assets: {
+            heading: "Assets",
+
+            enable: {
+                name: "Storing",
+                desc:
+                    "Whether to enable storing for other files (not notes) in the vault.",
+            },
+
+            folder: {
+                name: "Folder location",
+                desc: "Stored assets will be placed here.",
+            },
+        },
+
+        archive: {
+            heading: "Archive",
+
+            enable: {
+                name: "Archiving",
+                desc: "Whether to enable archiving for notes.",
+            },
+
+            folder: {
+                name: "Folder location",
+                desc: "Archived notes will be placed here.",
+            },
+
+            tag: {
+                name: "Tag name",
+                desc: "Notes with this tag will be archived",
+            },
         },
     },
 
     commands: {
-        createVerticalSplit: {
-            name: "Create new note in a vertical split",
+        createNewTabDefault: {
+            name: "Create new note in new tab (default template)",
         },
 
-        createHorizontalSplit: {
-            name: "Create new note in a horizontal split",
+        createCurrentTabDefault: {
+            name: "Create new note in current tab (default template)",
         },
 
-        createTab: {
-            name: "Create new note in a tab",
+        createVerticalSplitDefault: {
+            name: "Create new note in vertical split (default template)",
         },
 
-        moveActive: {
-            name: "Move active file to the store",
+        createHorizontalSplitDefault: {
+            name: "Create new note in horizontal split (default template)",
         },
 
-        addHeadingActive: {
-            name: "Add first-level heading in active note",
+        createNewTabSelect: {
+            name: "Create new note in new tab (select template)",
         },
 
-        addAliasesActive: {
-            name: "Add aliases in active note",
+        createCurrentTabSelect: {
+            name: "Create new note in current tab (select template)",
         },
 
-        packActive: {
-            name: "Pack active note",
+        createVerticalSplitSelect: {
+            name: "Create new note in vertical split (select template)",
         },
 
-        archiveActive: {
-            name: "Archive active note",
+        createHorizontalSplitSelect: {
+            name: "Create new note in horizontal split (select template)",
+        },
+
+        storeCurrent: {
+            name: "Store current file",
+        },
+
+        packCurrent: {
+            name: "Pack current file",
         },
     },
 
     menus: {
-        move: {
-            title: "Move to the store",
-        },
-
-        addHeading: {
-            title: "Add first-level heading",
-        },
-
-        addAliases: {
-            title: "Add aliases",
+        store: {
+            title: "Store",
         },
 
         pack: {
             title: "Pack",
-        },
-
-        archiveNotes: {
-            title: "Archive notes in folder",
-            folder: (p) => `Archiving notes in '${p}'...`,
-            count: (n) => `Archived ${n} note(s).`,
-            empty: "No notes archived.",
-        },
-
-        archiveNote: {
-            title: "Archive note",
-        },
-    },
-
-    ribbonActions: {
-        new: {
-            title: "Create new note in the store",
         },
     },
 } as const satisfies Translation
