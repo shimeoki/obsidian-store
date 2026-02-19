@@ -2,6 +2,8 @@
 
 Manage your notes within a single folder. Almost.
 
+![banner](./banner.png)
+
 ## Usage
 
 > [!WARNING]
