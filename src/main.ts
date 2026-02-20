@@ -338,7 +338,7 @@ export default class Store extends Plugin {
             .filter((h) => h != "" && !aliases.some((a) => a == h))
 
         if (titles.length > 0) {
-            aliases.concat(titles)
+            aliases.push(...titles)
             process = true
         }
 
