@@ -13,7 +13,7 @@ Manage your notes within a single folder. Almost.
 
 It's recommended to read the documentation before installing the plugin. It's
 hard to describe in a few words why this plugin is even needed and what it does,
-so a separate usage "book" is needed. It's available in multiple languages.
+so a separate usage "book" is needed.
 
 See [docs](./docs).
 
@@ -29,8 +29,8 @@ will submit a ticket.
 
 You can install [BRAT](https://github.com/TfTHacker/obsidian42-brat) to
 install/update the plugin automatically. Add the repository URL in "Beta plugin
-list" section. It's recommended to not use the latest version right now, because
-the plugin is not stable yet.
+list" section. It's recommended to not use the "latest version" tag right now,
+because the plugin is not stable yet. Use a specific version (like 0.7.0).
 
 ### GitHub releases
 
@@ -74,7 +74,7 @@ Before the pull request run
 nix flake check
 ```
 
-to ensure the package builds and the project is formatted.
+to ensure the package builds successfully and the project is formatted.
 
 ### pnpm
 
