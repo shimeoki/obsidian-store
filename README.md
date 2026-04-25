@@ -52,40 +52,11 @@ either:
 All contributions with the suspicion of AI usage in text/code are immediately
 declined.
 
-### Nix
-
-This repository is a Nix flake and contains a devshell, a formatter and some
-checks.
+I use Nix for development, so this repository contains everything you need as a
+Nix flake:
 
 ```sh
-nix develop
-```
-
-starts a shell with `pnpm` and `nodejs` available. To then format the project,
-run
-
-```sh
-nix fmt
-```
-
-Before the pull request run
-
-```sh
-nix flake check
-```
-
-to ensure the package builds successfully and the project is formatted.
-
-### pnpm
-
-On other setups you can just use `pnpm` directly. To format the project, run
-
-```sh
-pnpm fmt
-```
-
-to build the plugin, run
-
-```sh
-pnpm build
+nix develop     # pnpm + nodejs with install hook
+nix fmt         # treefmt
+nix flake check # package + formatting
 ```
