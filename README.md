@@ -60,3 +60,8 @@ nix develop     # pnpm + nodejs with install hook
 nix fmt         # treefmt
 nix flake check # package + formatting
 ```
+
+## License
+
+Unless otherwise noted, the source files are distributed under the
+[BSD-3-Clause license](./LICENSE).

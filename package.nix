@@ -1,5 +1,6 @@
 {
     stdenv,
+    lib,
     fetchPnpmDeps,
     pnpmConfigHook,
     nodejs_25,
@@ -45,4 +46,11 @@ stdenv.mkDerivation (finalAttrs: {
 
         runHook postInstall
     '';
+
+    meta = {
+        description = "Manage your notes within a single folder.";
+        homepage = "https://github.com/shimeoki/obsidian-store";
+        license = lib.licenses.bsd3;
+        platforms = lib.platforms.all;
+    };
 })
