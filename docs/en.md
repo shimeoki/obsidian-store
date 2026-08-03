@@ -66,8 +66,9 @@ After some thinking, I decided to use UUID (v4):
 
 - Using a date doesn't guarantee uniqueness entirely: it's possible to create
   two notes in one second or you can get a note from another person with the
-  same date. The conflict can occur if notes have the same name deliberately,
-  which is a good thing to notice copies or versions of the same note.
+  same date. The conflict with UUIDs can occur if notes have the same name
+  deliberately, which is a good thing to notice copies or versions of the same
+  note.
 
 - UUIDs are stateless. Even if you have a couple hundred notes to import into
   the vault, they all get a unique name and can be used in your vault without
@@ -123,7 +124,7 @@ Store allows to enable automatic generation of H1 based on the filename:
 - If file had a blank H1, it's replaced with the filename.
 - If file had a single H1, then nothing is done.
 - If file had multiple H1s, then all headings are "shifted" one level up (H1's
-  become H2s) and H1 is inserted at the start. The operations fails if there is
+  become H2s) and H1 is inserted at the start. The operation fails if there is
   at least one H6.
 
 If file already had UUID as the filename, it's simply ignored.
@@ -134,16 +135,12 @@ Obsidian has a built-in property for notes: `aliases`. It's a list of strings
 like `tags`. Entries in this list are used to refer to the note like a filename.
 
 It's pretty useful to name the note in different languages or just different
-titles.
-
-With the Store approach they are almost mandatory to use, because they work for
-both links and quick switcher.
+titles. With the Store approach they are almost mandatory to use, because they\
+work for both links and quick switcher.
 
 As well with the H1, the plugin has an optional feature to generate aliases for
-you.
-
-They are generated based on the filename and H1. Filename is not used, if it's a
-UUID.
+you. They are generated based on the filename and H1. Filename is not used, if
+it's a UUID.
 
 ## Benefits
 
@@ -158,9 +155,8 @@ I mark this as an advantage, because the manual restriction of the structure
 just doesn't allow you to list through folders even if you wanted to. Now you
 must adapt and use search, which is in many cases more effective.
 
-Also instead of creating notes that are "just a part of a directory and should
-be linked to an index note" you are probably going to create more
-"self-contained" notes.
+Also instead of creating notes that are "just a part of a directory acts as an
+index note", you are probably going to create more "self-contained" notes.
 
 ## Issues
 
@@ -252,7 +248,7 @@ parent.
 Now it's pretty much impossible, and you are certainly not going to go through
 all linked files manually. The pack feature allows to do this automatically.
 
-It copies the packed files in the configured folder by copying the the file into
+It copies the packed files in the configured folder by copying the file into
 it by "absolute vault path" to preserve the links no matter what the user chose
 in the settings.
 
