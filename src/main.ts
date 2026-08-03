@@ -5,13 +5,7 @@ import SettingTab from "@/tab.ts"
 import Translation from "@/i18n.ts"
 import getTranslation from "@/l10n.ts"
 import { TemplatesModal } from "@/modals.ts"
-import {
-    defaultSettings,
-    ExcludeSetting,
-    FeatureSetting,
-    normalize,
-    Settings,
-} from "@/settings.ts"
+import { defaultSettings, normalize, Settings } from "@/settings.ts"
 
 type CheckCallback = (checking: boolean) => boolean
 type FileCallback = (f: TFile) => void
@@ -63,7 +57,7 @@ function combine(...processors: Processor[]): Processor {
 }
 
 export default class Store extends Plugin {
-    settings!: Settings
+    declare settings: Settings
     translation!: Translation
 
     override async onload() {
@@ -90,37 +84,6 @@ export default class Store extends Plugin {
         }
 
         Object.assign(settings, data)
-
-        if (data.templates) {
-            Object.assign(settings.templates, data.templates)
-        }
-
-        if (data.pack) {
-            Object.assign(settings.pack, data.pack)
-        }
-
-        if (data.heading) {
-            Object.assign(settings.h1, data.heading)
-            if (data.heading.exclude) {
-                Object.assign(settings.h1.exclude, data.heading.exclude)
-            }
-        }
-
-        if (data.aliases) {
-            Object.assign(settings.aliases, data.aliases)
-            if (data.aliases.exclude) {
-                Object.assign(settings.aliases.exclude, data.aliases.exclude)
-            }
-        }
-
-        if (data.assets) {
-            Object.assign(settings.assets, data.assets)
-        }
-
-        if (data.archive) {
-            Object.assign(settings.archive, data.archive)
-        }
-
         return settings
     }
 
@@ -128,13 +91,13 @@ export default class Store extends Plugin {
         await this.saveData(normalize(this.settings))
     }
 
-    private exclude(file: TFile, exclude: ExcludeSetting): boolean {
+    private exclude(file: TFile, props: string[]): boolean {
         const meta = this.app.metadataCache.getFileCache(file)
         if (!meta || !meta.frontmatter) {
             return false
         }
 
-        for (const prop of exclude.props) {
+        for (const prop of props) {
             if (meta.frontmatter[prop] != undefined) {
                 return true
             }
@@ -143,12 +106,12 @@ export default class Store extends Plugin {
         return false
     }
 
-    private skip(file: TFile, feature: FeatureSetting): boolean {
-        if (!feature.enable) {
+    private skip(file: TFile, enabled: boolean, props: string[]): boolean {
+        if (!enabled) {
             return true
         }
 
-        return this.exclude(file, feature.exclude)
+        return this.exclude(file, props)
     }
 
     private folderPath(name: Folder): string {
@@ -156,11 +119,11 @@ export default class Store extends Plugin {
             case "notes":
                 return this.settings.folder
             case "assets":
-                return this.settings.assets.folder
+                return this.settings.assetsFolder
             case "archive":
-                return this.settings.archive.folder
+                return this.settings.archiveFolder
             case "pack":
-                return this.settings.pack.folder
+                return this.settings.packFolder
         }
     }
 
@@ -226,7 +189,7 @@ export default class Store extends Plugin {
 
     // TODO: path & tag checks
     private async storeAsset(f: TFile) {
-        if (!this.settings.assets.enable) {
+        if (!this.settings.assetsEnabled) {
             return
         }
 
@@ -263,7 +226,9 @@ export default class Store extends Plugin {
     }
 
     private async addHeading(f: TFile) {
-        if (this.skip(f, this.settings.h1)) {
+        if (
+            this.skip(f, this.settings.h1Enabled, this.settings.h1ExcludeProps)
+        ) {
             return
         }
 
@@ -311,7 +276,13 @@ export default class Store extends Plugin {
     }
 
     private async addAliases(f: TFile) {
-        if (this.skip(f, this.settings.aliases)) {
+        if (
+            this.skip(
+                f,
+                this.settings.aliasesEnabled,
+                this.settings.aliasesExcludeProps,
+            )
+        ) {
             return
         }
 
@@ -324,7 +295,7 @@ export default class Store extends Plugin {
         const aliases: string[] = meta.frontmatter?.aliases || []
 
         if (
-            !this.settings.h1.enable && !isUUID(f.basename) &&
+            !this.settings.h1Enabled && !isUUID(f.basename) &&
             !aliases.some((a) => a == f.basename)
         ) {
             aliases.push(f.basename)
@@ -363,12 +334,12 @@ export default class Store extends Plugin {
     }
 
     private hasArchiveTag(tags: string[]): boolean {
-        const tag = this.settings.archive.tag
+        const tag = this.settings.archiveTag
         return !!tags.find((t) => t == tag)
     }
 
     private async archiveNote(f: TFile): Promise<boolean> {
-        if (!this.settings.archive.enable) {
+        if (!this.settings.archiveEnabled) {
             return false
         }
 
@@ -429,7 +400,7 @@ export default class Store extends Plugin {
     private selectTemplate(cb: (f: TFile) => Promise<void>) {
         new TemplatesModal(
             this.app,
-            this.settings.templates.folder,
+            this.settings.templatesFolder,
             async (f) => await cb(await this.createFrom(f.path)),
         ).open()
     }
@@ -522,7 +493,7 @@ export default class Store extends Plugin {
             name: l10n.createNewTabDefault.name,
             callback: async () =>
                 await this.openTab(
-                    await this.createFrom(this.settings.templates.default),
+                    await this.createFrom(this.settings.templatesDefault),
                     false,
                 ),
         })
@@ -532,7 +503,7 @@ export default class Store extends Plugin {
             name: l10n.createCurrentTabDefault.name,
             callback: async () =>
                 await this.openTab(
-                    await this.createFrom(this.settings.templates.default),
+                    await this.createFrom(this.settings.templatesDefault),
                     true,
                 ),
         })
@@ -542,7 +513,7 @@ export default class Store extends Plugin {
             name: l10n.createVerticalSplitDefault.name,
             callback: async () =>
                 await this.openSplit(
-                    await this.createFrom(this.settings.templates.default),
+                    await this.createFrom(this.settings.templatesDefault),
                     "vertical",
                 ),
         })
@@ -552,7 +523,7 @@ export default class Store extends Plugin {
             name: l10n.createHorizontalSplitDefault.name,
             callback: async () =>
                 await this.openSplit(
-                    await this.createFrom(this.settings.templates.default),
+                    await this.createFrom(this.settings.templatesDefault),
                     "horizontal",
                 ),
         })

@@ -1,41 +1,27 @@
 import { normalizePath } from "obsidian"
 
-export interface FeatureSetting {
-    enable: boolean
-    exclude: ExcludeSetting
-}
-
-export interface ExcludeSetting {
-    props: string[]
-}
-
 export interface Settings {
     version: number
 
     folder: string
 
-    templates: {
-        default: string
-        folder: string
-    }
+    templatesDefault: string
+    templatesFolder: string
 
-    pack: {
-        folder: string
-    }
+    packFolder: string
 
-    h1: FeatureSetting
-    aliases: FeatureSetting
+    h1Enabled: boolean
+    h1ExcludeProps: string[]
 
-    assets: {
-        enable: boolean
-        folder: string
-    }
+    aliasesEnabled: boolean
+    aliasesExcludeProps: string[]
 
-    archive: {
-        enable: boolean
-        folder: string
-        tag: string
-    }
+    assetsEnabled: boolean
+    assetsFolder: string
+
+    archiveEnabled: boolean
+    archiveFolder: string
+    archiveTag: string
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -43,52 +29,28 @@ export const DEFAULT_SETTINGS: Settings = {
 
     folder: "store",
 
-    templates: {
-        default: "",
-        folder: "",
-    },
+    templatesDefault: "",
+    templatesFolder: "",
 
-    pack: {
-        folder: "pack",
-    },
+    packFolder: "pack",
 
-    h1: {
-        enable: true,
-        exclude: {
-            props: ["excalidraw-plugin", "kanban-plugin"],
-        },
-    },
+    h1Enabled: true,
+    h1ExcludeProps: ["excalidraw-plugin", "kanban-plugin"],
 
-    aliases: {
-        enable: true,
-        exclude: {
-            props: ["excalidraw-plugin", "kanban-plugin"],
-        },
-    },
+    aliasesEnabled: true,
+    aliasesExcludeProps: ["excalidraw-plugin", "kanban-plugin"],
 
-    assets: {
-        enable: true,
-        folder: "assets",
-    },
+    assetsEnabled: true,
+    assetsFolder: "assets",
 
-    archive: {
-        enable: true,
-        folder: "archive",
-        tag: "archive",
-    },
+    archiveEnabled: true,
+    archiveFolder: "archive",
+    archiveTag: "archive",
 }
 
 export function defaultSettings(): Settings {
     const settings = {} as Settings
     Object.assign(settings, DEFAULT_SETTINGS)
-    Object.assign(settings.templates, DEFAULT_SETTINGS.templates)
-    Object.assign(settings.pack, DEFAULT_SETTINGS.pack)
-    Object.assign(settings.h1, DEFAULT_SETTINGS.h1)
-    Object.assign(settings.h1.exclude, DEFAULT_SETTINGS.h1.exclude)
-    Object.assign(settings.aliases, DEFAULT_SETTINGS.aliases)
-    Object.assign(settings.aliases.exclude, DEFAULT_SETTINGS.aliases.exclude)
-    Object.assign(settings.assets, DEFAULT_SETTINGS.assets)
-    Object.assign(settings.archive, DEFAULT_SETTINGS.archive)
     return settings
 }
 
@@ -107,28 +69,28 @@ export function normalize(settings: Settings): Settings {
         DEFAULT_SETTINGS.folder,
     )
 
-    settings.templates.folder = normalizeOrDefault(
-        settings.templates.folder,
-        DEFAULT_SETTINGS.templates.folder,
+    settings.templatesFolder = normalizeOrDefault(
+        settings.templatesFolder,
+        DEFAULT_SETTINGS.templatesFolder,
     )
 
-    settings.pack.folder = normalizeOrDefault(
-        settings.pack.folder,
-        DEFAULT_SETTINGS.pack.folder,
+    settings.packFolder = normalizeOrDefault(
+        settings.packFolder,
+        DEFAULT_SETTINGS.packFolder,
     )
 
-    settings.assets.folder = normalizeOrDefault(
-        settings.assets.folder,
-        DEFAULT_SETTINGS.assets.folder,
+    settings.assetsFolder = normalizeOrDefault(
+        settings.assetsFolder,
+        DEFAULT_SETTINGS.assetsFolder,
     )
 
-    settings.archive.folder = normalizeOrDefault(
-        settings.archive.folder,
-        DEFAULT_SETTINGS.archive.folder,
+    settings.archiveFolder = normalizeOrDefault(
+        settings.archiveFolder,
+        DEFAULT_SETTINGS.archiveFolder,
     )
 
-    if (!settings.archive.tag) {
-        settings.archive.tag = DEFAULT_SETTINGS.archive.tag
+    if (!settings.archiveTag) {
+        settings.archiveTag = DEFAULT_SETTINGS.archiveTag
     }
 
     return settings
