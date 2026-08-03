@@ -33,7 +33,14 @@ instead, and each patch is a new feature.
 
 ### Community plugins
 
-This plugin is not available in Community plugins tab in Obsidian yet.
+This plugin is available to install from Community tab.
+
+1. Visit [Community site](https://community.obsidian.md/plugins/store) and click
+   "Add to Obsidian" to search this plugin inside of the app.
+2. Just search for the plugin manually in Community plugins after disabling
+   restricted mode.
+3. Click [here](obsidian://show-plugin?id=store) to view the plugin page
+   directly.
 
 ### BRAT
 
