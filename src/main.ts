@@ -255,9 +255,10 @@ export default class Store extends Plugin {
         const offset = meta.frontmatterPosition?.end.offset || 0
 
         switch (titles.length) {
-            case 0: // insert after the frontmatter if no titles
+            case 0: { // insert after the frontmatter if no titles
                 return inserter(title, offset)
-            case 1: // replace the only title if blank, otherwise skip
+            }
+            case 1: { // replace the only title if blank, otherwise skip
                 const only = titles[0]
                 if (only.heading.length != 0) {
                     return null
@@ -265,13 +266,15 @@ export default class Store extends Plugin {
 
                 const pos = only.position
                 return replacer(title, pos.start.offset, pos.end.offset)
-            default: // try to shift all headings to insert the title
+            }
+            default: { // try to shift all headings to insert the title
                 if (!shiftable) {
                     return null
                 }
 
                 const indexes = headings.map((h) => h.position.start.line)
                 return combine(shifter(indexes), inserter(title, offset))
+            }
         }
     }
 
