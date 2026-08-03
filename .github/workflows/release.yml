@@ -1,34 +1,36 @@
 name: Release
-
 on:
-    push:
-        tags:
-            - "*"
-
+  push:
+    tags:
+      - "*"
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        permissions:
-            contents: write
-        steps:
-            - uses: actions/checkout@v6
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run checks and build
+        run: nix flake check --print-build-logs
+      - name: Get the result
+        run: nix build
+      - name: Attest
+        uses: actions/attest@v4
+        with:
+          subject-path: ./result/main.js
+      - name: Create the release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag="${GITHUB_REF#refs/tags/}"
 
-            - uses: cachix/install-nix-action@v31
-              with:
-                  github_access_token: ${{ secrets.GITHUB_TOKEN }}
-
-            - name: Run checks
-              run: nix flake check --print-build-logs
-
-            - name: Build the plugin
-              run: nix build
-
-            - name: Create the release
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: |
-                  tag="${GITHUB_REF#refs/tags/}"
-
-                  gh release create "$tag" \
-                      --title="$tag" --draft \
-                      ./result/main.js ./result/manifest.json
+          gh release create "$tag" \
+              --title="$tag" --draft \
+              ./result/main.js ./result/manifest.json
