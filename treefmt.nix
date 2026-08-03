@@ -21,7 +21,7 @@ let
                 "manifest.json"
                 "package.json"
                 "tsconfig.json"
-                "vite.config.ts"
+                "vite.config.mts"
                 # keep-sorted end
             ];
         };

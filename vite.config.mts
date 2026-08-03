@@ -3,24 +3,21 @@ import { resolve } from "path"
 
 export default defineConfig({
     resolve: {
-        alias: {
-            "@": resolve(__dirname, "src"),
-        },
+        alias: { "@": resolve(import.meta.dirname, "src") },
     },
 
     build: {
+        outDir: ".",
+        emptyOutDir: false,
+
         lib: {
-            entry: resolve(__dirname, "src/main.ts"),
+            entry: resolve(import.meta.dirname, "src/main.ts"),
             formats: ["cjs"],
             fileName: "main",
         },
 
-        outDir: ".",
-        emptyOutDir: false,
         rollupOptions: {
-            external: [
-                "obsidian",
-            ],
+            external: ["obsidian"],
         },
     },
 })
