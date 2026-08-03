@@ -39,7 +39,8 @@ This plugin is available to install from Community tab.
    "Add to Obsidian" to search this plugin inside of the app.
 2. Just search for the plugin manually in Community plugins after disabling
    restricted mode.
-3. Click here to view the plugin page directly: obsidian://show-plugin?id=store.
+3. Copy this link and open it in your browser:
+   `obsidian://show-plugin?id=store`.
 
 ### BRAT
 
