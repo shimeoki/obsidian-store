@@ -248,9 +248,9 @@ parent.
 Now it's pretty much impossible, and you are certainly not going to go through
 all linked files manually. The pack feature allows to do this automatically.
 
-It copies the packed files in the configured folder by copying the file into
-it by "absolute vault path" to preserve the links no matter what the user chose
-in the settings.
+It copies the packed files in the configured folder by copying the file into it
+by "absolute vault path" to preserve the links no matter what the user chose in
+the settings.
 
 The plugin doesn't go overboard to be contained in Obsidian. The plugin only
 gives the files to be exported; external compression and folder removal is on
