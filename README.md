@@ -49,17 +49,7 @@ either:
 
 ## Contributing
 
-All contributions with the suspicion of AI usage in text/code are immediately
-declined.
-
-I use Nix for development, so this repository contains everything you need as a
-Nix flake:
-
-```sh
-nix develop     # pnpm + nodejs with install hook
-nix fmt         # treefmt
-nix flake check # package + formatting
-```
+See [Contributing](./CONTRIBUTING.md).
 
 ## License
 
