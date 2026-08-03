@@ -13,13 +13,13 @@ export default {
             heading: "Templates",
 
             default: {
-                name: "File location",
+                name: "Default template location",
                 desc: "Choose a note to use as a default template.",
                 placeholder: "Example: templates/default.md",
             },
 
             folder: {
-                name: "Folder location",
+                name: "Template folder location",
                 desc: "Notes in this folder will be available as templates.",
                 placeholder: "Example: templates",
             },
@@ -29,7 +29,7 @@ export default {
             heading: "Pack",
 
             folder: {
-                name: "Folder location",
+                name: "Pack folder location",
                 desc: "Packed files will be placed here.",
             },
         },
@@ -38,9 +38,9 @@ export default {
             heading: "H1",
 
             enable: {
-                name: "Automatic generation",
+                name: "Enable automatic heading generation",
                 desc:
-                    "Whether to enable level 1 heading generation based on the filename.",
+                    "Whether to enable level 1 heading generation based on the filename while storing.",
             },
         },
 
@@ -48,9 +48,9 @@ export default {
             heading: "Aliases",
 
             enable: {
-                name: "Automatic generation",
+                name: "Enable automatic aliases generation",
                 desc:
-                    "Whether to enable aliases generation based on the filename and level 1 heading.",
+                    "Whether to enable aliases generation based on the filename and level 1 heading while storing.",
             },
         },
 
@@ -58,13 +58,13 @@ export default {
             heading: "Assets",
 
             enable: {
-                name: "Storing",
+                name: "Enable asset storing",
                 desc:
                     "Whether to enable storing for other files (not notes) in the vault.",
             },
 
             folder: {
-                name: "Folder location",
+                name: "Assets folder location",
                 desc: "Stored assets will be placed here.",
             },
         },
@@ -73,17 +73,17 @@ export default {
             heading: "Archive",
 
             enable: {
-                name: "Archiving",
+                name: "Enable archiving",
                 desc: "Whether to enable archiving for notes.",
             },
 
             folder: {
-                name: "Folder location",
+                name: "Archive folder location",
                 desc: "Archived notes will be placed here.",
             },
 
             tag: {
-                name: "Tag name",
+                name: "Archive tag name",
                 desc: "Notes with this tag will be archived.",
             },
         },
