@@ -3,18 +3,23 @@
     lib,
     fetchPnpmDeps,
     pnpmConfigHook,
-    nodejs_25,
-    pnpm_10,
+    pnpm_11,
+    nodejs,
 }:
 let
-    nodejs = nodejs_25;
-    pnpm = pnpm_10.override { inherit nodejs; };
+    pnpm = pnpm_11;
 in
 stdenv.mkDerivation (finalAttrs: {
     pname = "obsidian-store";
     version = "0.7.1";
-
     src = ./.;
+
+    meta = {
+        description = "Manage your notes within a single folder.";
+        homepage = "https://github.com/shimeoki/obsidian-store";
+        license = lib.licenses.bsd3;
+        platforms = lib.platforms.all;
+    };
 
     nativeBuildInputs = [
         nodejs
@@ -25,8 +30,8 @@ stdenv.mkDerivation (finalAttrs: {
     pnpmDeps = fetchPnpmDeps {
         inherit (finalAttrs) pname version src;
         inherit pnpm;
-        hash = "sha256-wtDSUyPV8Hg8xeSNfC6nz2TJrXeiUzGTnXIw7kQRZH8=";
-        fetcherVersion = 3;
+        hash = "sha256-ODsQNgtd8dr/n7ehWDXCTSqevsyBf4kxvjivJou3lqg=";
+        fetcherVersion = 4;
     };
 
     buildPhase = ''
@@ -46,11 +51,4 @@ stdenv.mkDerivation (finalAttrs: {
 
         runHook postInstall
     '';
-
-    meta = {
-        description = "Manage your notes within a single folder.";
-        homepage = "https://github.com/shimeoki/obsidian-store";
-        license = lib.licenses.bsd3;
-        platforms = lib.platforms.all;
-    };
 })

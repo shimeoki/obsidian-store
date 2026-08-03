@@ -1,12 +1,12 @@
 {
     mkShell,
-    nodejs_25,
-    pnpm_10,
+    pnpm_11,
+    nodejs,
 }:
 mkShell {
     packages = [
-        nodejs_25
-        pnpm_10
+        nodejs
+        pnpm_11
     ];
 
     shellHook = ''

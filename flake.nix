@@ -13,7 +13,7 @@
 
     inputs = {
         nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-        systems.url = "github:nix-systems/default-linux";
+        systems.url = "github:nix-systems/x86_64-linux";
 
         flakelight = {
             url = "github:nix-community/flakelight";
