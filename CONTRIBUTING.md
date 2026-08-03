@@ -9,7 +9,7 @@ new features.
 ## AI
 
 This project follows "Read-Only AI Policy". This means that all changes should
-be done manually, by hand. This includes, for example:
+be done manually, by hand. This prohibits, for example:
 
 - Agentic usage (100% AI code);
 - Modifications of AI code (partial AI code);
@@ -19,7 +19,7 @@ be done manually, by hand. This includes, for example:
 This covers code, documentation, tests and translation - everything in the
 repository.
 
-However, this doesn't include use cases of AI for:
+However, this doesn't prohibit use cases of AI for:
 
 - Searching and researching;
 - Debugging;
