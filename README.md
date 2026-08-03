@@ -17,13 +17,23 @@ so a separate usage "book" is needed.
 
 See [docs](./docs).
 
+## Versioning
+
+This plugin follows [Semantic Versioning](https://semver.org).
+
+1. Each major version signifies a breaking change in settings format, so a
+   manual intervention can be needed after an update;
+2. Each minor version signifies a new feature;
+3. Each patch signifies a fix.
+
+While the major version is zero, each minor version bump is a breaking change
+instead, and each patch is a new feature.
+
 ## Installation
 
 ### Community plugins
 
-This plugin is not available in Community plugins tab in Obsidian yet, because
-the plugin isn't stable right now. When the plugin's 1.0.0 version releases, I
-will submit a ticket.
+This plugin is not available in Community plugins tab in Obsidian yet.
 
 ### BRAT
 

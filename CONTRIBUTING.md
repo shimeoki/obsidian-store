@@ -34,6 +34,12 @@ While this is a mandatory requirement for every contribution, it cannot be
 easily verified all the time. The decision to whether decline the contribution
 because "it looks like AI" is still up to the maintainer.
 
+## Commit style
+
+This project follows [Conventional Commits](https://conventionalcommits.org) for
+commit descriptions. Please make sure that you follow the format before
+submitting a pull request.
+
 ## Development environment
 
 The repository is a Nix flake, so if you use Nix and you use the new
