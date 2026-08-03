@@ -1,9 +1,9 @@
-# Store
+# Store (english documentation)
 
 This plugin allows the use of folders in Obsidian only one level deep,
 effectively flattening the vault.
 
-In the proposed solution, notes have UUIDs as the filenames and documents and
+In the proposed solution, notes have UUIDs as the filenames, while documents and
 images have hashes as the filenames.
 
 The plugin automates the process of migration to such structure, adds commands
@@ -25,7 +25,7 @@ daily usage: probably you just want to look what you can do to not go through
 every project.
 
 This problem gets exponentially worse the more your vault scales horizontally
-(projects amount) and vertically (depth level).
+(amount of projects) and vertically (depth level).
 
 That's hierarchy for you. Each file has only one "true" path. But for
 note-taking it doesn't align very well.
@@ -34,8 +34,7 @@ That's why Obsidian has tags. Instead of hierarchical classification, you can
 use faceted classification: attach some descriptors to the note and then use
 them for organization.
 
-For the example above, you just use tags like `project/A` or `project/B` and
-`todo` for the notes.
+For the example above, you just use tags like `A`, `B` and `todo` for the notes.
 
 You get the benefit of the first solution: you don't really need to have
 `todo/A` or `todo/B`: it's just a todo for a certain project, it makes more
@@ -47,7 +46,7 @@ I found no reason to keep the hierarchy anymore while using tags, because it's
 just mental overhead ("Where do I keep the note?"). This plugin is my attempt at
 it.
 
-## Conflicts
+## Solution
 
 So we want to remove hierarchy. If we keep everything in one folder for
 simplicity, then we need to resolve filename conflicts. While Obsidian can
@@ -65,16 +64,14 @@ After some thinking, I decided to use UUID (v4):
 - Using Zettelkasten-like approaches when the note name reflects it's contents
   requires more mental effort and (probably) cannot be automatized.
 
-- Using a date like Obsidian's core plugin "Unique note creator" does doesn't
-  guarantee uniqueness entirely: it's possible to create two notes in one second
-  or you can get a note from another person with the same date. Also it's how to
-  handle the migration of previous notes to the new naming scheme. UUIDs are
-  unique even if you get a note from another person. The conflict can occur if
-  notes have the same name deliberately, which is a good thing to notice copies
-  or versions of the same note, for example.
+- Using a date doesn't guarantee uniqueness entirely: it's possible to create
+  two notes in one second or you can get a note from another person with the
+  same date. The conflict can occur if notes have the same name deliberately,
+  which is a good thing to notice copies or versions of the same note.
 
-- It's not a dependency and easy to generate. It's also a widely recognized
-  standard.
+- UUIDs are stateless. Even if you have a couple hundred notes to import into
+  the vault, they all get a unique name and can be used in your vault without
+  anything else.
 
 From now on, the action of "converting a folder or a note to the plugin format"
 is referred as "storing". It's both available as a command for the current file
@@ -84,11 +81,12 @@ Storing is a general process which tries to convert the vault to the proposed
 solution. Based on the enabled features, it won't just rename the notes, but do
 something else while at it.
 
-## Filenames
+## Main features
 
 But if we use UUIDs as the filename, how do we address the notes then? We can
 forget about the names in the filesystem, so we need to use Obsidian features
-for that. Our main weapon is the search.
+for that. And main plugin features are dedicated to finding and linking the
+notes.
 
 ### H1
 
@@ -186,14 +184,18 @@ it as a value to represent the file.
 But it doesn't make sense for us with the usage of UUIDs. So:
 
 - Graph is essentially unusable for navigating. I don't use it, but be aware.
+
 - You probably want to show aliases in every search with `[aliases:]` query.
   Also search by path or filename doesn't make sense anymore.
+
 - Obsidian Bases are the same as the search in this regard: you want aliases to
   show and don't want to filter by path.
+
 - Quick switcher is mostly fine, because aliases in my experience take priority:
   UUIDs are random and even a part of a real word excludes most of them.
-- Many UI elements with the filename probably should be hidden. I use
-  [Hider](https://github.com/kepano/obsidian-hider) for this.
+
+- Many UI elements with the filename probably should be hidden. I recommend
+  using [Hider](https://github.com/kepano/obsidian-hider) for this.
 
 ### Format
 
@@ -211,7 +213,9 @@ application that works with a YAML frontmatter and tags/aliases from it.
 It's also difficult to reuse notes from your vault on GitHub or to use your
 notes by others if they don't use the plugin.
 
-## New notes
+## Other features
+
+### New notes
 
 For daily usage you probably wouldn't rename the files to UUIDs manually. Though
 you can create the files manually and then store them, I wanted to remove the
@@ -224,7 +228,7 @@ The templates can be configured in settings. It's recommended to add a default
 template with a tag like `tagme`, because it is pretty difficult to find a note
 you forgot to tag properly and accidentally closed.
 
-## Archive
+### Archive
 
 Because now you can create notes almost effortlessly, it's natural that the
 vault becomes cluttered faster. If you don't delete your notes and preserve them
@@ -238,7 +242,7 @@ You can add configured Store's archive folder there. Then, use the configured
 archive tag on the notes you want to archive, and on the next storing, if the
 feature is enabled, these notes are going to be excluded.
 
-## Pack
+### Pack
 
 Though it's also not guaranteed and very convenient, it's much easier to export
 the notes as a ZIP (for example, to share them with your friend) if you use
@@ -256,7 +260,9 @@ The plugin doesn't go overboard to be contained in Obsidian. The plugin only
 gives the files to be exported; external compression and folder removal is on
 the user.
 
-## Assets
+The feature is available both in context menu and as a command.
+
+### Assets
 
 While at it, I wanted to deduplicate my attachments in the vault, and the whole
 concept of keeping everything at the same level aligns well with this feature.
@@ -275,3 +281,23 @@ SHA-256 filename.
 
 The default is to have a separate `assets` folder, but you can actually use a
 "global" attachments Obsidian folder.
+
+Also I recommend to exclude both `attachments` (default folder) and `assets`
+from the search. Names are not helpful (they are just hashes), so you are
+probably going to find the related images or documents based on the linked note.
+
+## Tips and tricks
+
+### Exporting by tags or properties
+
+While packing feature is useful, you can find yourself on exporting the notes
+not based on the links, but based on tags or properties.
+
+In this case, the solution is not limited to this plugin. You can use Obsidian's
+core plugin Bases to select the notes you need, and then either through the
+command palette or by clicking LMB on the results amount export the table
+contents.
+
+After getting the results, you can either just copy the notes or move them based
+on your goal via a script in the command line. Yes, that's not very convenient,
+but it's out of scope for this plugin.
