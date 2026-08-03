@@ -84,7 +84,7 @@ export default {
 
             tag: {
                 name: "Tag name",
-                desc: "Notes with this tag will be archived",
+                desc: "Notes with this tag will be archived.",
             },
         },
     },
