@@ -11,7 +11,7 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
     pname = "obsidian-store";
-    version = "0.8.0";
+    version = "0.8.1";
     src = ./.;
 
     meta = {
