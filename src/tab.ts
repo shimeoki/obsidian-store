@@ -1,6 +1,7 @@
 import { App, PluginSettingTab, SettingDefinitionItem } from "obsidian"
 
 import Store from "@/main.ts"
+import { tagRegExp } from "@/settings.ts"
 
 export default class SettingTab extends PluginSettingTab {
     plugin: Store
@@ -143,6 +144,53 @@ export default class SettingTab extends PluginSettingTab {
                             type: "text",
                             key: "archiveTag",
                             defaultValue: "archive",
+                            validate: (t) => {
+                                if (tagRegExp.test(t)) {
+                                    return
+                                }
+
+                                return "a-Z, 0-9, _- and at least one letter."
+                            },
+                        },
+                    },
+                ],
+            },
+            {
+                type: "group",
+                heading: l10n.tagme.heading,
+                items: [
+                    {
+                        name: l10n.tagme.enableAddition.name,
+                        desc: l10n.tagme.enableAddition.desc,
+                        control: {
+                            type: "toggle",
+                            key: "tagmeAdditionEnabled",
+                            defaultValue: true,
+                        },
+                    },
+                    {
+                        name: l10n.tagme.enableDeletion.name,
+                        desc: l10n.tagme.enableDeletion.desc,
+                        control: {
+                            type: "toggle",
+                            key: "tagmeDeletionEnabled",
+                            defaultValue: true,
+                        },
+                    },
+                    {
+                        name: l10n.tagme.tag.name,
+                        desc: l10n.tagme.tag.desc,
+                        control: {
+                            type: "text",
+                            key: "tagmeTag",
+                            defaultValue: "tagme",
+                            validate: (t) => {
+                                if (tagRegExp.test(t)) {
+                                    return
+                                }
+
+                                return "a-Z, 0-9, _- and at least one letter."
+                            },
                         },
                     },
                 ],

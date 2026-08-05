@@ -329,16 +329,28 @@ export default class Store extends Plugin {
         const cache = this.app.metadataCache
 
         const meta = cache.getFileCache(f)
-        if (meta) {
-            return meta.frontmatter?.tags || []
+
+        const fm = meta?.frontmatter
+        if (!fm || !fm.tags) {
+            return []
         }
 
-        return []
+        if (typeof fm.tags == "string") {
+            return [fm.tags]
+        } else if (!Array.isArray(fm.tags)) {
+            return []
+        } else {
+            return fm.tags
+        }
     }
 
-    private hasArchiveTag(tags: string[]): boolean {
-        const tag = this.settings.archiveTag
-        return !!tags.find((t) => t == tag)
+    private hasTag(tag: string, tags: string[]): boolean {
+        if (!tag) {
+            return false
+        }
+
+        const tt = tag.toLowerCase()
+        return !!tags.find((t) => t.toLowerCase() == tt)
     }
 
     private async archiveNote(f: TFile): Promise<boolean> {
@@ -346,12 +358,55 @@ export default class Store extends Plugin {
             return false
         }
 
-        if (!this.hasArchiveTag(this.getTags(f))) {
+        if (!this.hasTag(this.settings.archiveTag, this.getTags(f))) {
             return false
         }
 
         await this.moveNote(f, "archive")
         return true
+    }
+
+    private tagmeNote(f: TFile) {
+        if (!this.settings.tagmeTag) {
+            return
+        }
+
+        const tags = this.getTags(f)
+
+        if (this.settings.tagmeAdditionEnabled && tags.length == 0) {
+            this.app.fileManager.processFrontMatter(f, (fm) => {
+                if (!fm.tags) {
+                    fm.tags = []
+                } else if (typeof fm.tags == "string") {
+                    fm.tags = [fm.tags]
+                } else if (!Array.isArray(fm.tags)) {
+                    return
+                }
+
+                fm.tags.push(this.settings.tagmeTag)
+            })
+        }
+
+        if (this.settings.tagmeDeletionEnabled && tags.length > 0) {
+            const tag = this.settings.tagmeTag.toLowerCase()
+            let only = true
+
+            const newTags = tags.filter((t) => {
+                if (t.toLowerCase() == tag) {
+                    return false
+                } else {
+                    only = false
+                    return true
+                }
+            })
+
+            if (!only) {
+                this.app.fileManager.processFrontMatter(
+                    f,
+                    (fm) => fm.tags = newTags,
+                )
+            }
+        }
     }
 
     private async storeFile(f: TFile) {
@@ -366,6 +421,8 @@ export default class Store extends Plugin {
         if (!archived) {
             await this.storeNote(f)
         }
+
+        this.tagmeNote(f)
     }
 
     private async storeFolder(folder: TFolder) {

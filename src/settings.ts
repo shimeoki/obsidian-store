@@ -22,6 +22,10 @@ export interface Settings {
     archiveEnabled: boolean
     archiveFolder: string
     archiveTag: string
+
+    tagmeAdditionEnabled: boolean
+    tagmeDeletionEnabled: boolean
+    tagmeTag: string
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -46,6 +50,10 @@ export const DEFAULT_SETTINGS: Settings = {
     archiveEnabled: true,
     archiveFolder: "archive",
     archiveTag: "archive",
+
+    tagmeAdditionEnabled: true,
+    tagmeDeletionEnabled: true,
+    tagmeTag: "tagme",
 }
 
 export function defaultSettings(): Settings {
@@ -61,6 +69,10 @@ function normalizeOrDefault(custom: string, defaults: string): string {
         return normalizePath(custom)
     }
 }
+
+// NOTE: https://obsidian.md/help/tags#Tag+format
+// no emojis or other symbols, however
+export const tagRegExp = /^[-_a-z0-9//]*[-_a-z][-_a-z0-9//]*$/i
 
 // TODO: support for undefined settings
 export function normalize(settings: Settings): Settings {
@@ -89,8 +101,12 @@ export function normalize(settings: Settings): Settings {
         DEFAULT_SETTINGS.archiveFolder,
     )
 
-    if (!settings.archiveTag) {
+    if (!settings.archiveTag || !tagRegExp.test(settings.archiveTag)) {
         settings.archiveTag = DEFAULT_SETTINGS.archiveTag
+    }
+
+    if (!settings.tagmeTag || !tagRegExp.test(settings.tagmeTag)) {
+        settings.tagmeTag = DEFAULT_SETTINGS.tagmeTag
     }
 
     return settings

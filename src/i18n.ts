@@ -52,6 +52,12 @@ export default interface Translation {
             folder: Setting
             tag: Setting
         }
+
+        tagme: SettingGroup & {
+            enableAddition: Setting
+            enableDeletion: Setting
+            tag: Setting
+        }
     }
 
     commands: {

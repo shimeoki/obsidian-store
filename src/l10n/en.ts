@@ -87,6 +87,27 @@ export default {
                 desc: "Notes with this tag will be archived.",
             },
         },
+
+        tagme: {
+            heading: "TAGME",
+
+            enableAddition: {
+                name: "Enable automatic addition",
+                desc:
+                    "Whether to enable automatic addition of the TAGME tag if a stored note doesn't have any tags.",
+            },
+
+            enableDeletion: {
+                name: "Enable automatic deletion",
+                desc:
+                    "Whether to disable automatic deletion of the TAGME tag if a stored note has other tags.",
+            },
+
+            tag: {
+                name: "TAGME tag name",
+                desc: "Notes with no tags will receive this tag.",
+            },
+        },
     },
 
     commands: {
