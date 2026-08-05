@@ -220,9 +220,14 @@ friction as much as possible to simplify the workflow.
 The plugin has the commands for creating new notes in the Store in new/current
 tab or vertical/horizontal split with a default or selected template.
 
-The templates can be configured in settings. It's recommended to add a default
-template with a tag like `tagme`, because it is pretty difficult to find a note
-you forgot to tag properly and accidentally closed.
+The templates can be configured in settings.
+
+### TAGME
+
+It's pretty difficult to find a note you forgot to add proper tags to. For this
+scenario, plugin has a TAGME feature, where you can configure a tag like `tagme`
+to add to a note if no other tags are present. Also this tag can be deleted
+automatically if desired so. Both options are enabled by default.
 
 ### Archive
 
