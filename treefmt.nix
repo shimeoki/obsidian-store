@@ -16,6 +16,7 @@ let
                 "src/*"
                 # keep-sorted end
                 # keep-sorted start
+                "CONTRIBUTING.md"
                 "README.md"
                 "deno.json"
                 "manifest.json"

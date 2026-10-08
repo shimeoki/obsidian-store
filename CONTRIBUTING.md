@@ -2,33 +2,23 @@
 
 ## Issues
 
-Before making a contribution, it's advised to open an issue first to discuss
-the change beforehand. The process is the same for bug fixes, translations and
-new features.
+Before making a contribution, it's advised to open an issue first to discuss the
+change beforehand. The process is the same for bug fixes, translations and new
+features.
 
 ## AI
 
-This project follows "Read-Only AI Policy". This means that all changes should
-be done manually, by hand. This prohibits, for example:
+AI contributions are prohibited. By "AI" the policy means LLMs and all other
+kinds of artificial intelligence. This includes, but not limited to:
 
 - Agentic usage (100% AI code);
 - Modifications of AI code (partial AI code);
 - AI completions inside of an editor (AI-assisted code);
-- Copy-pasting from a chat (AI traced code).
+- Copy-pasting or rewriting from a chat (AI traced code).
 
-This covers code, documentation, tests and translation - everything in the
-repository.
-
-However, this doesn't prohibit use cases of AI for:
-
-- Searching and researching;
-- Debugging;
-- Analyzing for vulnerabilites;
-- And more.
-
-Therefore, the policy is called "Read-Only" in terms of "AI cannot write to the
-codebase in any shape or form", but AI can be used for actions limited on just
-reading the project's contents.
+This covers code, documentation, tests, translation, bug reports, comments on
+issues, etc. - everything in the repository. The same applies to reading the
+contents of the repository via AI: it's not allowed, even for local models.
 
 While this is a mandatory requirement for every contribution, it cannot be
 easily verified all the time. The decision to whether decline the contribution
