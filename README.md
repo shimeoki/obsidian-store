@@ -42,13 +42,6 @@ This plugin is available to install from Community tab.
 3. Copy this link and open it in your browser:
    `obsidian://show-plugin?id=store`.
 
-### BRAT
-
-You can install [BRAT](https://github.com/TfTHacker/obsidian42-brat) to
-install/update the plugin automatically. Add the repository URL in "Beta plugin
-list" section. It's recommended to not use the "latest version" tag right now,
-because the plugin is not stable yet. Use a specific version (like 0.7.0).
-
 ### GitHub releases
 
 This repository has automatic GitHub releases, so you can manually install the
